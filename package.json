@@ -2,11 +2,13 @@
   "name": "local-ansible-runner",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "index.mjs",
   "scripts": {
     "start": "node index.mjs",
     "start:dev": "nodemon index.mjs",
-    "lint": "prettier --write .",
+    "style": "prettier --write .",
+    "lint": "eslint \"**/*.mjs\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,6 +25,11 @@
   },
   "homepage": "https://github.com/pkarpovich/local-ansible-runner#readme",
   "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-prettier": "^3.4.0",
     "nodemon": "^2.0.12",
     "prettier": "^2.3.2"
   },

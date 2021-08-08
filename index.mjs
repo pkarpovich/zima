@@ -1,7 +1,6 @@
 import express from "express";
 
 import { Config } from "./config.mjs";
-import { RunPlaybook } from "./ansible.mjs";
 
 const port = Config.Port || 3000;
 
@@ -12,5 +11,6 @@ app.get("/playbooks", (req, resp) => {
 });
 
 app.listen(port, () => {
+  // eslint-disable-next-line no-console
   console.log(`Listening on port ${port}`);
 });
