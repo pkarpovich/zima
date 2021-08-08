@@ -29,8 +29,8 @@ app.post("/playbooks", async (req, resp) => {
     return resp.sendStatus(404);
   }
 
-  const { status, output } = await RunPlaybook(playbookName, variables);
-  resp.json({ status, output });
+  const { code, output } = await RunPlaybook(playbookName, variables);
+  resp.json({ code, output });
 });
 
 app.use((err, _, resp, next) => {
