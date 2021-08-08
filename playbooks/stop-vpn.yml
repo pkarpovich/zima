@@ -1,0 +1,9 @@
+- hosts: 127.0.0.1
+  connection: local
+
+  tasks:
+    - name: "Stop OpenVPN"
+      command: "sudo killall openvpn"
+
+    - name: "Remove forward rules"
+      command: "sudo netfilter-persistent flush"
