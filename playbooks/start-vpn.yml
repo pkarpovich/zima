@@ -1,5 +1,5 @@
 - hosts: 127.0.0.1
   connection: local
   tasks:
-  - name: "Echo text"
-    command: "echo 'test'"
+    - name: "Echo text"
+      command: "echo 'test'"

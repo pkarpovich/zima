@@ -1,7 +1,7 @@
-import Ansible from 'node-ansible-control'
+import Ansible from "node-ansible-control";
 
 export const RunPlaybook = (name) => {
-    const playbook = new Ansible.Playbook().playbook(name);
+  const playbook = new Ansible.Playbook().playbook(name);
 
-    return playbook.exec();
-}
+  return playbook.exec();
+};
