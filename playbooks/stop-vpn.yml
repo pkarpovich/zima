@@ -2,8 +2,15 @@
   connection: local
 
   tasks:
+    - name: "Check if VPN already on"
+      shell: "netstat -i | grep tun0"
+      register: interfaces
+      ignore_errors: true
+
     - name: "Stop OpenVPN"
       command: "sudo killall openvpn"
+      when: interfaces.stdout != ""
 
     - name: "Remove forward rules"
       command: "sudo netfilter-persistent flush"
+      when: interfaces.stdout != ""

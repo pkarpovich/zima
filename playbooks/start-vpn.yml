@@ -2,10 +2,17 @@
   connection: local
 
   tasks:
+    - name: "Check if VPN already on"
+      shell: "netstat -i | grep tun0"
+      register: interfaces
+      ignore_errors: true
+
     - name: "Start forward rules"
       command: "sudo netfilter-persistent start"
+      when: interfaces.stdout == ""
 
     - name: "Start OpenVPN"
-      command: "sudo openvpn ~/ovpn/D2.ovpn"
+      command: "sudo openvpn ~/ovpn/{{ vpn_name }}.ovpn"
       async: 1
       poll: 0
+      when: interfaces.stdout == ""

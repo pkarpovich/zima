@@ -21,7 +21,7 @@ app.get("/playbooks", async (_, resp) => {
 });
 
 app.post("/playbooks", async (req, resp) => {
-  const { name } = req.body;
+  const { name, variables } = req.body;
   const playbookName = `${playbooksDir}/${name}`;
   const playbookPath = `${playbookName}.yml`;
 
@@ -29,7 +29,7 @@ app.post("/playbooks", async (req, resp) => {
     return resp.sendStatus(404);
   }
 
-  const { status, output } = await RunPlaybook(playbookName);
+  const { status, output } = await RunPlaybook(playbookName, variables);
   resp.json({ status, output });
 });
 
