@@ -1,13 +1,46 @@
 import express from "express";
+import "express-async-errors";
+import bodyParser from "body-parser";
+import morgan from "morgan";
 
 import { Config } from "./config.mjs";
+import { GetDirFiles, IsFileExists } from "./fs.mjs";
+import { RunPlaybook } from "./ansible.mjs";
 
 const port = Config.Port || 3000;
+const playbooksDir = Config.PlaybooksDir || "./playbooks";
 
 const app = express();
+app.use(bodyParser.json());
+app.use(morgan("tiny"));
 
-app.get("/playbooks", (req, resp) => {
-  resp.json({ ok: true });
+app.get("/playbooks", async (_, resp) => {
+  const fields = await GetDirFiles(playbooksDir);
+
+  resp.json(fields);
+});
+
+app.post("/playbooks", async (req, resp) => {
+  const { name } = req.body;
+  const playbookName = `${playbooksDir}/${name}`;
+  const playbookPath = `${playbookName}.yml`;
+
+  if (!(await IsFileExists(playbookPath))) {
+    return resp.sendStatus(404);
+  }
+
+  const { status, output } = await RunPlaybook(playbookName);
+  resp.json({ status, output });
+});
+
+app.use((err, _, resp, next) => {
+  if (err) {
+    resp.status(500).json({
+      error: err.message,
+    });
+  }
+
+  next(err);
 });
 
 app.listen(port, () => {
