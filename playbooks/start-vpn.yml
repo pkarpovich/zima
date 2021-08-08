@@ -6,6 +6,6 @@
       command: "sudo netfilter-persistent start"
 
     - name: "Start OpenVPN"
-      command: "sudo openvpn ~/Desktop/ovpn/other\ os/Russia\,\ Moscow\ D2.ovpn"
+      command: "sudo openvpn ~/ovpn/D2.ovpn"
       async: 1
       poll: 0
