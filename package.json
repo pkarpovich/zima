@@ -1,0 +1,27 @@
+{
+  "name": "local-ansible-runner",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.mjs",
+  "scripts": {
+    "start": "node index.mjs",
+    "start:dev": "nodemon index.mjs",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pkarpovich/local-ansible-runner.git"
+  },
+  "keywords": [
+    "ansible"
+  ],
+  "author": "Pavel Karpovich <pavel.karpovich@outlook.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pkarpovich/local-ansible-runner/issues"
+  },
+  "homepage": "https://github.com/pkarpovich/local-ansible-runner#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.12"
+  }
+}
