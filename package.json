@@ -23,5 +23,8 @@
   "homepage": "https://github.com/pkarpovich/local-ansible-runner#readme",
   "devDependencies": {
     "nodemon": "^2.0.12"
+  },
+  "dependencies": {
+    "node-ansible-control": "^0.6.0"
   }
 }
