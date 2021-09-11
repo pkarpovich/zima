@@ -2,5 +2,8 @@
   connection: local
 
   tasks:
-    - name: "Stop OpenVPN"
+    - name: "Get list of VPN files"
       command: "ls -la ~/ovpn"
+      register: out
+
+    - debug: var=out.stdout_lines
