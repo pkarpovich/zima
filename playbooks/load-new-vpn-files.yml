@@ -3,19 +3,13 @@
 
   tasks:
     - name: "Remove temp files"
-      command: "rm ~/vpns.zip && rm -rf ~/vpns"
-
-    - name: "Remove old VPN files"
-      command: "rm -rf ~/ovpn"
+      command: "rm ~/vpns.zip && rm -rf ~/ovpn && rm -rf ~/vpns"
 
     - name: "Get zip with new VPN files"
-      command: "curl 'https://hidemy.name/api/vpn_get_config.php' --data-raw 'os=nix&software=ovpn&type=tun&use_embed_crt=true&code=763375554652884' -o vpns.zip"
+      command: "curl 'https://hidemy.name/api/vpn_get_config.php' --data-raw 'os=nix&software=ovpn&type=tun&use_embed_crt=true&code={{ lookup('env','OVPN_CODE') }}' -o ~/vpns.zip"
 
     - name: "Unzip vpn files"
-      command: "unzip vpns.zip -d vpns"
+      command: "unzip ~/vpns.zip -d ~/vpns"
 
     - name: "Move VPNs files into original folder"
-      command: "mkdir ~/ovpn && mv ~/vpns/other\ os/ ~/ovpn"
-
-    - name: "Remove temp files"
-      command: "rm ~/vpns.zip && rm -rf ~/vpns"
+      command: "mv '~/vpns/other os' ~/ovpn"

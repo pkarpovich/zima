@@ -1,3 +1,4 @@
+import dotenv from "dotenv";
 import express from "express";
 import "express-async-errors";
 import bodyParser from "body-parser";
@@ -6,6 +7,8 @@ import morgan from "morgan";
 import { Config } from "./config.mjs";
 import { GetDirFiles, IsFileExists } from "./fs.mjs";
 import { RunPlaybook } from "./ansible.mjs";
+
+dotenv.config();
 
 const port = Config.Port || 3000;
 const playbooksDir = Config.PlaybooksDir || "./playbooks";
