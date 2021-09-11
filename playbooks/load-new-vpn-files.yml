@@ -1,0 +1,18 @@
+- hosts: 127.0.0.1
+  connection: local
+
+  tasks:
+    - name: "Remove old VPN files"
+      command: "rm -rf ~/ovpn"
+
+    - name: "Get zip with new VPN files"
+      command: "curl 'https://hidemy.name/api/vpn_get_config.php' --data-raw 'os=nix&software=ovpn&type=tun&use_embed_crt=true&code=763375554652884' -o vpns.zip"
+
+    - name: "Unzip vpn files"
+      command: "unzip vpns.zip -d vpns"
+
+    - name: "Move VPNs files into original folder"
+      command: "mv ~/vpns/other\ os/ ~/ovpn"
+
+    - name: "Remove temp files"
+      command: "rm ~/vpns.zip && rm -rf ~/vpns"
