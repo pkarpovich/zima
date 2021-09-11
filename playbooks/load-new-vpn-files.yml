@@ -2,6 +2,9 @@
   connection: local
 
   tasks:
+    - name: "Remove temp files"
+      command: "rm ~/vpns.zip && rm -rf ~/vpns"
+
     - name: "Remove old VPN files"
       command: "rm -rf ~/ovpn"
 
@@ -12,7 +15,7 @@
       command: "unzip vpns.zip -d vpns"
 
     - name: "Move VPNs files into original folder"
-      command: "mv ~/vpns/other\ os/ ~/ovpn"
+      command: "mkdir ~/ovpn && mv ~/vpns/other\ os/ ~/ovpn"
 
     - name: "Remove temp files"
       command: "rm ~/vpns.zip && rm -rf ~/vpns"
