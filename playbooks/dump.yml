@@ -1,0 +1,14 @@
+- hosts: 127.0.0.1
+  connection: local
+
+  tasks:
+    - name: "Stop OpenVPN"
+      shell: "netstat -i | grep tun01"
+      register: interfaces
+      ignore_errors: true
+
+    - debug: msg="{{ vpn_name }}"
+
+    - name: "tst"
+      command: "echo 'ok'"
+      when: interfaces.stdout == ""

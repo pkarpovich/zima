@@ -6,7 +6,8 @@ import morgan from "morgan";
 
 import { Config } from "./config.mjs";
 import { GetDirFiles, IsFileExists } from "./fs.mjs";
-import { RunPlaybook } from "./ansible.mjs";
+
+import { AnsibleService } from "./services/ansible-service.mjs";
 
 dotenv.config();
 
@@ -16,6 +17,8 @@ const playbooksDir = Config.PlaybooksDir || "./playbooks";
 const app = express();
 app.use(bodyParser.json());
 app.use(morgan("tiny"));
+
+const ansibleService = new AnsibleService();
 
 app.get("/playbooks", async (_, resp) => {
   const fields = await GetDirFiles(playbooksDir);
@@ -29,10 +32,11 @@ app.post("/playbooks", async (req, resp) => {
   const playbookPath = `${playbookName}.yml`;
 
   if (!(await IsFileExists(playbookPath))) {
-    return resp.sendStatus(404);
+    resp.sendStatus(404);
+    return;
   }
 
-  const { code, output } = await RunPlaybook(playbookName, variables);
+  const { code, output } = await ansibleService.run(playbookName, variables);
   resp.json({ code, output });
 });
 
