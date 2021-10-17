@@ -8,6 +8,7 @@ import { Config } from "./config.mjs";
 import { GetDirFiles, IsFileExists } from "./fs.mjs";
 
 import { AnsibleService } from "./services/ansible-service.mjs";
+import { SentencesAnalyzerService } from "./services/sentences-analyzer-service.mjs";
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.use(bodyParser.json());
 app.use(morgan("tiny"));
 
 const ansibleService = new AnsibleService();
+const sentencesAnalyzerService = new SentencesAnalyzerService();
 
 app.get("/playbooks", async (_, resp) => {
   const fields = await GetDirFiles(playbooksDir);
@@ -38,6 +40,14 @@ app.post("/playbooks", async (req, resp) => {
 
   const { code, output } = await ansibleService.run(playbookName, variables);
   resp.json({ code, output });
+});
+
+app.post("/command", (req, resp) => {
+  const { text } = req.body;
+
+  const result = sentencesAnalyzerService.analyze(text);
+
+  resp.json({ result });
 });
 
 app.use((err, _, resp, next) => {
