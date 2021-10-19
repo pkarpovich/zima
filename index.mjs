@@ -9,6 +9,8 @@ import { GetDirFiles, IsFileExists } from "./fs.mjs";
 
 import { AnsibleService } from "./services/ansible-service.mjs";
 import { SentencesAnalyzerService } from "./services/sentences-analyzer-service.mjs";
+import { FormsService } from "./services/forms-service.mjs";
+import { VpnQueryForm } from "./models/vpn-query-form.mjs";
 
 dotenv.config();
 
@@ -21,6 +23,7 @@ app.use(morgan("tiny"));
 
 const ansibleService = new AnsibleService();
 const sentencesAnalyzerService = new SentencesAnalyzerService();
+const formsService = new FormsService([new VpnQueryForm()]);
 
 app.get("/playbooks", async (_, resp) => {
   const fields = await GetDirFiles(playbooksDir);
@@ -45,9 +48,10 @@ app.post("/playbooks", async (req, resp) => {
 app.post("/command", (req, resp) => {
   const { text } = req.body;
 
-  const result = sentencesAnalyzerService.analyze(text);
+  const { tokens, customEntities } = sentencesAnalyzerService.analyze(text);
+  formsService.findAndExecute(tokens, customEntities);
 
-  resp.json({ result });
+  resp.json({ tokens, customEntities });
 });
 
 app.use((err, _, resp, next) => {

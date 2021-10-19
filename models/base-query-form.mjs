@@ -1,15 +1,25 @@
 export class BaseQueryForm {
-  #name = "";
+  name = "";
 
-  #keywords = [];
+  keywords = [];
 
-  #props = [];
+  props = [];
 
   constructor({ name, keywords, props }) {
-    this.#name = name;
-    this.#keywords = keywords;
-    this.#props = props;
+    this.name = name;
+    this.keywords = keywords;
+    this.props = props;
   }
 
-  execute = () => {};
+  // eslint-disable-next-line class-methods-use-this
+  execute() {}
+
+  initProps(customEntities) {
+    for (let i = 0; i < this.props.length; i++) {
+      const { value } = customEntities.find(
+        (ce) => ce.type === this.props[i].type
+      );
+      this.props[i].value = value;
+    }
+  }
 }
