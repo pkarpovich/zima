@@ -1,25 +1,39 @@
 export class BaseQueryForm {
   name = "";
 
-  keywords = [];
+  globalKeywords = [];
 
-  props = [];
+  actions = [];
 
-  constructor({ name, keywords, props }) {
+  constructor({ name, globalKeywords, actions }) {
     this.name = name;
-    this.keywords = keywords;
-    this.props = props;
+    this.globalKeywords = globalKeywords;
+    this.actions = actions;
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  execute() {}
+  // eslint-disable-next-line class-methods-use-this,no-empty-function
+  async execute() {}
 
-  initProps(customEntities) {
-    for (let i = 0; i < this.props.length; i++) {
+  isTokensMatchWithKeywords(tokens) {
+    return tokens.some((t) => this.globalKeywords.includes(t));
+  }
+
+  getActionByTokens(tokens) {
+    return this.actions.find((a) =>
+      a.keywords.some((ak) => tokens.includes(ak))
+    );
+  }
+
+  initActionProps(actionId, customEntities) {
+    const action = this.actions.find((a) => a.id === actionId);
+
+    for (let i = 0; i < action.props.length; i++) {
       const { value } = customEntities.find(
-        (ce) => ce.type === this.props[i].type
+        (ce) => ce.type === action.props[i].type
       );
-      this.props[i].value = value;
+      action.props[i].value = value;
     }
+
+    return action;
   }
 }

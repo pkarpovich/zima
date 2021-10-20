@@ -6,20 +6,20 @@ export class FormsService {
   }
 
   findAndExecute(tokens, customEntities) {
-    const form = this.matchTokensWithForm(tokens);
-    form.initProps(customEntities);
-    form.execute();
+    const { actionId, form } = this.findFormAction(tokens);
+    const action = form.initActionProps(actionId, customEntities);
+    console.log(action);
 
-    return form;
+    return action.execute();
   }
 
-  matchTokensWithForm(tokens) {
-    const form = this.#forms.find(
-      (f) => tokens.findIndex((t) => f.keywords.includes(t)) !== -1
-    );
-    const clone = form ? { ...form } : null;
-    Object.setPrototypeOf(clone, Object.getPrototypeOf(form));
+  findFormAction(tokens) {
+    const form = this.#forms.find((f) => f.isTokensMatchWithKeywords(tokens));
+    const action = form.getActionByTokens(tokens);
 
-    return clone;
+    return {
+      form,
+      actionId: action.id,
+    };
   }
 }

@@ -1,49 +1,33 @@
-import dotenv from "dotenv";
 import express from "express";
 import "express-async-errors";
 import bodyParser from "body-parser";
 import morgan from "morgan";
+import fs from "fs/promises";
 
-import { Config } from "./config.mjs";
-import { GetDirFiles, IsFileExists } from "./fs.mjs";
+import { Config } from "./config/config.mjs";
 
 import { AnsibleService } from "./services/ansible-service.mjs";
 import { SentencesAnalyzerService } from "./services/sentences-analyzer-service.mjs";
 import { FormsService } from "./services/forms-service.mjs";
 import { VpnQueryForm } from "./models/vpn-query-form.mjs";
-
-dotenv.config();
-
-const port = Config.Port || 3000;
-const playbooksDir = Config.PlaybooksDir || "./playbooks";
+import { FilesService } from "./services/files-service.mjs";
+import { ConfigService } from "./services/config-service.js";
+import { VpnService } from "./services/vpn-service.mjs";
 
 const app = express();
 app.use(bodyParser.json());
 app.use(morgan("tiny"));
 
+const configService = new ConfigService({ config: Config });
+const filesService = new FilesService(fs);
 const ansibleService = new AnsibleService();
 const sentencesAnalyzerService = new SentencesAnalyzerService();
-const formsService = new FormsService([new VpnQueryForm()]);
+const vpnService = new VpnService({ ansibleService, configService });
+const formsService = new FormsService([
+  new VpnQueryForm({ filesService, configService, vpnService }),
+]);
 
-app.get("/playbooks", async (_, resp) => {
-  const fields = await GetDirFiles(playbooksDir);
-
-  resp.json(fields);
-});
-
-app.post("/playbooks", async (req, resp) => {
-  const { name, variables } = req.body;
-  const playbookName = `${playbooksDir}/${name}`;
-  const playbookPath = `${playbookName}.yml`;
-
-  if (!(await IsFileExists(playbookPath))) {
-    resp.sendStatus(404);
-    return;
-  }
-
-  const { code, output } = await ansibleService.run(playbookName, variables);
-  resp.json({ code, output });
-});
+const httpPort = configService.get("General.Port") || 3000;
 
 app.post("/command", (req, resp) => {
   const { text } = req.body;
@@ -54,17 +38,19 @@ app.post("/command", (req, resp) => {
   resp.json({ tokens, customEntities });
 });
 
-app.use((err, _, resp, next) => {
+const errorHandler = (err, req, resp, next) => {
   if (err) {
-    resp.status(500).json({
+    resp.status(500);
+    resp.json({
       error: err.message,
     });
   }
 
   next(err);
-});
+};
+app.use(errorHandler);
 
-app.listen(port, () => {
+app.listen(httpPort, () => {
   // eslint-disable-next-line no-console
-  console.log(`Listening on port ${port}`);
+  console.log(`Listening on port ${httpPort}`);
 });
