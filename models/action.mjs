@@ -14,8 +14,8 @@ export class Action {
   constructor({ actionType, keywords, props, handler }) {
     this.id = nanoid();
     this.actionType = actionType;
-    this.keywords = keywords;
-    this.props = props;
+    this.keywords = keywords ?? [];
+    this.props = props ?? [];
     this.handler = handler;
   }
 

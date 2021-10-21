@@ -35,7 +35,7 @@ export class VpnQueryForm extends BaseQueryForm {
           ],
         }),
         new Action({
-          actionType: ActionTypes.Start,
+          actionType: ActionTypes.Stop,
           keywords: ["stop"],
         }),
         new Action({
