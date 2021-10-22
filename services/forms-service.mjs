@@ -8,7 +8,6 @@ export class FormsService {
   findAndExecute(tokens, customEntities) {
     const { actionId, form } = this.findFormAction(tokens);
     const action = form.initActionProps(actionId, customEntities);
-    console.log(action);
 
     return action.execute();
   }

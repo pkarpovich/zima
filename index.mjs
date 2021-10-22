@@ -29,11 +29,12 @@ const formsService = new FormsService([
 
 const httpPort = configService.get("General.Port") || 3000;
 
-app.post("/command", (req, resp) => {
+app.post("/command", async (req, resp) => {
   const { text } = req.body;
 
   const { tokens, customEntities } = sentencesAnalyzerService.analyze(text);
-  formsService.findAndExecute(tokens, customEntities);
+  const result = await formsService.findAndExecute(tokens, customEntities);
+  console.log(result);
 
   resp.json({ tokens, customEntities });
 });

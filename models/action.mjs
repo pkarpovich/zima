@@ -24,6 +24,6 @@ export class Action {
   }
 
   execute() {
-    this.handler?.(this);
+    return this.handler?.(this);
   }
 }

@@ -63,7 +63,8 @@ export class VpnQueryForm extends BaseQueryForm {
 
   async startVpnHandler(action) {
     const location = action.getPropByType(TokenTypes.COUNTRY)?.value;
-    const [vpnFileName] = await this.getLocationVpnFiles(location);
+    const [vpnFilePath] = await this.getLocationVpnFiles(location);
+    const [vpnFileName] = vpnFilePath.split(".");
 
     return this.vpnService.start(vpnFileName);
   }

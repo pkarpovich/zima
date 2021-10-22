@@ -13,7 +13,7 @@ export class VpnService {
     const playbookName = `${playbooksDir}/start-vpn`;
 
     const { code, output } = await this.#ansibleService.run(playbookName, {
-      vpn_name: vpnName,
+      vpn_name: vpnName.replace(/(\s+)/g, "\\$1"),
     });
 
     return {
