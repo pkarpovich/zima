@@ -61,9 +61,15 @@ export class VpnQueryForm extends BaseQueryForm {
     this.vpnService = vpnService;
   }
 
-  async startVpnHandler(action) {
+  async startVpnHandler(action, tokens) {
     const location = action.getPropByType(TokenTypes.COUNTRY)?.value;
-    const [vpnFilePath] = await this.getLocationVpnFiles(location);
+    const vpnFiles = await this.getLocationVpnFiles(location);
+
+    const tokensAfterLocation = tokens.slice(tokens.indexOf(location));
+    const [vpnFilePath] = this.pickMostPossibleFile(
+      vpnFiles,
+      tokensAfterLocation
+    );
     const [vpnFileName] = vpnFilePath.split(".");
 
     return this.vpnService.start(vpnFileName);
@@ -84,5 +90,30 @@ export class VpnQueryForm extends BaseQueryForm {
     return files.filter((name) =>
       name.toLowerCase().includes(location.toLowerCase())
     );
+  }
+
+  pickMostPossibleFile(vpnFiles, tokens) {
+    if (vpnFiles.length === 1) {
+      return vpnFiles;
+    }
+
+    let possibleLocation = [];
+    let files = [...vpnFiles];
+
+    for (const token of tokens) {
+      possibleLocation = [...possibleLocation, token];
+      const filteredFiles = vpnFiles.filter((vpnFile) =>
+        vpnFile
+          .replace(/[^\w\s]|_/g, "")
+          .replace(/\s+/g, " ")
+          .includes(possibleLocation.join(" "))
+      );
+
+      if (filteredFiles.length && filteredFiles.length < files.length) {
+        files = filteredFiles;
+      }
+    }
+
+    return files;
   }
 }

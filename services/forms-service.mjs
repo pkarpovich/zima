@@ -9,7 +9,7 @@ export class FormsService {
     const { actionId, form } = this.findFormAction(tokens);
     const action = form.initActionProps(actionId, customEntities);
 
-    return action.execute();
+    return action.execute(tokens);
   }
 
   findFormAction(tokens) {

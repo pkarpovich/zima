@@ -23,7 +23,7 @@ export class Action {
     return this.props.find((p) => p.type === type);
   }
 
-  execute() {
-    return this.handler?.(this);
+  execute(...args) {
+    return this.handler?.(this, ...args);
   }
 }
