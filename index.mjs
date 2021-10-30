@@ -11,8 +11,10 @@ import { SentencesAnalyzerService } from "./services/sentences-analyzer-service.
 import { FormsService } from "./services/forms-service.mjs";
 import { VpnQueryForm } from "./models/vpn-query-form.mjs";
 import { FilesService } from "./services/files-service.mjs";
-import { ConfigService } from "./services/config-service.js";
+import { ConfigService } from "./services/config-service.mjs";
 import { VpnService } from "./services/vpn-service.mjs";
+import { BrokerService } from "./services/broker-service.mjs";
+import { MeetingsQueryForm } from "./models/meetings-query-form.mjs";
 
 const app = express();
 app.use(bodyParser.json());
@@ -23,8 +25,11 @@ const filesService = new FilesService(fs);
 const ansibleService = new AnsibleService();
 const sentencesAnalyzerService = new SentencesAnalyzerService();
 const vpnService = new VpnService({ ansibleService, configService });
+const rabbitService = new BrokerService({ configService });
+
 const formsService = new FormsService([
   new VpnQueryForm({ filesService, configService, vpnService }),
+  new MeetingsQueryForm({ rabbitService, configService }),
 ]);
 
 const httpPort = configService.get("General.Port") || 3000;
@@ -34,9 +39,8 @@ app.post("/command", async (req, resp) => {
 
   const { tokens, customEntities } = sentencesAnalyzerService.analyze(text);
   const result = await formsService.findAndExecute(tokens, customEntities);
-  console.log(result);
 
-  resp.json({ tokens, customEntities });
+  resp.json({ tokens, customEntities, ...result });
 });
 
 const errorHandler = (err, req, resp, next) => {

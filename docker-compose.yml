@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  message-broker:
+    image: rabbitmq:3-management-alpine
+    container_name: message-broker
+    ports:
+      - 5672:5672 # for sender and consumer connections
+      - 15672:15672 # for serve RabbitMQ GUI
+    volumes:
+      - ${HOME}/dev-rabbitmq/data/:/var/lib/rabbitmq
+      - ${HOME}/dev-rabbitmq/log/:/var/log/rabbitmq
+    restart: unless-stopped
+    networks:
+      - zima-main-network
+
+  meetings-service:
+    build:
+      context: ./microservices/meeting-service
+      dockerfile: Dockerfile
+    container_name: meetings-service
+    volumes:
+      - ./microservices/meeting-service/credentials.json:/app/credentials.json
+      - ./microservices/meeting-service/token.json:/app/token.json
+    environment:
+      AMQP_MEETINGS_QUEUE_NAME: ${AMQP_MEETINGS_QUEUE_NAME}
+      AMQP_SERVER_URL: ${AMQP_SERVER_URL}
+    restart: unless-stopped
+    networks:
+      - zima-main-network
+    depends_on:
+      - message-broker
+
+networks:
+  zima-main-network:
+    driver: bridge
