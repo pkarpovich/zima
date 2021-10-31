@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "type": "module",
-  "main": "index.mjs",
+  "main": "src/index.mjs",
   "scripts": {
     "start": "pm2 start bin/doppler-run.sh --name 'local-ansible-runner'",
     "stop": "pm2 stop local-ansible-runner",
-    "start:dev": "nodemon index.mjs --experimental-json-modules",
+    "start:dev": "nodemon src/index.mjs --experimental-json-modules",
     "style": "prettier --write .",
     "lint": "eslint \"**/*.mjs\"",
     "test": "echo \"Error: no test specified\" && exit 1"
