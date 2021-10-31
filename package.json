@@ -6,7 +6,6 @@
   "main": "src/index.mjs",
   "scripts": {
     "start": "node src/index.mjs",
-    "stop": "pm2 stop local-ansible-runner",
     "start:dev": "nodemon src/index.mjs --experimental-json-modules",
     "style": "prettier --write .",
     "lint": "eslint \"**/*.mjs\"",
