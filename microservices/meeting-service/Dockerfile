@@ -7,8 +7,7 @@ RUN go mod download
 
 COPY . .
 
-ENV CGO_ENABLED=0 GOOS=linux GOARCH=arm64
-RUN go build -ldflags="-s -w" -o meeting-service .
+RUN go build -o meeting-service .
 
 FROM alpine
 

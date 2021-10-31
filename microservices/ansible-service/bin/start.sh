@@ -1,1 +1,1 @@
-doppler run -- node src/index.mjs
+node src/index.mjs
