@@ -13,6 +13,35 @@ services:
     restart: unless-stopped
     networks:
       - zima-main-network
+    labels:
+      reproxy.port: 15672
+
+  zima:
+    build: .
+    container_name: zima
+    ports:
+      - ${PORT}:${PORT}
+    expose:
+      - ${PORT}
+    volumes:
+      - ${VPN_FILES_PATH}:/usr/src/vpns
+    environment:
+      PORT: ${PORT}
+      AMQP_SERVER_URL: ${AMQP_SERVER_URL}
+      AMQP_ANSIBLE_QUEUE_NAME: ${AMQP_ANSIBLE_QUEUE_NAME}
+      AMQP_MEETINGS_QUEUE_NAME: ${AMQP_MEETINGS_QUEUE_NAME}
+      VPN_FILES_PATH: "/usr/src/vpns"
+    restart: unless-stopped
+    networks:
+      - zima-main-network
+    depends_on:
+      - message-broker
+    labels:
+      reproxy.server: '*'
+      reproxy.route: '^/(.*)'
+      reproxy.dest: '/$$1'
+
+
 
   meetings-service:
     build:
@@ -30,6 +59,37 @@ services:
       - zima-main-network
     depends_on:
       - message-broker
+    labels:
+      reproxy.enabled: 0
+
+  reproxy:
+    image: umputun/reproxy:master
+    container_name: zima-api
+    hostname: reproxy
+    ports:
+      - "80:8080"
+      - "443:8443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - TZ=Europe/Warsaw
+      - LISTEN=0.0.0.0:8080
+      - DOCKER_ENABLED=true
+      - DOCKER_AUTO=true
+      - DEBUG=true
+      - TIMEOUT_RESP_HEADER=640s
+      - TIMEOUT_WRITE=640s
+      - TIMEOUT_IDLE=640s
+      - TIMEOUT_DIAL=640s
+      - TIMEOUT_KEEP_ALIVE=640s
+      - MAX_SIZE=0
+    restart: unless-stopped
+    networks:
+      - zima-main-network
+    depends_on:
+      - message-broker
+      - meetings-service
+      - zima
 
 networks:
   zima-main-network:

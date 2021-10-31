@@ -13,10 +13,6 @@ export const Config = {
     FolderFilesPath: process.env.VPN_FILES_PATH,
   },
 
-  Ansible: {
-    PlaybooksDir: process.env.PLAYBOOKS_DIR,
-  },
-
   Rabbit: {
     Url: process.env.AMQP_SERVER_URL,
     MeetingsQueueName: process.env.AMQP_MEETINGS_QUEUE_NAME,

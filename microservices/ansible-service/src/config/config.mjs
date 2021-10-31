@@ -9,10 +9,6 @@ dotenv.config({
 });
 
 export const Config = {
-  VPN: {
-    FolderFilesPath: process.env.VPN_FILES_PATH,
-  },
-
   Ansible: {
     PlaybooksDir: process.env.PLAYBOOKS_DIR,
   },
