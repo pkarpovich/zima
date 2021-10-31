@@ -24,23 +24,10 @@ export class BrokerService {
     return null;
   }
 
-  async sendToChannelWithResponse(queueName, message) {
+  async subscribeToChannel(queueName, cb) {
     const channel = await this.#connection.createChannel();
+    const q = await channel.assertQueue(queueName);
 
-    return new Promise(async (resolve) => {
-      const q = await channel.assertQueue("", { exclusive: true });
-      const correlationId = nanoid();
-
-      await channel.consume(q.queue, (msg) => {
-        if (msg.properties.correlationId === correlationId) {
-          resolve(JSON.parse(msg.content.toString()));
-        }
-      });
-
-      await channel.sendToQueue(queueName, Buffer.from(message), {
-        replyTo: q.queue,
-        correlationId,
-      });
-    });
+    await channel.consume(queueName, cb(q, channel), { noAck: true });
   }
 }

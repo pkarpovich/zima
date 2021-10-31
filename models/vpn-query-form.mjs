@@ -1,5 +1,3 @@
-import { nanoid } from "nanoid";
-
 import { BaseQueryForm } from "./base-query-form.mjs";
 import { TokenTypes } from "../constants/token-types.mjs";
 import { Action } from "./action.mjs";
@@ -17,7 +15,7 @@ export class VpnQueryForm extends BaseQueryForm {
 
   vpnService = null;
 
-  constructor({ filesService, configService, vpnService }) {
+  constructor({ rabbitService, filesService, configService }) {
     super({
       name: "VPN Form",
       globalKeywords: ["vpn"],
@@ -58,7 +56,7 @@ export class VpnQueryForm extends BaseQueryForm {
 
     this.filesService = filesService;
     this.configService = configService;
-    this.vpnService = vpnService;
+    this.rabbitService = rabbitService;
   }
 
   async startVpnHandler(action, tokens) {
@@ -72,15 +70,30 @@ export class VpnQueryForm extends BaseQueryForm {
     );
     const [vpnFileName] = vpnFilePath.split(".");
 
-    return this.vpnService.start(vpnFileName);
+    const queueName = this.configService.get("Rabbit.AnsibleQueueName");
+    await this.rabbitService.createConnection();
+    return this.rabbitService.sendToChannelWithResponse(
+      queueName,
+      JSON.stringify({ name: "start-vpn", props: { vpnFileName } })
+    );
   }
 
   async stopVpnHandler() {
-    return this.vpnService.stop();
+    const queueName = this.configService.get("Rabbit.AnsibleQueueName");
+    await this.rabbitService.createConnection();
+    return this.rabbitService.sendToChannelWithResponse(
+      queueName,
+      JSON.stringify({ name: "stop-vpn", props: {} })
+    );
   }
 
   async vpnStatusHandler() {
-    return this.vpnService.status();
+    const queueName = this.configService.get("Rabbit.AnsibleQueueName");
+    await this.rabbitService.createConnection();
+    return this.rabbitService.sendToChannelWithResponse(
+      queueName,
+      JSON.stringify({ name: "status-vpn", props: {} })
+    );
   }
 
   async getLocationVpnFiles(location) {

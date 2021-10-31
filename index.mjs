@@ -6,13 +6,11 @@ import fs from "fs/promises";
 
 import { Config } from "./config/config.mjs";
 
-import { AnsibleService } from "./services/ansible-service.mjs";
 import { SentencesAnalyzerService } from "./services/sentences-analyzer-service.mjs";
 import { FormsService } from "./services/forms-service.mjs";
 import { VpnQueryForm } from "./models/vpn-query-form.mjs";
 import { FilesService } from "./services/files-service.mjs";
 import { ConfigService } from "./services/config-service.mjs";
-import { VpnService } from "./services/vpn-service.mjs";
 import { BrokerService } from "./services/broker-service.mjs";
 import { MeetingsQueryForm } from "./models/meetings-query-form.mjs";
 
@@ -22,13 +20,11 @@ app.use(morgan("tiny"));
 
 const configService = new ConfigService({ config: Config });
 const filesService = new FilesService(fs);
-const ansibleService = new AnsibleService();
 const sentencesAnalyzerService = new SentencesAnalyzerService();
-const vpnService = new VpnService({ ansibleService, configService });
 const rabbitService = new BrokerService({ configService });
 
 const formsService = new FormsService([
-  new VpnQueryForm({ filesService, configService, vpnService }),
+  new VpnQueryForm({ rabbitService, filesService, configService }),
   new MeetingsQueryForm({ rabbitService, configService }),
 ]);
 

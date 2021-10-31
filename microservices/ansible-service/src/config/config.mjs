@@ -19,11 +19,6 @@ export const Config = {
 
   Rabbit: {
     Url: process.env.AMQP_SERVER_URL,
-    MeetingsQueueName: process.env.AMQP_MEETINGS_QUEUE_NAME,
     AnsibleQueueName: process.env.AMQP_ANSIBLE_QUEUE_NAME,
-  },
-
-  General: {
-    Port: process.env.PORT,
   },
 };
