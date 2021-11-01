@@ -1,4 +1,4 @@
-version: "3.9"
+version: "3.3"
 
 services:
   message-broker:
@@ -8,8 +8,6 @@ services:
       - 5672:5672 # for sender and consumer connections
       - 15672:15672 # for serve RabbitMQ GUI
     restart: unless-stopped
-    networks:
-      - zima-main-network
     labels:
       reproxy.port: 15672
 
@@ -29,8 +27,6 @@ services:
       AMQP_MEETINGS_QUEUE_NAME: ${AMQP_MEETINGS_QUEUE_NAME}
       VPN_FILES_PATH: "/usr/src/vpns"
     restart: unless-stopped
-    networks:
-      - zima-main-network
     depends_on:
       - message-broker
     labels:
@@ -52,8 +48,6 @@ services:
       AMQP_MEETINGS_QUEUE_NAME: ${AMQP_MEETINGS_QUEUE_NAME}
       AMQP_SERVER_URL: ${AMQP_SERVER_URL}
     restart: unless-stopped
-    networks:
-      - zima-main-network
     depends_on:
       - message-broker
     labels:
@@ -81,13 +75,7 @@ services:
       - TIMEOUT_KEEP_ALIVE=640s
       - MAX_SIZE=0
     restart: unless-stopped
-    networks:
-      - zima-main-network
     depends_on:
       - message-broker
       - meetings-service
       - zima
-
-networks:
-  zima-main-network:
-    driver: bridge
