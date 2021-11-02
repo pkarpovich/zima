@@ -10,8 +10,6 @@ services:
     restart: unless-stopped
     labels:
       reproxy.port: 15672
-    networks:
-      - zima-internal-network
 
   zima:
     build: .
@@ -35,8 +33,6 @@ services:
       reproxy.server: '*'
       reproxy.route: '^/(.*)'
       reproxy.dest: '/$$1'
-    networks:
-      - zima-internal-network
 
   meetings-service:
     build:
@@ -54,8 +50,6 @@ services:
       - message-broker
     labels:
       reproxy.enabled: 0
-    networks:
-      - zima-internal-network
 
   reproxy:
     image: umputun/reproxy:master
@@ -83,12 +77,3 @@ services:
       - message-broker
       - meetings-service
       - zima
-    networks:
-      - zima-internal-network
-
-networks:
-  zima-internal-network:
-    ipam:
-      config:
-        - subnet: 172.16.238.0/24
-          gateway: 172.16.238.1

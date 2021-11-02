@@ -7,8 +7,16 @@
       register: interfaces
       ignore_errors: true
 
+    - name: "Save docker iptables rules into file"
+      shell: "sudo iptables-save > ~/docker.rules"
+      when: interfaces.stdout == ""
+
     - name: "Start forward rules"
       command: "sudo netfilter-persistent start"
+      when: interfaces.stdout == ""
+
+    - name: "Apply docker iptables rules"
+      shell: "sudo iptables-restore -n ~/docker.rules"
       when: interfaces.stdout == ""
 
     - name: "Start OpenVPN"

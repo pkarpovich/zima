@@ -14,3 +14,7 @@
     - name: "Remove forward rules"
       command: "sudo netfilter-persistent flush"
       when: interfaces.stdout != ""
+
+    - name: "Apply docker iptables rules"
+      command: "sudo iptables-restore -n ~/docker.rules"
+      when: interfaces.stdout != ""
