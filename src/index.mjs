@@ -13,6 +13,7 @@ import { FilesService } from "./services/files-service.mjs";
 import { ConfigService } from "./services/config-service.mjs";
 import { BrokerService } from "./services/broker-service.mjs";
 import { MeetingsQueryForm } from "./models/meetings-query-form.mjs";
+import { SmartDevicesQueryForm } from "./models/smart-devices-form.mjs";
 
 const app = express();
 app.use(bodyParser.json());
@@ -26,6 +27,7 @@ const rabbitService = new BrokerService({ configService });
 const formsService = new FormsService([
   new VpnQueryForm({ rabbitService, filesService, configService }),
   new MeetingsQueryForm({ rabbitService, configService }),
+  new SmartDevicesQueryForm({ rabbitService, configService }),
 ]);
 
 const httpPort = configService.get("General.Port") || 3000;

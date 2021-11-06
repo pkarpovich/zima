@@ -8,6 +8,11 @@ services:
       - 5672:5672 # for sender and consumer connections
       - 15672:15672 # for serve RabbitMQ GUI
     restart: unless-stopped
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
     labels:
       reproxy.port: 15672
     networks:
@@ -27,6 +32,7 @@ services:
       AMQP_SERVER_URL: ${AMQP_SERVER_URL}
       AMQP_ANSIBLE_QUEUE_NAME: ${AMQP_ANSIBLE_QUEUE_NAME}
       AMQP_MEETINGS_QUEUE_NAME: ${AMQP_MEETINGS_QUEUE_NAME}
+      AMQP_SMART_DEVICES_QUEUE_NAME: ${AMQP_SMART_DEVICES_QUEUE_NAME}
       VPN_FILES_PATH: "/usr/src/vpns"
     restart: unless-stopped
     depends_on:
