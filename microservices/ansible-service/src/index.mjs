@@ -1,8 +1,9 @@
+import { ConfigService, BrokerService } from "shared/services.mjs";
+import { ActionTypes } from "shared/constants.mjs";
+
 import { Config } from "./config/config.mjs";
 
 import { AnsibleService } from "./services/ansible-service.mjs";
-import { BrokerService } from "./services/broker-service.mjs";
-import { ConfigService } from "./services/config-service.mjs";
 import { VpnService } from "./services/vpn-service.mjs";
 
 const configService = new ConfigService({ config: Config });
@@ -12,26 +13,20 @@ const rabbit = new BrokerService({ configService });
 
 const serviceQueueName = configService.get("Rabbit.AnsibleQueueName");
 
-const AnsiblePlaybooks = {
-  VpnStart: "start-vpn",
-  VpnStop: "stop-vpn",
-  VpnStatus: "vpn-status",
-};
-
 const handleQueueMessage = (_, channel) => async (msg) => {
   const { name, props } = JSON.parse(msg.content.toString());
   let ansibleOutput = {};
 
   switch (name) {
-    case AnsiblePlaybooks.VpnStart: {
+    case ActionTypes.Ansible.VpnStart: {
       ansibleOutput = await vpnService.start(props.vpnFileName);
       break;
     }
-    case AnsiblePlaybooks.VpnStop: {
+    case ActionTypes.Ansible.VpnStop: {
       ansibleOutput = await vpnService.stop();
       break;
     }
-    case AnsiblePlaybooks.VpnStatus: {
+    case ActionTypes.Ansible.VpnStatus: {
       break;
     }
   }

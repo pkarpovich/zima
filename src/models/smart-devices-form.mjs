@@ -1,11 +1,7 @@
+import { ActionTypes } from "shared/constants.mjs";
+
 import { BaseQueryForm } from "./base-query-form.mjs";
 import { Action } from "./action.mjs";
-
-const ActionTypes = {
-  SetYeelightRandomColor: "set-yeelight-random-color",
-  TurnOnYeelight: "turn-on-yeelight",
-  TurnOffYeelight: "turn-off-yeelight",
-};
 
 export class SmartDevicesQueryForm extends BaseQueryForm {
   #rabbitService = null;
@@ -18,25 +14,26 @@ export class SmartDevicesQueryForm extends BaseQueryForm {
       globalKeywords: ["light"],
       actions: [
         new Action({
-          actionType: ActionTypes.SetYeelightRandomColor,
+          actionType: ActionTypes.SmartDevices.SetYeelightRandomColor,
           keywords: ["set random color"],
         }),
         new Action({
-          actionType: ActionTypes.TurnOnYeelight,
+          actionType: ActionTypes.SmartDevices.TurnOnYeelight,
           keywords: ["turn on"],
         }),
         new Action({
-          actionType: ActionTypes.TurnOffYeelight,
+          actionType: ActionTypes.SmartDevices.TurnOffYeelight,
           keywords: ["turn off"],
         }),
       ],
     });
 
     const actionHandlers = {
-      [ActionTypes.SetYeelightRandomColor]:
+      [ActionTypes.SmartDevices.SetYeelightRandomColor]:
         this.setYeelightRandomColor.bind(this),
-      [ActionTypes.TurnOnYeelight]: this.turnOnYeelight.bind(this),
-      [ActionTypes.TurnOffYeelight]: this.turnOffYeelight.bind(this),
+      [ActionTypes.SmartDevices.TurnOnYeelight]: this.turnOnYeelight.bind(this),
+      [ActionTypes.SmartDevices.TurnOffYeelight]:
+        this.turnOffYeelight.bind(this),
     };
 
     // eslint-disable-next-line no-restricted-syntax
@@ -66,14 +63,16 @@ export class SmartDevicesQueryForm extends BaseQueryForm {
   }
 
   async setYeelightRandomColor() {
-    return this.sendYeelightMessage("set-yeelight-random-color");
+    return this.sendYeelightMessage(
+      ActionTypes.SmartDevices.SetYeelightRandomColor
+    );
   }
 
   async turnOnYeelight() {
-    return this.sendYeelightMessage("turn-on-yeelight");
+    return this.sendYeelightMessage(ActionTypes.SmartDevices.TurnOnYeelight);
   }
 
   async turnOffYeelight() {
-    return this.sendYeelightMessage("turn-off-yeelight");
+    return this.sendYeelightMessage(ActionTypes.SmartDevices.TurnOffYeelight);
   }
 }

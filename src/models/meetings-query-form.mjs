@@ -1,9 +1,6 @@
+import { ActionTypes } from "shared/constants.mjs";
 import { BaseQueryForm } from "./base-query-form.mjs";
 import { Action } from "./action.mjs";
-
-const ActionTypes = {
-  Start: "start-meeting",
-};
 
 export class MeetingsQueryForm extends BaseQueryForm {
   #rabbitService = null;
@@ -16,14 +13,14 @@ export class MeetingsQueryForm extends BaseQueryForm {
       globalKeywords: ["meeting"],
       actions: [
         new Action({
-          actionType: ActionTypes.Start,
+          actionType: ActionTypes.Ansible.Start,
           keywords: ["start"],
         }),
       ],
     });
 
     const actionHandlers = {
-      [ActionTypes.Start]: this.startMeeting.bind(this),
+      [ActionTypes.Ansible.Start]: this.startMeeting.bind(this),
     };
 
     // eslint-disable-next-line no-restricted-syntax

@@ -1,7 +1,8 @@
 import { Config } from "./config/config.mjs";
 
-import { BrokerService } from "./services/broker-service.mjs";
-import { ConfigService } from "./services/config-service.mjs";
+import { ConfigService, BrokerService } from "shared/services.mjs";
+import { ActionTypes } from "shared/constants.mjs";
+
 import { YeelightService } from "./services/yeelight-service.mjs";
 
 const configService = new ConfigService({ config: Config });
@@ -9,26 +10,20 @@ const rabbit = new BrokerService({ configService });
 const yeelightService = new YeelightService();
 
 const serviceQueueName = configService.get("Rabbit.SmartDevicesQueueName");
-console.log(serviceQueueName);
-const Commands = {
-  SetYeelightRandomColor: "set-yeelight-random-color",
-  TurnOnYeelight: "turn-on-yeelight",
-  TurnOffYeelight: "turn-off-yeelight",
-};
 
 const handleQueueMessage = (_, channel) => async (msg) => {
   const { name, props } = JSON.parse(msg.content.toString());
 
   switch (name) {
-    case Commands.SetYeelightRandomColor: {
+    case ActionTypes.SmartDevices.SetYeelightRandomColor: {
       await yeelightService.setRandomColor();
       break;
     }
-    case Commands.TurnOnYeelight: {
+    case ActionTypes.SmartDevices.TurnOnYeelight: {
       await yeelightService.setPower(true);
       break;
     }
-    case Commands.TurnOffYeelight: {
+    case ActionTypes.SmartDevices.TurnOffYeelight: {
       await yeelightService.setPower(false);
     }
   }

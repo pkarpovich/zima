@@ -6,12 +6,15 @@ import fs from "fs/promises";
 
 import { Config } from "./config/config.mjs";
 
+import {
+  ConfigService,
+  FilesService,
+  BrokerService,
+} from "shared/services.mjs";
+
 import { SentencesAnalyzerService } from "./services/sentences-analyzer-service.mjs";
 import { FormsService } from "./services/forms-service.mjs";
 import { VpnQueryForm } from "./models/vpn-query-form.mjs";
-import { FilesService } from "./services/files-service.mjs";
-import { ConfigService } from "./services/config-service.mjs";
-import { BrokerService } from "./services/broker-service.mjs";
 import { MeetingsQueryForm } from "./models/meetings-query-form.mjs";
 import { SmartDevicesQueryForm } from "./models/smart-devices-form.mjs";
 

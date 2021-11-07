@@ -24,6 +24,10 @@
     "url": "https://github.com/pkarpovich/local-ansible-runner/issues"
   },
   "homepage": "https://github.com/pkarpovich/local-ansible-runner#readme",
+  "workspaces": [
+    "./shared",
+    "./microservices/*"
+  ],
   "devDependencies": {
     "@babel/core": "^7.15.8",
     "@babel/eslint-parser": "^7.15.8",

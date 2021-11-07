@@ -2,7 +2,7 @@
   "name": "smart-devices-service",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.mjs",
   "scripts": {
     "start": "node ./src/index.mjs",
     "start:prod": "pm2 start 'npm run start' --name 'smart-devices-runner'",
@@ -17,7 +17,8 @@
     "dotenv": "^10.0.0",
     "nanoid": "^3.1.30",
     "node-yeelight-wifi-extended": "^0.1.5",
-    "pm2": "^5.1.2"
+    "pm2": "^5.1.2",
+    "shared": "^1.0.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.14"

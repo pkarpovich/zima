@@ -1,12 +1,8 @@
+import { ActionTypes } from "shared/constants.mjs";
+
 import { BaseQueryForm } from "./base-query-form.mjs";
 import { TokenTypes } from "../constants/token-types.mjs";
 import { Action } from "./action.mjs";
-
-const ActionTypes = {
-  Start: "start-vpn",
-  Stop: "stop-vpn",
-  Status: "vpn-status",
-};
 
 export class VpnQueryForm extends BaseQueryForm {
   filesService = null;
@@ -21,7 +17,7 @@ export class VpnQueryForm extends BaseQueryForm {
       globalKeywords: ["vpn"],
       actions: [
         new Action({
-          actionType: ActionTypes.Start,
+          actionType: ActionTypes.Ansible.VpnStart,
           keywords: ["start"],
           props: [
             {
@@ -33,20 +29,20 @@ export class VpnQueryForm extends BaseQueryForm {
           ],
         }),
         new Action({
-          actionType: ActionTypes.Stop,
+          actionType: ActionTypes.Ansible.VpnStop,
           keywords: ["stop"],
         }),
         new Action({
-          actionType: ActionTypes.Status,
+          actionType: ActionTypes.Ansible.VpnStatus,
           keywords: ["status"],
         }),
       ],
     });
 
     const actionHandlers = {
-      [ActionTypes.Start]: this.startVpnHandler.bind(this),
-      [ActionTypes.Stop]: this.stopVpnHandler.bind(this),
-      [ActionTypes.Status]: this.vpnStatusHandler.bind(this),
+      [ActionTypes.Ansible.VpnStart]: this.startVpnHandler.bind(this),
+      [ActionTypes.Ansible.VpnStop]: this.stopVpnHandler.bind(this),
+      [ActionTypes.Ansible.VpnStatus]: this.vpnStatusHandler.bind(this),
     };
 
     // eslint-disable-next-line no-restricted-syntax
@@ -74,7 +70,10 @@ export class VpnQueryForm extends BaseQueryForm {
     await this.rabbitService.createConnection();
     return this.rabbitService.sendToChannelWithResponse(
       queueName,
-      JSON.stringify({ name: "start-vpn", props: { vpnFileName } })
+      JSON.stringify({
+        name: ActionTypes.Ansible.VpnStart,
+        props: { vpnFileName },
+      })
     );
   }
 
@@ -83,7 +82,7 @@ export class VpnQueryForm extends BaseQueryForm {
     await this.rabbitService.createConnection();
     return this.rabbitService.sendToChannelWithResponse(
       queueName,
-      JSON.stringify({ name: "stop-vpn", props: {} })
+      JSON.stringify({ name: ActionTypes.Ansible.VpnStop, props: {} })
     );
   }
 
@@ -92,7 +91,7 @@ export class VpnQueryForm extends BaseQueryForm {
     await this.rabbitService.createConnection();
     return this.rabbitService.sendToChannelWithResponse(
       queueName,
-      JSON.stringify({ name: "status-vpn", props: {} })
+      JSON.stringify({ name: ActionTypes.Ansible.VpnStatus, props: {} })
     );
   }
 
