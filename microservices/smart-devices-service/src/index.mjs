@@ -12,6 +12,8 @@ const serviceQueueName = configService.get("Rabbit.SmartDevicesQueueName");
 console.log(serviceQueueName);
 const Commands = {
   SetYeelightRandomColor: "set-yeelight-random-color",
+  TurnOnYeelight: "turn-on-yeelight",
+  TurnOffYeelight: "turn-off-yeelight",
 };
 
 const handleQueueMessage = (_, channel) => async (msg) => {
@@ -20,6 +22,14 @@ const handleQueueMessage = (_, channel) => async (msg) => {
   switch (name) {
     case Commands.SetYeelightRandomColor: {
       await yeelightService.setRandomColor();
+      break;
+    }
+    case Commands.TurnOnYeelight: {
+      await yeelightService.setPower(true);
+      break;
+    }
+    case Commands.TurnOffYeelight: {
+      await yeelightService.setPower(false);
     }
   }
 

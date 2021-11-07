@@ -34,4 +34,12 @@ export class YeelightService {
       }
     } catch {}
   }
+
+  async setPower(status) {
+    try {
+      for (let device of this.#devices) {
+        await device.setPower(status);
+      }
+    } catch {}
+  }
 }
