@@ -4,10 +4,13 @@ import { nanoid } from "nanoid";
 export class BrokerService {
   #configService = null;
 
+  #loggerService = null;
+
   #connection = null;
 
-  constructor({ configService }) {
+  constructor({ configService, loggerService }) {
     this.#configService = configService;
+    this.#loggerService = loggerService;
   }
 
   async createConnection() {
@@ -33,10 +36,17 @@ export class BrokerService {
 
       await channel.consume(q.queue, (msg) => {
         if (msg.properties.correlationId === correlationId) {
-          resolve(JSON.parse(msg.content.toString()));
+          const rawMessage = msg.content.toString();
+          this.#loggerService.log(
+            `Received message from queue ${q.queue} with message ${rawMessage}`
+          );
+          resolve(JSON.parse(rawMessage));
         }
       });
 
+      this.#loggerService.log(
+        `Send message to queue ${queueName} with message ${message}`
+      );
       await channel.sendToQueue(queueName, Buffer.from(message), {
         replyTo: q.queue,
         correlationId,
@@ -48,6 +58,17 @@ export class BrokerService {
     const channel = await this.#connection.createChannel();
     const q = await channel.assertQueue(queueName);
 
-    await channel.consume(queueName, cb(q, channel), { noAck: true });
+    await channel.consume(
+      queueName,
+      (msg) => {
+        const rawMessage = msg.content.toString();
+        this.#loggerService.log(
+          `Received message from queue ${queueName} with message ${rawMessage}`
+        );
+
+        cb(q, channel)(msg);
+      },
+      { noAck: true }
+    );
   }
 }

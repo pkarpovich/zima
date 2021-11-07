@@ -1,4 +1,8 @@
-import { ConfigService, BrokerService } from "shared/services.mjs";
+import {
+  ConfigService,
+  BrokerService,
+  LoggerService,
+} from "shared/services.mjs";
 import { ActionTypes } from "shared/constants.mjs";
 
 import { Config } from "./config/config.mjs";
@@ -6,10 +10,11 @@ import { Config } from "./config/config.mjs";
 import { AnsibleService } from "./services/ansible-service.mjs";
 import { VpnService } from "./services/vpn-service.mjs";
 
+const loggerService = new LoggerService({});
 const configService = new ConfigService({ config: Config });
 const ansibleService = new AnsibleService();
 const vpnService = new VpnService({ ansibleService, configService });
-const rabbit = new BrokerService({ configService });
+const rabbit = new BrokerService({ configService, loggerService });
 
 const serviceQueueName = configService.get("Rabbit.AnsibleQueueName");
 

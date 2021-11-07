@@ -10,6 +10,7 @@ import {
   ConfigService,
   FilesService,
   BrokerService,
+  LoggerService,
 } from "shared/services.mjs";
 
 import { SentencesAnalyzerService } from "./services/sentences-analyzer-service.mjs";
@@ -22,10 +23,11 @@ const app = express();
 app.use(bodyParser.json());
 app.use(morgan("tiny"));
 
+const loggerService = new LoggerService({});
 const configService = new ConfigService({ config: Config });
 const filesService = new FilesService(fs);
 const sentencesAnalyzerService = new SentencesAnalyzerService();
-const rabbitService = new BrokerService({ configService });
+const rabbitService = new BrokerService({ configService, loggerService });
 
 const formsService = new FormsService([
   new VpnQueryForm({ rabbitService, filesService, configService }),

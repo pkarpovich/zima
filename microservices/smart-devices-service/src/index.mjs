@@ -1,12 +1,17 @@
 import { Config } from "./config/config.mjs";
 
-import { ConfigService, BrokerService } from "shared/services.mjs";
+import {
+  ConfigService,
+  BrokerService,
+  LoggerService,
+} from "shared/services.mjs";
 import { ActionTypes } from "shared/constants.mjs";
 
 import { YeelightService } from "./services/yeelight-service.mjs";
 
+const loggerService = new LoggerService({});
 const configService = new ConfigService({ config: Config });
-const rabbit = new BrokerService({ configService });
+const rabbit = new BrokerService({ configService, loggerService });
 const yeelightService = new YeelightService();
 
 const serviceQueueName = configService.get("Rabbit.SmartDevicesQueueName");
