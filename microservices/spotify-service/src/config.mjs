@@ -9,19 +9,13 @@ dotenv.config({
 });
 
 export const Config = {
-  VPN: {
-    FolderFilesPath: process.env.VPN_FILES_PATH,
-  },
-
   Rabbit: {
     Url: process.env.AMQP_SERVER_URL,
-    MeetingsQueueName: process.env.AMQP_MEETINGS_QUEUE_NAME,
-    AnsibleQueueName: process.env.AMQP_ANSIBLE_QUEUE_NAME,
-    SmartDevicesQueueName: process.env.AMQP_SMART_DEVICES_QUEUE_NAME,
     SpotifyQueueName: process.env.AMQP_SPOTIFY_QUEUE_NAME,
   },
-
-  General: {
-    Port: process.env.PORT,
+  Spotify: {
+    ClientId: process.env.SPOTIFY_CLIENT_ID,
+    ClientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+    RedirectUri: process.env.SPOTIFY_REDIRECT_URI,
   },
 };

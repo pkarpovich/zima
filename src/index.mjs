@@ -18,6 +18,7 @@ import { FormsService } from "./services/forms-service.mjs";
 import { VpnQueryForm } from "./models/vpn-query-form.mjs";
 import { MeetingsQueryForm } from "./models/meetings-query-form.mjs";
 import { SmartDevicesQueryForm } from "./models/smart-devices-form.mjs";
+import { SpotifyQueryForm } from "./models/spotify-query-form.mjs";
 
 const app = express();
 app.use(bodyParser.json());
@@ -33,6 +34,7 @@ const formsService = new FormsService([
   new VpnQueryForm({ rabbitService, filesService, configService }),
   new MeetingsQueryForm({ rabbitService, configService }),
   new SmartDevicesQueryForm({ rabbitService, configService }),
+  new SpotifyQueryForm({ rabbitService, configService }),
 ]);
 
 const httpPort = configService.get("General.Port") || 3000;
@@ -41,7 +43,11 @@ app.post("/command", async (req, resp) => {
   const { text } = req.body;
 
   const { tokens, customEntities } = sentencesAnalyzerService.analyze(text);
-  const result = await formsService.findAndExecute(tokens, customEntities);
+  const result = await formsService.findAndExecute(
+    tokens,
+    customEntities,
+    text
+  );
 
   resp.json({ tokens, customEntities, ...result });
 });

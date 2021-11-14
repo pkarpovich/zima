@@ -31,6 +31,7 @@ services:
       AMQP_ANSIBLE_QUEUE_NAME: ${AMQP_ANSIBLE_QUEUE_NAME}
       AMQP_MEETINGS_QUEUE_NAME: ${AMQP_MEETINGS_QUEUE_NAME}
       AMQP_SMART_DEVICES_QUEUE_NAME: ${AMQP_SMART_DEVICES_QUEUE_NAME}
+      AMQP_SPOTIFY_QUEUE_NAME: ${AMQP_SPOTIFY_QUEUE_NAME}
       VPN_FILES_PATH: "/usr/src/vpns"
     restart: unless-stopped
     depends_on:
@@ -56,6 +57,26 @@ services:
       - message-broker
     labels:
       reproxy.enabled: 0
+
+  spotify-service:
+    build:
+      context: .
+      dockerfile: microservices/spotify-service/Dockerfile
+    container_name: spotify-service
+    hostname: spotify-service
+    volumes:
+      - ./microservices/spotify-service/auth.json:/app/auth.json
+    environment:
+      AMQP_SERVER_URL: ${AMQP_SERVER_URL}
+      AMQP_SPOTIFY_QUEUE_NAME: ${AMQP_SPOTIFY_QUEUE_NAME}
+      SPOTIFY_CLIENT_ID: ${SPOTIFY_CLIENT_ID}
+      SPOTIFY_CLIENT_SECRET: ${SPOTIFY_CLIENT_SECRET}
+      SPOTIFY_REDIRECT_URI: ${SPOTIFY_REDIRECT_URI}
+    restart: unless-stopped
+    depends_on:
+      - message-broker
+    expose:
+      - 3000
 
   reproxy:
     image: umputun/reproxy:master

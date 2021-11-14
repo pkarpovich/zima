@@ -5,11 +5,11 @@ export class FormsService {
     this.#forms = forms;
   }
 
-  findAndExecute(tokens, customEntities) {
+  findAndExecute(tokens, customEntities, text) {
     const { actionId, form } = this.findFormAction(tokens);
     const action = form.initActionProps(actionId, customEntities);
 
-    return action.execute(tokens);
+    return action.execute(tokens, text);
   }
 
   findFormAction(tokens) {

@@ -14,4 +14,13 @@ export const ActionTypes = {
   Meetings: {
     Start: "start-meeting",
   },
+
+  Spotify: {
+    Resume: "spotify-resume-track",
+    Pause: "spotify-pause-track",
+    NextTrack: "spotify-next-track",
+    PrevTrack: "spotify-prev-track",
+    PlayPlaylist: "spotify-play-playlist",
+    RestartTack: "spotify-restart-tack",
+  },
 };
