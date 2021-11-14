@@ -106,4 +106,8 @@ export class SpotifyService {
   async seekTrack(timeMs, deviceId) {
     return this.#spotifyApi.seek(timeMs, { device_id: deviceId });
   }
+
+  async setShuffle(deviceId, shuffle) {
+    return this.#spotifyApi.setShuffle(shuffle, { device_id: deviceId });
+  }
 }

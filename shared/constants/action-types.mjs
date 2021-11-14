@@ -22,5 +22,7 @@ export const ActionTypes = {
     PrevTrack: "spotify-prev-track",
     PlayPlaylist: "spotify-play-playlist",
     RestartTack: "spotify-restart-tack",
+    EnableShuffle: "spotify-enable-shuffle",
+    DisableShuffle: "spotify-disable-shuffle",
   },
 };

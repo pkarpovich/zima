@@ -209,3 +209,5 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+/microservices/spotify-service/auth.json

@@ -37,6 +37,14 @@ export class SpotifyQueryForm extends BaseQueryForm {
           actionType: ActionTypes.Spotify.PlayPlaylist,
           keywords: ["play playlist"],
         }),
+        new Action({
+          actionType: ActionTypes.Spotify.EnableShuffle,
+          keywords: ["enable shuffle"],
+        }),
+        new Action({
+          actionType: ActionTypes.Spotify.DisableShuffle,
+          keywords: ["disable shuffle"],
+        }),
       ],
     });
 

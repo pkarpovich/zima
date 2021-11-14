@@ -69,6 +69,14 @@ const handleQueueMessage = (_, channel) => async (msg) => {
       await spotifyService.play(tv.id, props[0]);
       break;
     }
+    case ActionTypes.Spotify.EnableShuffle: {
+      await spotifyService.setShuffle(tv.id, true);
+      break;
+    }
+    case ActionTypes.Spotify.DisableShuffle: {
+      await spotifyService.setShuffle(tv.id, false);
+      break;
+    }
   }
 
   const serviceResp = JSON.stringify(ansibleOutput);
