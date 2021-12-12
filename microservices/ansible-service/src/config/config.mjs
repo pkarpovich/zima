@@ -17,4 +17,8 @@ export const Config = {
     Url: process.env.AMQP_SERVER_URL,
     AnsibleQueueName: process.env.AMQP_ANSIBLE_QUEUE_NAME,
   },
+
+  VPN: {
+    FolderFilesPath: process.env.VPN_FILES_PATH,
+  },
 };

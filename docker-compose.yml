@@ -23,16 +23,10 @@ services:
       - ${PORT}:${PORT}
     expose:
       - ${PORT}
-    volumes:
-      - ${VPN_FILES_PATH}:/usr/src/vpns
     environment:
       PORT: ${PORT}
       AMQP_SERVER_URL: ${AMQP_SERVER_URL}
-      AMQP_ANSIBLE_QUEUE_NAME: ${AMQP_ANSIBLE_QUEUE_NAME}
-      AMQP_MEETINGS_QUEUE_NAME: ${AMQP_MEETINGS_QUEUE_NAME}
-      AMQP_SMART_DEVICES_QUEUE_NAME: ${AMQP_SMART_DEVICES_QUEUE_NAME}
-      AMQP_SPOTIFY_QUEUE_NAME: ${AMQP_SPOTIFY_QUEUE_NAME}
-      VPN_FILES_PATH: "/usr/src/vpns"
+      AMQP_FORMS_QUEUE_NAME: ${AMQP_FORMS_QUEUE_NAME}
     restart: unless-stopped
     depends_on:
       - message-broker
@@ -104,3 +98,50 @@ services:
       - message-broker
       - meetings-service
       - zima
+
+  forms-db:
+    image: mongo:4.4-bionic
+    container_name: forms-db
+    restart: unless-stopped
+    command: mongod --serviceExecutor adaptive
+    ports:
+      - ${MONGO_PORT}:${MONGO_PORT}
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_USERNAME: ${MONGO_USERNAME}
+      MONGO_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_DB: ${MONGO_DB}
+    volumes:
+      - ./mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh
+      - formsdbdata:/data/db
+    labels:
+      reproxy.enabled: no
+
+  forms-service:
+    build:
+      context: .
+      dockerfile: microservices/forms-service/Dockerfile
+    container_name: forms-service
+    hostname: forms-service
+    environment:
+      AMQP_SERVER_URL: ${AMQP_SERVER_URL}
+      AMQP_ANSIBLE_QUEUE_NAME: ${AMQP_ANSIBLE_QUEUE_NAME}
+      AMQP_MEETINGS_QUEUE_NAME: ${AMQP_MEETINGS_QUEUE_NAME}
+      AMQP_SMART_DEVICES_QUEUE_NAME: ${AMQP_SMART_DEVICES_QUEUE_NAME}
+      AMQP_SPOTIFY_QUEUE_NAME: ${AMQP_SPOTIFY_QUEUE_NAME}
+      AMQP_FORMS_QUEUE_NAME: ${AMQP_FORMS_QUEUE_NAME}
+      MONGO_USERNAME: ${MONGO_USERNAME}
+      MONGO_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_HOST: ${MONGO_HOST}
+      MONGO_PORT: ${MONGO_PORT}
+      MONGO_DB: ${MONGO_DB}
+    restart: unless-stopped
+    depends_on:
+      - message-broker
+      - forms-db
+    labels:
+      reproxy.enabled: no
+
+volumes:
+  formsdbdata:

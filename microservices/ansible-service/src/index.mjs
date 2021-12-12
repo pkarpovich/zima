@@ -1,7 +1,10 @@
+import fs from "fs/promises";
+
 import {
   ConfigService,
   BrokerService,
   LoggerService,
+  FilesService,
 } from "shared/services.mjs";
 import { ActionTypes } from "shared/constants.mjs";
 
@@ -13,7 +16,12 @@ import { VpnService } from "./services/vpn-service.mjs";
 const loggerService = new LoggerService({});
 const configService = new ConfigService({ config: Config });
 const ansibleService = new AnsibleService();
-const vpnService = new VpnService({ ansibleService, configService });
+const filesService = new FilesService(fs);
+const vpnService = new VpnService({
+  ansibleService,
+  configService,
+  filesService,
+});
 const rabbit = new BrokerService({ configService, loggerService });
 
 const serviceQueueName = configService.get("Rabbit.AnsibleQueueName");
@@ -24,7 +32,7 @@ const handleQueueMessage = (_, channel) => async (msg) => {
 
   switch (name) {
     case ActionTypes.Ansible.VpnStart: {
-      ansibleOutput = await vpnService.start(props.vpnFileName);
+      ansibleOutput = await vpnService.start(props[0].value);
       break;
     }
     case ActionTypes.Ansible.VpnStop: {

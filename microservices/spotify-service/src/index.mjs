@@ -39,12 +39,12 @@ const serviceQueueName = configService.get("Rabbit.SpotifyQueueName");
 
 const runFunctionWithRetry = async (func) => {
   try {
-    await func()
+    await func();
   } catch {
     await spotifyService.refreshAccess();
-    await func()
+    await func();
   }
-}
+};
 
 const handleQueueMessage = (_, channel) => async (msg) => {
   const { name, props } = JSON.parse(msg.content.toString());
@@ -76,7 +76,7 @@ const handleQueueMessage = (_, channel) => async (msg) => {
         break;
       }
       case ActionTypes.Spotify.PlayPlaylist: {
-        await spotifyService.play(tv.id, props[0]);
+        await spotifyService.play(tv.id, props[0].value);
         break;
       }
       case ActionTypes.Spotify.EnableShuffle: {
@@ -88,7 +88,7 @@ const handleQueueMessage = (_, channel) => async (msg) => {
         break;
       }
     }
-  })
+  });
 
   const serviceResp = JSON.stringify(ansibleOutput);
 

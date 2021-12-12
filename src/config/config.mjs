@@ -9,16 +9,9 @@ dotenv.config({
 });
 
 export const Config = {
-  VPN: {
-    FolderFilesPath: process.env.VPN_FILES_PATH,
-  },
-
   Rabbit: {
     Url: process.env.AMQP_SERVER_URL,
-    MeetingsQueueName: process.env.AMQP_MEETINGS_QUEUE_NAME,
-    AnsibleQueueName: process.env.AMQP_ANSIBLE_QUEUE_NAME,
-    SmartDevicesQueueName: process.env.AMQP_SMART_DEVICES_QUEUE_NAME,
-    SpotifyQueueName: process.env.AMQP_SPOTIFY_QUEUE_NAME,
+    FormsQueueName: process.env.AMQP_FORMS_QUEUE_NAME,
   },
 
   General: {

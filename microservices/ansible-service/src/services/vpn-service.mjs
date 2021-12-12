@@ -3,23 +3,40 @@ export class VpnService {
 
   #configService = null;
 
-  constructor({ ansibleService, configService }) {
+  #filesService = null;
+
+  constructor({ ansibleService, configService, filesService }) {
     this.#ansibleService = ansibleService;
     this.#configService = configService;
+    this.#filesService = filesService;
   }
 
-  async start(vpnName) {
+  async start(vpnFileName) {
     const playbooksDir = this.#configService.get("Ansible.PlaybooksDir");
     const playbookName = `${playbooksDir}/start-vpn`;
+    const [vpnFile] = await this.#pickMostPossibleFile(vpnFileName);
 
     const { code, output } = await this.#ansibleService.run(playbookName, {
-      vpn_name: vpnName.replace(/(\s+)/g, "\\$1"),
+      vpn_name: vpnFile.replace(/(\s+)/g, "\\$1"),
     });
 
     return {
       code,
       output,
     };
+  }
+
+  async #pickMostPossibleFile(location) {
+    const vpnFolderFilesPath = this.#configService.get("VPN.FolderFilesPath");
+    const files = await this.#filesService.getDirFiles(vpnFolderFilesPath);
+
+    return files.filter((name) =>
+      name
+        .replace(/[^\w\s]|_/g, "")
+        .replace(/\s+/g, " ")
+        .toLowerCase()
+        .includes(location.toLowerCase())
+    );
   }
 
   async stop() {

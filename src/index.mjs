@@ -2,23 +2,15 @@ import express from "express";
 import "express-async-errors";
 import bodyParser from "body-parser";
 import morgan from "morgan";
-import fs from "fs/promises";
 
 import { Config } from "./config/config.mjs";
 
 import {
   ConfigService,
-  FilesService,
   BrokerService,
   LoggerService,
 } from "shared/services.mjs";
-
-import { SentencesAnalyzerService } from "./services/sentences-analyzer-service.mjs";
-import { FormsService } from "./services/forms-service.mjs";
-import { VpnQueryForm } from "./models/vpn-query-form.mjs";
-import { MeetingsQueryForm } from "./models/meetings-query-form.mjs";
-import { SmartDevicesQueryForm } from "./models/smart-devices-form.mjs";
-import { SpotifyQueryForm } from "./models/spotify-query-form.mjs";
+import { CommandRespStatuses } from "shared/constants.mjs";
 
 const app = express();
 app.use(bodyParser.json());
@@ -26,30 +18,36 @@ app.use(morgan("tiny"));
 
 const loggerService = new LoggerService({});
 const configService = new ConfigService({ config: Config });
-const filesService = new FilesService(fs);
-const sentencesAnalyzerService = new SentencesAnalyzerService();
 const rabbitService = new BrokerService({ configService, loggerService });
-
-const formsService = new FormsService([
-  new VpnQueryForm({ rabbitService, filesService, configService }),
-  new MeetingsQueryForm({ rabbitService, configService }),
-  new SmartDevicesQueryForm({ rabbitService, configService }),
-  new SpotifyQueryForm({ rabbitService, configService }),
-]);
 
 const httpPort = configService.get("General.Port") || 3000;
 
 app.post("/command", async (req, resp) => {
   const { text } = req.body;
+  let result = {};
 
-  const { tokens, customEntities } = sentencesAnalyzerService.analyze(text);
-  const result = await formsService.findAndExecute(
-    tokens,
-    customEntities,
-    text
-  );
+  const tokens = text.split(" ");
+  const customEntities = [];
+  const formsQueueName = configService.get("Rabbit.FormsQueueName");
 
-  resp.json({ tokens, customEntities, ...result });
+  await rabbitService.createConnection();
+  const { status, queueName, actionType, props } =
+    await rabbitService.sendToChannelWithResponse(
+      formsQueueName,
+      JSON.stringify({
+        tokens,
+        customEntities,
+      })
+    );
+
+  if (status === CommandRespStatuses.Ok) {
+    result = await rabbitService.sendToChannelWithResponse(
+      queueName,
+      JSON.stringify({ name: actionType, props })
+    );
+  }
+
+  resp.json({ tokens, customEntities, status, ...result });
 });
 
 const errorHandler = (err, req, resp, next) => {
