@@ -17,8 +17,7 @@
     "dotenv": "^10.0.0",
     "nanoid": "^3.1.30",
     "node-yeelight-wifi-extended": "^0.1.5",
-    "pm2": "^5.1.2",
-    "shared": "^1.0.1"
+    "pm2": "^5.1.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.14"

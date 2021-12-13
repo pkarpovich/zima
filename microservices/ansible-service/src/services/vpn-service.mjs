@@ -15,9 +15,10 @@ export class VpnService {
     const playbooksDir = this.#configService.get("Ansible.PlaybooksDir");
     const playbookName = `${playbooksDir}/start-vpn`;
     const [vpnFile] = await this.#pickMostPossibleFile(vpnFileName);
+    const [vpnFileNameWithoutExt] = vpnFile.split('.')
 
     const { code, output } = await this.#ansibleService.run(playbookName, {
-      vpn_name: vpnFile.replace(/(\s+)/g, "\\$1"),
+      vpn_name: vpnFileNameWithoutExt.replace(/(\s+)/g, "\\$1"),
     });
 
     return {
