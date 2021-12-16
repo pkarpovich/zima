@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 import { ActionSchema } from "./actions-model.mjs";
+import { FormTypes } from "shared/form-types.mjs";
 
 export const FormSchema = new Schema({
   name: {
@@ -14,6 +15,10 @@ export const FormSchema = new Schema({
   },
   actions: {
     type: [ActionSchema],
+  },
+  type: {
+    type: String,
+    default: FormTypes.User,
   },
   queueName: {
     type: String,

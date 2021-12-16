@@ -1,5 +1,6 @@
 import { difference as _difference } from "lodash-es";
 import { TokenTypes } from "shared/constants.mjs";
+import { FormTypes } from "shared/form-types.mjs";
 
 export class FormsService {
   #formModel = null;
@@ -15,9 +16,15 @@ export class FormsService {
   async getFormActionByTokens(tokens) {
     const tokenSets = this.#getTokenSets(tokens);
 
-    const form = await this.#formModel.findOne({
+    let form = await this.#formModel.findOne({
       globalKeywords: { $in: tokenSets },
     });
+
+    if (!form) {
+      form = await this.#formModel.findOne({
+        type: FormTypes.System,
+      });
+    }
 
     const action =
       form?.actions.find(

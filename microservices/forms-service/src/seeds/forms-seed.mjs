@@ -1,5 +1,6 @@
 import { ActionTypes, TokenTypes } from "shared/constants.mjs";
 import { Config } from "../config/config.mjs";
+import { FormTypes } from "shared/form-types.mjs";
 
 export const FormsSeed = [
   {
@@ -99,6 +100,19 @@ export const FormsSeed = [
       {
         keywords: ["status"],
         actionType: ActionTypes.Ansible.VpnStatus,
+      },
+    ],
+  },
+
+  {
+    name: "System",
+    type: FormTypes.System,
+    queueName: "system",
+    globalKeywords: [],
+    actions: [
+      {
+        keywords: ["one more time"],
+        actionType: ActionTypes.System.Repeat,
       },
     ],
   },

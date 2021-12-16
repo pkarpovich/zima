@@ -25,4 +25,8 @@ export const ActionTypes = {
     EnableShuffle: "spotify-enable-shuffle",
     DisableShuffle: "spotify-disable-shuffle",
   },
+
+  System: {
+    Repeat: "repeat",
+  },
 };
