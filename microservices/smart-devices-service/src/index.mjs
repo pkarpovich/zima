@@ -24,12 +24,24 @@ const handleQueueMessage = (_, channel) => async (msg) => {
       await yeelightService.setRandomColor();
       break;
     }
+    case ActionTypes.SmartDevices.SetRandomColorInEveryLight: {
+      await yeelightService.setRandomColorInEveryLight();
+      break;
+    }
     case ActionTypes.SmartDevices.TurnOnYeelight: {
       await yeelightService.setPower(true);
       break;
     }
     case ActionTypes.SmartDevices.TurnOffYeelight: {
       await yeelightService.setPower(false);
+      break;
+    }
+    case ActionTypes.SmartDevices.StartFlowMode: {
+      await yeelightService.startFlowMode();
+      break;
+    }
+    case ActionTypes.SmartDevices.StopFlowMode: {
+      await yeelightService.stopFlowMode();
     }
   }
 

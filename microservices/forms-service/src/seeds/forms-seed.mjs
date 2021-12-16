@@ -9,6 +9,14 @@ export const FormsSeed = [
     queueName: Config.Rabbit.SmartDevicesQueueName,
     actions: [
       {
+        keywords: ["turn on flow mode"],
+        actionType: ActionTypes.SmartDevices.StartFlowMode,
+      },
+      {
+        keywords: ["turn off flow mode"],
+        actionType: ActionTypes.SmartDevices.StopFlowMode,
+      },
+      {
         keywords: ["turn on"],
         actionType: ActionTypes.SmartDevices.TurnOnYeelight,
       },
@@ -19,6 +27,10 @@ export const FormsSeed = [
       {
         keywords: ["set random color"],
         actionType: ActionTypes.SmartDevices.SetYeelightRandomColor,
+      },
+      {
+        keywords: ["set random colors"],
+        actionType: ActionTypes.SmartDevices.SetRandomColorInEveryLight,
       },
     ],
   },

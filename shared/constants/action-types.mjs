@@ -1,8 +1,11 @@
 export const ActionTypes = {
   SmartDevices: {
     SetYeelightRandomColor: "set-yeelight-random-color",
+    SetRandomColorInEveryLight: "set-random-color-in-every-light",
     TurnOnYeelight: "turn-on-yeelight",
     TurnOffYeelight: "turn-off-yeelight",
+    StartFlowMode: "start-flow-mode",
+    StopFlowMode: "stop-flow-mode",
   },
 
   Ansible: {
