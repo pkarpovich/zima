@@ -1,4 +1,8 @@
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+
 import { Config } from "./config/config.mjs";
+const devicesConfig = require("../devices.json");
 
 import {
   ConfigService,
@@ -12,7 +16,7 @@ import { YeelightService } from "./services/yeelight-service.mjs";
 const loggerService = new LoggerService({});
 const configService = new ConfigService({ config: Config });
 const rabbit = new BrokerService({ configService, loggerService });
-const yeelightService = new YeelightService();
+const yeelightService = new YeelightService({ yeelightConfig: devicesConfig });
 
 const serviceQueueName = configService.get("Rabbit.SmartDevicesQueueName");
 

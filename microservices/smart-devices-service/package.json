@@ -15,6 +15,7 @@
   "dependencies": {
     "amqplib": "^0.8.0",
     "dotenv": "^10.0.0",
+    "miio-api": "^0.4.1",
     "nanoid": "^3.1.30",
     "node-yeelight-wifi-extended": "^0.1.5",
     "pm2": "^5.1.2"

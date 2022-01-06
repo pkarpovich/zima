@@ -1,20 +1,16 @@
-import { Lookup } from "node-yeelight-wifi-extended";
+import { YeelightDevice } from "../device/yeelight.mjs";
 
 export class YeelightService {
-  #lookup = null;
-
   #devices = [];
 
   #flowIntervalId = null;
 
-  constructor() {
-    this.#lookup = new Lookup();
+  constructor({ yeelightConfig }) {
+    this.discoverDevices(yeelightConfig);
+  }
 
-    this.#lookup.on("detected", (light) => {
-      this.#devices.push(light);
-
-      console.log("new yeelight detected: id=", light.id, "name=", light.name);
-    });
+  discoverDevices(devices) {
+    this.#devices = devices.map((d) => new YeelightDevice(d));
   }
 
   stopFlowMode() {
@@ -58,33 +54,16 @@ export class YeelightService {
   }
 
   async setRandomColorInEveryLight() {
-    for (let device of this.#devices) {
-      const color = this.getRandomColor();
-      await this.setColor(device, color);
-    }
+    return Promise.all(
+      this.#devices.map((d) => d.setColor(this.getRandomColor()))
+    );
   }
 
   async setOneColorOnEveryLight(color) {
-    for (let device of this.#devices) {
-      await this.setColor(device, color);
-    }
-  }
-
-  async setColor(device, rgb) {
-    try {
-      console.log(`Try to change color on device ${device.id} to color ${rgb}`);
-      await device.setPower(true);
-      await device.setRGB(rgb);
-    } catch (e) {
-      console.error(e);
-    }
+    return Promise.all(this.#devices.map((d) => d.setColor(color)));
   }
 
   async setPower(status) {
-    try {
-      for (let device of this.#devices) {
-        await device.setPower(status);
-      }
-    } catch {}
+    return Promise.all(this.#devices.map((d) => d.setPower(status)));
   }
 }
