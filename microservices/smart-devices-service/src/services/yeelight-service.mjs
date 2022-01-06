@@ -1,7 +1,9 @@
 import { YeelightDevice } from "../device/yeelight.mjs";
+import { YeelightHomekit } from "../device/yeelight-homekit.mjs";
 
 export class YeelightService {
   #devices = [];
+  #homekitDevices = [];
 
   #flowIntervalId = null;
 
@@ -9,8 +11,15 @@ export class YeelightService {
     this.discoverDevices(yeelightConfig);
   }
 
-  discoverDevices(devices) {
-    this.#devices = devices.map((d) => new YeelightDevice(d));
+  async discoverDevices(devices) {
+    for (let d of devices) {
+      const instance = new YeelightDevice();
+      await instance.connect(d);
+      const homekitInstance = new YeelightHomekit(instance, d);
+
+      this.#devices.push(instance);
+      this.#homekitDevices.push(homekitInstance);
+    }
   }
 
   stopFlowMode() {

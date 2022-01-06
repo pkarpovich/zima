@@ -7,14 +7,16 @@
     "start": "node ./src/index.mjs",
     "start:prod": "pm2 start 'npm run start' --name 'smart-devices-runner'",
     "stop:prod": "pm2 stop 'smart-devices-runner'",
-    "start:dev": "nodemon ./src/index.mjs",
+    "start:dev": "nodemon -e mjs ./src/index.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Pavel Karpovich",
   "license": "ISC",
   "dependencies": {
     "amqplib": "^0.8.0",
+    "color-convert": "^2.0.1",
     "dotenv": "^10.0.0",
+    "hap-nodejs": "^0.9.8",
     "miio-api": "^0.4.1",
     "nanoid": "^3.1.30",
     "node-yeelight-wifi-extended": "^0.1.5",
