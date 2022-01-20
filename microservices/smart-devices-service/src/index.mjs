@@ -16,36 +16,33 @@ import { YeelightService } from "./services/yeelight-service.mjs";
 const loggerService = new LoggerService({});
 const configService = new ConfigService({ config: Config });
 const rabbit = new BrokerService({ configService, loggerService });
-const yeelightService = new YeelightService({ yeelightConfig: devicesConfig });
+const yeelightService = new YeelightService({
+  yeelightConfig: devicesConfig.lights,
+});
 
 const serviceQueueName = configService.get("Rabbit.SmartDevicesQueueName");
 
 const handleQueueMessage = (_, channel) => async (msg) => {
-  const { name, props } = JSON.parse(msg.content.toString());
+  const { name, args: { zones } = { zones: [] } } = JSON.parse(
+    msg.content.toString()
+  );
 
   switch (name) {
     case ActionTypes.SmartDevices.SetYeelightRandomColor: {
-      await yeelightService.setRandomColor();
+      await yeelightService.setRandomColor(zones);
       break;
     }
     case ActionTypes.SmartDevices.SetRandomColorInEveryLight: {
-      await yeelightService.setRandomColorInEveryLight();
+      await yeelightService.setRandomColorInEveryLight(zones);
       break;
     }
     case ActionTypes.SmartDevices.TurnOnYeelight: {
-      await yeelightService.setPower(true);
+      await yeelightService.setPower(true, zones);
       break;
     }
     case ActionTypes.SmartDevices.TurnOffYeelight: {
-      await yeelightService.setPower(false);
+      await yeelightService.setPower(false, zones);
       break;
-    }
-    case ActionTypes.SmartDevices.StartFlowMode: {
-      await yeelightService.startFlowMode();
-      break;
-    }
-    case ActionTypes.SmartDevices.StopFlowMode: {
-      await yeelightService.stopFlowMode();
     }
   }
 

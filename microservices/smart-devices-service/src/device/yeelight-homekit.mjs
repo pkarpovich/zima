@@ -18,7 +18,7 @@ export class YeelightHomekit {
 
   saturationValue = 0;
 
-  constructor(instance, { uuid, name, username, pincode, port }) {
+  constructor(instance, { uuid, name, username, pincode, homekitPort: port }) {
     this.instance = instance;
 
     this.getPowerState = this.getPowerState.bind(this);

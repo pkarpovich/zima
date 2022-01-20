@@ -23,7 +23,7 @@ const rabbitService = new BrokerService({ configService, loggerService });
 const httpPort = configService.get("General.Port") || 3000;
 
 app.post("/command", async (req, resp) => {
-  const { text } = req.body;
+  const { text, args } = req.body;
   let result = {};
 
   const tokens = text.split(" ");
@@ -43,7 +43,7 @@ app.post("/command", async (req, resp) => {
   if (status === CommandRespStatuses.Ok) {
     result = await rabbitService.sendToChannelWithResponse(
       queueName,
-      JSON.stringify({ name: actionType, props })
+      JSON.stringify({ name: actionType, props, args })
     );
   }
 

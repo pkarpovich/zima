@@ -20,7 +20,8 @@
     "miio-api": "^0.4.1",
     "nanoid": "^3.1.30",
     "node-yeelight-wifi-extended": "^0.1.5",
-    "pm2": "^5.1.2"
+    "pm2": "^5.1.2",
+    "yeelight-node": "^1.1.5"
   },
   "devDependencies": {
     "nodemon": "^2.0.14"

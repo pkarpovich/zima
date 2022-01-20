@@ -1,11 +1,9 @@
-import { YeelightDevice } from "../device/yeelight.mjs";
+import { YeelightDevice } from "../device/yeelight-local.mjs";
 import { YeelightHomekit } from "../device/yeelight-homekit.mjs";
 
 export class YeelightService {
-  #devices = [];
+  #devices = new Map();
   #homekitDevices = [];
-
-  #flowIntervalId = null;
 
   constructor({ yeelightConfig }) {
     this.discoverDevices(yeelightConfig);
@@ -15,35 +13,13 @@ export class YeelightService {
     for (let d of devices) {
       const instance = new YeelightDevice();
       await instance.connect(d);
+
       const homekitInstance = new YeelightHomekit(instance, d);
 
-      this.#devices.push(instance);
+      const zoneDevices = this.#devices.get(d.zone) || [];
+      this.#devices.set(d.zone, [...zoneDevices, instance]);
       this.#homekitDevices.push(homekitInstance);
     }
-  }
-
-  stopFlowMode() {
-    clearInterval(this.#flowIntervalId);
-  }
-
-  startFlowMode() {
-    let i = 0;
-    const frequency = 0.2;
-    const amplitude = 115;
-    const center = 140;
-
-    this.#flowIntervalId = setInterval(async () => {
-      ++i;
-
-      if (i === 32) {
-        i = 0;
-      }
-
-      const r = Math.round(Math.sin(frequency * i + 0) * amplitude + center);
-      const g = Math.round(Math.sin(frequency * i + 2) * amplitude + center);
-      const b = Math.round(Math.sin(frequency * i + 4) * amplitude + center);
-      await this.setOneColorOnEveryLight([r, g, b]);
-    }, 1000);
   }
 
   getRandomColor() {
@@ -57,22 +33,35 @@ export class YeelightService {
     return [r, g, b];
   }
 
-  async setRandomColor() {
+  async setRandomColor(zones) {
     const color = this.getRandomColor();
-    return this.setOneColorOnEveryLight(color);
+    return this.setOneColorOnEveryLight(color, zones);
   }
 
-  async setRandomColorInEveryLight() {
-    return Promise.all(
-      this.#devices.map((d) => d.setColor(this.getRandomColor()))
-    );
+  async setRandomColorInEveryLight(zones) {
+    const devices = this.#getTargetDevicesByZones(zones);
+
+    return Promise.all(devices.map((d) => d.setColor(this.getRandomColor())));
   }
 
-  async setOneColorOnEveryLight(color) {
-    return Promise.all(this.#devices.map((d) => d.setColor(color)));
+  async setOneColorOnEveryLight(color, zones) {
+    const devices = this.#getTargetDevicesByZones(zones);
+
+    return Promise.all(devices.map((d) => d.setColor(color)));
   }
 
-  async setPower(status) {
-    return Promise.all(this.#devices.map((d) => d.setPower(status)));
+  async setPower(status, zones) {
+    const devices = this.#getTargetDevicesByZones(zones);
+
+    return Promise.all(devices.map((d) => d.setPower(status)));
+  }
+
+  #getTargetDevicesByZones(zones) {
+    return zones.length > 0
+      ? zones.reduce((d, current) => {
+          d.push(...this.#devices.get(current));
+          return d;
+        }, [])
+      : Array.from(this.#devices.values()).flat(1);
   }
 }
