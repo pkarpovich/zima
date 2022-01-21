@@ -18,7 +18,10 @@ export class YeelightHomekit {
 
   saturationValue = 0;
 
-  constructor(instance, { uuid, name, username, pincode, homekitPort: port }) {
+  constructor(
+    instance,
+    { uuid, name, username, pincode, homekitPort: port, hasRGB = false }
+  ) {
     this.instance = instance;
 
     this.getPowerState = this.getPowerState.bind(this);
@@ -45,21 +48,22 @@ export class YeelightHomekit {
     const lightService = new Service.Lightbulb(name);
 
     const power = lightService.getCharacteristic(On);
-    const hue = lightService.getCharacteristic(Hue);
-    const brightness = lightService.getCharacteristic(Brightness);
-    const saturation = lightService.getCharacteristic(Saturation);
-
-    saturation.on(CharacteristicEventTypes.SET, this.setSaturation);
-    saturation.on(CharacteristicEventTypes.GET, this.getSaturation);
-
     power.on(CharacteristicEventTypes.GET, this.getPowerState);
     power.on(CharacteristicEventTypes.SET, this.setPowerState);
 
+    const brightness = lightService.getCharacteristic(Brightness);
     brightness.on(CharacteristicEventTypes.GET, this.getBrightness);
     brightness.on(CharacteristicEventTypes.SET, this.setBrightness);
 
-    hue.on(CharacteristicEventTypes.GET, this.getHue);
-    hue.on(CharacteristicEventTypes.SET, this.setHue);
+    if (hasRGB) {
+      const saturation = lightService.getCharacteristic(Saturation);
+      saturation.on(CharacteristicEventTypes.SET, this.setSaturation);
+      saturation.on(CharacteristicEventTypes.GET, this.getSaturation);
+
+      const hue = lightService.getCharacteristic(Hue);
+      hue.on(CharacteristicEventTypes.GET, this.getHue);
+      hue.on(CharacteristicEventTypes.SET, this.setHue);
+    }
 
     accessory.addService(lightService);
     accessory.publish({
