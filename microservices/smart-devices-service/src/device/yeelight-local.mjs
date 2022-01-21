@@ -1,9 +1,5 @@
 import { Yeelight } from "yeelight-node";
 
-function rgbToCode(r, g, b) {
-  return r * 65536 + g * 256 + b;
-}
-
 function codeToRgb(c) {
   const r = Math.floor(c / (256 * 256));
   const g = Math.floor(c / 256) % 256;
@@ -22,24 +18,42 @@ export class YeelightDevice {
   }
 
   async getPowerState() {
-    const state = this.#parsePropResponse(
-      await this.#instance.get_prop("power")
-    );
-    return state === "on";
+    try {
+      const state = this.#parsePropResponse(
+        await this.#instance.get_prop("power")
+      );
+      return state === "on";
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   async getBrightness() {
-    return this.#parsePropResponse(await this.#instance.get_prop("bright"));
+    try {
+      return this.#parsePropResponse(await this.#instance.get_prop("bright"));
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   async setBrightness(brightness) {
-    await this.#instance.set_bright(brightness);
+    try {
+      await this.#instance.set_bright(brightness);
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   async getRGB() {
-    const state = this.#parsePropResponse(await this.#instance.get_prop("rgb"));
+    try {
+      const state = this.#parsePropResponse(
+        await this.#instance.get_prop("rgb")
+      );
 
-    return codeToRgb(state);
+      return codeToRgb(state);
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   async setColor(rgb) {
@@ -56,10 +70,14 @@ export class YeelightDevice {
   }
 
   async setPower(status) {
-    console.log(
-      `Try to change power status on device ${this.#instance.id} to ${status}`
-    );
-    return this.#instance.set_power(status ? "on" : "off");
+    try {
+      console.log(
+        `Try to change power status on device ${this.#instance.id} to ${status}`
+      );
+      return this.#instance.set_power(status ? "on" : "off");
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   #parsePropResponse(resp) {
