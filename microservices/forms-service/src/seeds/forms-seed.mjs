@@ -132,4 +132,16 @@ export const FormsSeed = [
       },
     ],
   },
+
+  {
+    name: "Apple TV",
+    globalKeywords: ["atv"],
+    queueName: Config.Rabbit.SmartDevicesQueueName,
+    actions: [
+      {
+        keywords: ["execute"],
+        actionType: ActionTypes.SmartDevices.AppleTvExecute,
+      },
+    ],
+  },
 ];

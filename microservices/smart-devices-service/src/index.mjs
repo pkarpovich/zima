@@ -13,6 +13,7 @@ import { ActionTypes } from "shared/constants.mjs";
 
 import { YeelightService } from "./services/yeelight-service.mjs";
 import { SimpleTriggerService } from "./services/simple-trigger-service.mjs";
+import { AppleTvService } from "./services/apple-tv-service.mjs";
 
 const loggerService = new LoggerService({});
 const configService = new ConfigService({ config: Config });
@@ -23,13 +24,13 @@ const yeelightService = new YeelightService({
 const simpleTriggerService = new SimpleTriggerService({
   config: devicesConfig.triggers,
 });
+const appleTvService = new AppleTvService({});
 
 const serviceQueueName = configService.get("Rabbit.SmartDevicesQueueName");
 
 const handleQueueMessage = (_, channel) => async (msg) => {
-  const { name, args: { zones } = { zones: [] } } = JSON.parse(
-    msg.content.toString()
-  );
+  const { name, args: { zones, command } = { zones: [], command: "" } } =
+    JSON.parse(msg.content.toString());
 
   switch (name) {
     case ActionTypes.SmartDevices.SetYeelightRandomColor: {
@@ -46,6 +47,10 @@ const handleQueueMessage = (_, channel) => async (msg) => {
     }
     case ActionTypes.SmartDevices.TurnOffYeelight: {
       await yeelightService.setPower(false, zones);
+      break;
+    }
+    case ActionTypes.SmartDevices.AppleTvExecute: {
+      appleTvService.execute(command);
       break;
     }
   }
