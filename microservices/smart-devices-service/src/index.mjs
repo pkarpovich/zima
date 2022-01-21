@@ -12,12 +12,16 @@ import {
 import { ActionTypes } from "shared/constants.mjs";
 
 import { YeelightService } from "./services/yeelight-service.mjs";
+import { SimpleTriggerService } from "./services/simple-trigger-service.mjs";
 
 const loggerService = new LoggerService({});
 const configService = new ConfigService({ config: Config });
 const rabbit = new BrokerService({ configService, loggerService });
 const yeelightService = new YeelightService({
   yeelightConfig: devicesConfig.lights,
+});
+const simpleTriggerService = new SimpleTriggerService({
+  config: devicesConfig.triggers,
 });
 
 const serviceQueueName = configService.get("Rabbit.SmartDevicesQueueName");
