@@ -25,6 +25,8 @@ const spotifyService = new SpotifyService({ authStoreService, configService });
 const loggerService = new LoggerService({});
 const brokerService = new BrokerService({ configService, loggerService });
 
+const defaultDeviceType = "TV";
+
 const app = express();
 app.get("/callback", async (req, resp) => {
   await spotifyService.authorizationCodeGrant(req.query.code);
@@ -47,45 +49,55 @@ const runFunctionWithRetry = async (func) => {
 };
 
 const handleQueueMessage = (_, channel) => async (msg) => {
-  const { name, props } = JSON.parse(msg.content.toString());
+  const {
+    name,
+    props,
+    args: { deviceType } = { deviceType: null },
+  } = JSON.parse(msg.content.toString());
   let ansibleOutput = {};
 
   await runFunctionWithRetry(async () => {
     const devices = await spotifyService.getDevices();
-    const tv = devices.find((d) => d.type === "TV");
+    const targetDevice = deviceType
+      ? devices.find((d) => d.type === deviceType)
+      : devices.find((d) => d.is_active) ||
+        devices.find((d) => d.type === defaultDeviceType);
 
     switch (name) {
       case ActionTypes.Spotify.Resume: {
-        await spotifyService.resume(tv.id);
+        await spotifyService.resume(targetDevice.id);
         break;
       }
       case ActionTypes.Spotify.Pause: {
-        await spotifyService.pause(tv.id);
+        await spotifyService.pause(targetDevice.id);
         break;
       }
       case ActionTypes.Spotify.NextTrack: {
-        await spotifyService.nextTrack(tv.id);
+        await spotifyService.nextTrack(targetDevice.id);
         break;
       }
       case ActionTypes.Spotify.PrevTrack: {
-        await spotifyService.prevTrack(tv.id);
+        await spotifyService.prevTrack(targetDevice.id);
         break;
       }
       case ActionTypes.Spotify.RestartTack: {
-        await spotifyService.seekTrack(0, tv.id);
+        await spotifyService.seekTrack(0, targetDevice.id);
         break;
       }
       case ActionTypes.Spotify.PlayPlaylist: {
-        await spotifyService.play(tv.id, props[0].value);
+        await spotifyService.play(targetDevice.id, props[0].value);
         break;
       }
       case ActionTypes.Spotify.EnableShuffle: {
-        await spotifyService.setShuffle(tv.id, true);
+        await spotifyService.setShuffle(targetDevice.id, true);
         break;
       }
       case ActionTypes.Spotify.DisableShuffle: {
-        await spotifyService.setShuffle(tv.id, false);
+        await spotifyService.setShuffle(targetDevice.id, false);
         break;
+      }
+      case ActionTypes.Spotify.ChangePlayback: {
+        await spotifyService.changePlaybackDevice(targetDevice.id);
       }
     }
   });

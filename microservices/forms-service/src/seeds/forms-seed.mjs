@@ -79,6 +79,10 @@ export const FormsSeed = [
         keywords: ["disable shuffle"],
         actionType: ActionTypes.Spotify.DisableShuffle,
       },
+      {
+        keywords: ["change playback device"],
+        actionType: ActionTypes.Spotify.ChangePlayback,
+      },
     ],
   },
 

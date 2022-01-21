@@ -110,4 +110,8 @@ export class SpotifyService {
   async setShuffle(deviceId, shuffle) {
     return this.#spotifyApi.setShuffle(shuffle, { device_id: deviceId });
   }
+
+  async changePlaybackDevice(deviceId) {
+    return this.#spotifyApi.transferMyPlayback([deviceId], true);
+  }
 }

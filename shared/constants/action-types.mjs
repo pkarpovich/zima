@@ -27,6 +27,7 @@ export const ActionTypes = {
     RestartTack: "spotify-restart-tack",
     EnableShuffle: "spotify-enable-shuffle",
     DisableShuffle: "spotify-disable-shuffle",
+    ChangePlayback: "spotify-change-playback",
   },
 
   System: {
