@@ -16,7 +16,11 @@ const HSBToRGB = (h, s, b) => {
 export class YeelightHomekit {
   instance = null;
 
-  saturationValue = 0;
+  hue = 255;
+  sat = 45;
+  temp = 588;
+  brightness = 100;
+  power = true;
 
   constructor(
     instance,
@@ -24,45 +28,57 @@ export class YeelightHomekit {
   ) {
     this.instance = instance;
 
-    this.getPowerState = this.getPowerState.bind(this);
+    this.setTemperature = this.setTemperature.bind(this);
     this.setPowerState = this.setPowerState.bind(this);
-
-    this.getBrightness = this.getBrightness.bind(this);
     this.setBrightness = this.setBrightness.bind(this);
-
-    this.getHue = this.getHue.bind(this);
-    this.setHue = this.setHue.bind(this);
-
     this.setSaturation = this.setSaturation.bind(this);
-    this.getSaturation = this.getSaturation.bind(this);
+    this.setHue = this.setHue.bind(this);
 
     const Accessory = hap.Accessory;
     const Characteristic = hap.Characteristic;
     const CharacteristicEventTypes = hap.CharacteristicEventTypes;
     const Service = hap.Service;
-    const { On, Hue, Brightness, Saturation } = Characteristic;
+    const { On, Hue, Brightness, Saturation, ColorTemperature } =
+      Characteristic;
 
     const accessoryUuid = hap.uuid.generate(uuid);
     const accessory = new Accessory(name, accessoryUuid);
 
     const lightService = new Service.Lightbulb(name);
 
-    const power = lightService.getCharacteristic(On);
-    power.on(CharacteristicEventTypes.GET, this.getPowerState);
-    power.on(CharacteristicEventTypes.SET, this.setPowerState);
+    lightService
+      .getCharacteristic(On)
+      .on(CharacteristicEventTypes.SET, this.setPowerState)
+      .updateValue(this.power);
 
-    const brightness = lightService.getCharacteristic(Brightness);
-    brightness.on(CharacteristicEventTypes.GET, this.getBrightness);
-    brightness.on(CharacteristicEventTypes.SET, this.setBrightness);
+    lightService
+      .getCharacteristic(Brightness)
+      .on(CharacteristicEventTypes.SET, this.setBrightness)
+      .updateValue(this.brightness);
 
     if (hasRGB) {
-      const saturation = lightService.getCharacteristic(Saturation);
-      saturation.on(CharacteristicEventTypes.SET, this.setSaturation);
-      saturation.on(CharacteristicEventTypes.GET, this.getSaturation);
+      lightService
+        .getCharacteristic(Saturation)
+        .on(CharacteristicEventTypes.SET, this.setSaturation)
+        .updateValue(this.sat);
 
-      const hue = lightService.getCharacteristic(Hue);
-      hue.on(CharacteristicEventTypes.GET, this.getHue);
-      hue.on(CharacteristicEventTypes.SET, this.setHue);
+      lightService
+        .getCharacteristic(Hue)
+        .on(CharacteristicEventTypes.SET, this.setHue)
+        .updateValue(this.hue);
+
+      lightService
+        .getCharacteristic(ColorTemperature)
+        .on(CharacteristicEventTypes.SET, this.setTemperature)
+        .setProps({
+          minValue: 154,
+          maxValue: 588,
+        })
+        .updateValue(this.temp);
+
+      accessory.configureController(
+        new hap.AdaptiveLightingController(lightService)
+      );
     }
 
     accessory.addService(lightService);
@@ -74,48 +90,38 @@ export class YeelightHomekit {
     });
   }
 
-  async getBrightness(callback) {
-    const currentBrightnessLevel = await this.instance.getBrightness();
-    callback(undefined, currentBrightnessLevel);
-  }
-
   async setBrightness(value, callback) {
+    this.brightness = value;
     await this.instance.setBrightness(value);
     callback(undefined);
   }
 
-  async getPowerState(callback) {
-    const state = await this.instance.getPowerState();
-    callback(undefined, state);
-  }
-
   async setPowerState(value, callback) {
+    this.power = value;
     await this.instance.setPower(value);
     callback(undefined);
   }
 
-  async getHue(callback) {
-    const [r, g, b] = await this.instance.getRGB();
-    const hsl = colorConvert.rgb.hsl(r, g, b);
-    callback(undefined, hsl[0]);
-  }
-
   async setHue(h, callback) {
-    const b = await this.instance.getBrightness();
-    const rgb = HSBToRGB(h, this.saturationValue, +b);
-    await this.instance.setColor(rgb);
+    this.hue = h;
+    await this.setColor();
 
     callback(undefined);
   }
 
   async setSaturation(s, callback) {
-    this.saturationValue = s;
+    this.sat = s;
+    await this.setColor();
     callback(undefined);
   }
 
-  async getSaturation(callback) {
-    const [r, g, b] = await this.instance.getRGB();
-    const hsl = colorConvert.rgb.hsl(r, g, b);
-    callback(undefined, hsl[1]);
+  async setTemperature(value, callback) {
+    this.temp = value;
+    await this.instance.setTemperature(value);
+    callback(null);
+  }
+
+  async setColor() {
+    await this.instance.setHsv(this.hue, this.sat);
   }
 }

@@ -1,13 +1,5 @@
 import { Yeelight } from "yeelight-node";
 
-function codeToRgb(c) {
-  const r = Math.floor(c / (256 * 256));
-  const g = Math.floor(c / 256) % 256;
-  const b = c % 256;
-
-  return [r, g, b];
-}
-
 export class YeelightDevice {
   #instance = null;
 
@@ -17,40 +9,35 @@ export class YeelightDevice {
     this.#instance = new Yeelight({ ip: address, port: port });
   }
 
-  async getPowerState() {
+  async setBrightness(b) {
     try {
-      const state = this.#parsePropResponse(
-        await this.#instance.get_prop("power")
+      console.log(
+        `Try to change Brightness on device ${this.#instance.id} to ${b}`
       );
-      return state === "on";
+      await this.#instance.set_bright(b);
     } catch (e) {
       console.error(e);
     }
   }
 
-  async getBrightness() {
+  async setHsv(hue, sat) {
     try {
-      return this.#parsePropResponse(await this.#instance.get_prop("bright"));
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  async setBrightness(brightness) {
-    try {
-      await this.#instance.set_bright(brightness);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  async getRGB() {
-    try {
-      const state = this.#parsePropResponse(
-        await this.#instance.get_prop("rgb")
+      console.log(
+        `Try to change HUE on device ${this.#instance.id} to ${hue}K`
       );
+      return this.#instance.set_hsv(hue, sat, "smooth", 400);
+    } catch (e) {
+      console.error(e);
+    }
+  }
 
-      return codeToRgb(state);
+  async setTemperature(mired) {
+    try {
+      const kelvin = 10 ** 6 / mired;
+      console.log(
+        `Try to change temperature on device ${this.#instance.id} to ${kelvin}K`
+      );
+      return this.#instance.set_ct_abx(kelvin, "smooth", 400);
     } catch (e) {
       console.error(e);
     }
@@ -59,9 +46,7 @@ export class YeelightDevice {
   async setColor(rgb) {
     try {
       console.log(
-        `Try to change color on device ${this.#instance.id} to color ${
-          rgb[0]
-        }, ${rgb[1]}, ${rgb[2]}`
+        `Try to change color on device ${this.#instance.id} to color ${rgb}`
       );
       return this.#instance.set_rgb(rgb);
     } catch (e) {
@@ -69,21 +54,14 @@ export class YeelightDevice {
     }
   }
 
-  async setPower(status) {
+  async setPower(p) {
     try {
       console.log(
-        `Try to change power status on device ${this.#instance.id} to ${status}`
+        `Try to change power status on device ${this.#instance.id} to ${p}`
       );
-      return this.#instance.set_power(status ? "on" : "off");
+      return this.#instance.set_power(p ? "on" : "off");
     } catch (e) {
       console.error(e);
     }
-  }
-
-  #parsePropResponse(resp) {
-    const { result } = JSON.parse(resp);
-    const [state] = result;
-
-    return state;
   }
 }
