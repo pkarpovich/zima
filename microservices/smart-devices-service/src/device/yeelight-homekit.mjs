@@ -1,19 +1,7 @@
 import hap from "hap-nodejs";
-import colorConvert from "color-convert";
-
-const HSBToRGB = (h, s, b) => {
-  s /= 100;
-  b /= 100;
-  const k = (n) => (n + h / 60) % 6;
-  const f = (n) => b * (1 - s * Math.max(0, Math.min(k(n), 4 - k(n), 1)));
-  return [
-    Math.round(255 * f(5)),
-    Math.round(255 * f(3)),
-    Math.round(255 * f(1)),
-  ];
-};
 
 export class YeelightHomekit {
+  id = null;
   instance = null;
 
   hue = 255;
@@ -22,11 +10,16 @@ export class YeelightHomekit {
   brightness = 100;
   power = true;
 
+  saturationService = null;
+  powerService = null;
+  hueService = null;
+
   constructor(
     instance,
     { uuid, name, username, pincode, homekitPort: port, hasRGB = false }
   ) {
     this.instance = instance;
+    this.id = uuid;
 
     this.setTemperature = this.setTemperature.bind(this);
     this.setPowerState = this.setPowerState.bind(this);
@@ -46,7 +39,7 @@ export class YeelightHomekit {
 
     const lightService = new Service.Lightbulb(name);
 
-    lightService
+    this.powerService = lightService
       .getCharacteristic(On)
       .on(CharacteristicEventTypes.SET, this.setPowerState)
       .updateValue(this.power);
@@ -57,12 +50,12 @@ export class YeelightHomekit {
       .updateValue(this.brightness);
 
     if (hasRGB) {
-      lightService
+      this.saturationService = lightService
         .getCharacteristic(Saturation)
         .on(CharacteristicEventTypes.SET, this.setSaturation)
         .updateValue(this.sat);
 
-      lightService
+      this.hueService = lightService
         .getCharacteristic(Hue)
         .on(CharacteristicEventTypes.SET, this.setHue)
         .updateValue(this.hue);
@@ -123,5 +116,10 @@ export class YeelightHomekit {
 
   async setColor() {
     await this.instance.setHsv(this.hue, this.sat);
+  }
+
+  updateColor(h, s) {
+    this.hueService.updateValue(h);
+    this.saturationService.updateValue(s);
   }
 }

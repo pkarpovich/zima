@@ -1,5 +1,6 @@
 import { YeelightDevice } from "../device/yeelight-local.mjs";
 import { YeelightHomekit } from "../device/yeelight-homekit.mjs";
+import colorConvert from "color-convert";
 
 export class YeelightService {
   #devices = new Map();
@@ -11,7 +12,7 @@ export class YeelightService {
 
   async discoverDevices(devices) {
     for (let d of devices) {
-      const instance = new YeelightDevice();
+      const instance = new YeelightDevice({ id: d.uuid });
       await instance.connect(d);
 
       const homekitInstance = new YeelightHomekit(instance, d);
@@ -41,27 +42,47 @@ export class YeelightService {
   async setRandomColorInEveryLight(zones) {
     const devices = this.#getTargetDevicesByZones(zones);
 
-    return Promise.all(devices.map((d) => d.setColor(this.getRandomColor())));
+    for (const device of devices) {
+      const color = this.getRandomColor();
+      await device.setColor(color);
+
+      this.#getHomekitDevicesById(device.id)?.updateColor(
+        ...colorConvert.rgb.hsv(...color)
+      );
+    }
   }
 
   async setOneColorOnEveryLight(color, zones) {
     const devices = this.#getTargetDevicesByZones(zones);
 
-    return Promise.all(devices.map((d) => d.setColor(color)));
+    for (const device of devices) {
+      await device.setColor(color);
+
+      this.#getHomekitDevicesById(device.id)?.updateColor(
+        ...colorConvert.rgb.hsv(...color)
+      );
+    }
   }
 
   async setPower(status, zones) {
     const devices = this.#getTargetDevicesByZones(zones);
 
-    return Promise.all(devices.map((d) => d.setPower(status)));
+    for (const device of devices) {
+      await device.setPower(status);
+      this.#getHomekitDevicesById(device.id)?.powerService.updateValue(status);
+    }
   }
 
   #getTargetDevicesByZones(zones) {
     return zones.length > 0
       ? zones.reduce((d, current) => {
-          d.push(...this.#devices.get(current));
+          d.push(...(this.#devices.get(current) || []));
           return d;
         }, [])
       : Array.from(this.#devices.values()).flat(1);
+  }
+
+  #getHomekitDevicesById(id) {
+    return this.#homekitDevices.find((hd) => hd.id === id);
   }
 }

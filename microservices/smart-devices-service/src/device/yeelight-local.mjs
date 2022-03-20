@@ -1,9 +1,13 @@
 import { Yeelight } from "yeelight-node";
 
 export class YeelightDevice {
+  id = null;
+
   #instance = null;
 
-  constructor() {}
+  constructor({ id }) {
+    this.id = id;
+  }
 
   async connect({ ip: address, port }) {
     this.#instance = new Yeelight({ ip: address, port: port });
