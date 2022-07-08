@@ -83,10 +83,14 @@ services:
     environment:
       AMQP_SERVER_URL: ${HOST_AMQP_SERVER_URL}
       AMQP_SMART_DEVICES_QUEUE_NAME: ${AMQP_SMART_DEVICES_QUEUE_NAME}
+      ATV_ID: ${ATV_ID}
+      ATV_COMPANION_CREDENTIALS: ${ATV_COMPANION_CREDENTIALS}
     network_mode: host
     restart: unless-stopped
     depends_on:
       - message-broker
+    labels:
+      reproxy.enabled: 0
 
   reproxy:
     image: umputun/reproxy:master
