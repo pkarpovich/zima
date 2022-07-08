@@ -72,6 +72,22 @@ services:
     expose:
       - 3000
 
+  smart-devices-service:
+    build:
+      context: .
+      dockerfile: microservices/smart-devices-service/Dockerfile
+    container_name: smart-devices-service
+    hostname: smart-devices-service
+    volumes:
+      - ./microservices/smart-devices-service/devices.json:/usr/src/app/microservices/smart-devices-service/devices.json
+    environment:
+      AMQP_SERVER_URL: ${HOST_AMQP_SERVER_URL}
+      AMQP_SMART_DEVICES_QUEUE_NAME: ${AMQP_SMART_DEVICES_QUEUE_NAME}
+    network_mode: host
+    restart: unless-stopped
+    depends_on:
+      - message-broker
+
   reproxy:
     image: umputun/reproxy:master
     container_name: zima-api

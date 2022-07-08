@@ -5,8 +5,10 @@
   "type": "module",
   "main": "src/index.mjs",
   "scripts": {
+    "start:forms:dev": "npm run start:dev --prefix microservices/forms-service",
+    "start:devices:dev": "npm run start:dev --prefix microservices/smart-devices-service",
+    "start:zima:dev": "nodemon src/index.mjs --experimental-json-modules",
     "start": "node src/index.mjs",
-    "start:dev": "nodemon src/index.mjs --experimental-json-modules",
     "style": "prettier --write .",
     "lint": "eslint \"**/*.mjs\"",
     "test": "echo \"Error: no test specified\" && exit 1"
