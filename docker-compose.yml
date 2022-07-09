@@ -95,6 +95,7 @@ services:
       context: .
       dockerfile: microservices/ansible-service/Dockerfile
       args:
+        SSH_HOST: ${SSH_HOST}
         SSH_USER: ${SSH_USER}
         SSHPASS: ${SSH_PASS}
     container_name: ansible-service
