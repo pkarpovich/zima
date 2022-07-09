@@ -117,6 +117,10 @@ export const FormsSeed = [
         keywords: ["status"],
         actionType: ActionTypes.Ansible.VpnStatus,
       },
+      {
+        keywords: ["load vpn files"],
+        actionType: ActionTypes.Ansible.LoadVpnFiles,
+      },
     ],
   },
 

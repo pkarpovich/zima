@@ -3,8 +3,15 @@ import Ansible from "node-ansible-control";
 export class AnsibleService {
   #playbook = null;
 
-  constructor() {
-    this.#playbook = new Ansible.Playbook();
+  #configService = null;
+
+  constructor({ configService }) {
+    this.#configService = configService;
+
+    const playbooksDir = this.#configService.get("Ansible.PlaybooksDir");
+    this.#playbook = new Ansible.Playbook().inventory(
+      `${playbooksDir}/hosts.yml`
+    );
   }
 
   run(name, variables = {}) {

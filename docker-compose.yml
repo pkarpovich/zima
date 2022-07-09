@@ -1,5 +1,3 @@
-version: "3.3"
-
 services:
   message-broker:
     image: rabbitmq:3-management-alpine
@@ -86,6 +84,30 @@ services:
       ATV_ID: ${ATV_ID}
       ATV_COMPANION_CREDENTIALS: ${ATV_COMPANION_CREDENTIALS}
     network_mode: host
+    restart: unless-stopped
+    depends_on:
+      - message-broker
+    labels:
+      reproxy.enabled: 0
+
+  ansible-service:
+    build:
+      context: .
+      dockerfile: microservices/ansible-service/Dockerfile
+      args:
+        SSH_USER: ${SSH_USER}
+        SSHPASS: ${SSH_PASS}
+    container_name: ansible-service
+    hostname: ansible-service
+    volumes:
+      - ./microservices/ansible-service/ansible/playbooks:/usr/src/app/microservices/ansible-service/ansible/playbooks
+      - ${LOCAL_VPN_FILES_PATH}:${VPN_FILES_PATH}
+    environment:
+      AMQP_SERVER_URL: ${AMQP_SERVER_URL}
+      AMQP_ANSIBLE_QUEUE_NAME: ${AMQP_ANSIBLE_QUEUE_NAME}
+      PLAYBOOKS_DIR: ${PLAYBOOKS_DIR}
+      VPN_FILES_PATH: ${VPN_FILES_PATH}
+      SSH_USER: ${SSH_USER}
     restart: unless-stopped
     depends_on:
       - message-broker

@@ -15,7 +15,7 @@ import { VpnService } from "./services/vpn-service.mjs";
 
 const loggerService = new LoggerService({});
 const configService = new ConfigService({ config: Config });
-const ansibleService = new AnsibleService();
+const ansibleService = new AnsibleService({ configService });
 const filesService = new FilesService(fs);
 const vpnService = new VpnService({
   ansibleService,
@@ -39,7 +39,8 @@ const handleQueueMessage = (_, channel) => async (msg) => {
       ansibleOutput = await vpnService.stop();
       break;
     }
-    case ActionTypes.Ansible.VpnStatus: {
+    case ActionTypes.Ansible.LoadVpnFiles: {
+      ansibleOutput = await vpnService.loadVpnFiles();
       break;
     }
   }

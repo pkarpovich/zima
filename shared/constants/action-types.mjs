@@ -13,6 +13,7 @@ export const ActionTypes = {
     VpnStart: "start-vpn",
     VpnStop: "stop-vpn",
     VpnStatus: "vpn-status",
+    LoadVpnFiles: "load-vpn-files",
   },
 
   Meetings: {

@@ -5,9 +5,7 @@
   "main": "src/index.mjs",
   "scripts": {
     "start:dev": "nodemon src/index.mjs",
-    "start": "pm2 start bin/start.sh --name 'local-ansible-runner'",
-    "stop": "pm2 stop local-ansible-runner",
-    "start:local": "node src/index.mjs",
+    "start": "node src/index.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Pavel Karpovich",
