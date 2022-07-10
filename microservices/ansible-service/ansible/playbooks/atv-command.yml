@@ -1,0 +1,5 @@
+---
+- hosts: all
+  tasks:
+    - name: "Execute ATV command"
+      command: "atvremote --id $ATV_ID --companion-credentials $ATV_COMPANION_CREDENTIALS {{ command }}"

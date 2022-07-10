@@ -15,8 +15,9 @@ export class AnsibleService {
   }
 
   run(name, variables = {}) {
-    const playbook = this.#playbook.playbook(name).variables(variables);
+    const playbooksDir = this.#configService.get("Ansible.PlaybooksDir");
+    const playbookName = `${playbooksDir}/playbooks/${name}`;
 
-    return playbook.exec();
+    return this.#playbook.playbook(playbookName).variables(variables).exec();
   }
 }

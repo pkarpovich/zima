@@ -12,12 +12,10 @@ export class VpnService {
   }
 
   async start(vpnFileName) {
-    const playbooksDir = this.#configService.get("Ansible.PlaybooksDir");
-    const playbookName = `${playbooksDir}/playbooks/start-vpn`;
     const [vpnFile] = await this.#pickMostPossibleFile(vpnFileName);
     const [vpnFileNameWithoutExt] = vpnFile.split(".");
 
-    const { code, output } = await this.#ansibleService.run(playbookName, {
+    const { code, output } = await this.#ansibleService.run("start-vpn", {
       vpn_name: vpnFileNameWithoutExt.replace(/(\s+)/g, "\\$1"),
     });
 
@@ -41,10 +39,7 @@ export class VpnService {
   }
 
   async stop() {
-    const playbooksDir = this.#configService.get("Ansible.PlaybooksDir");
-    const playbookName = `${playbooksDir}/playbooks/stop-vpn`;
-
-    const { code, output } = await this.#ansibleService.run(playbookName, {});
+    const { code, output } = await this.#ansibleService.run("stop-vpn");
 
     return {
       code,
@@ -53,10 +48,9 @@ export class VpnService {
   }
 
   async loadVpnFiles() {
-    const playbooksDir = this.#configService.get("Ansible.PlaybooksDir");
-    const playbookName = `${playbooksDir}/playbooks/load-new-vpn-files`;
-
-    const { code, output } = await this.#ansibleService.run(playbookName, {});
+    const { code, output } = await this.#ansibleService.run(
+      "load-new-vpn-files"
+    );
 
     return {
       code,

@@ -12,6 +12,7 @@ import { Config } from "./config/config.mjs";
 
 import { AnsibleService } from "./services/ansible-service.mjs";
 import { VpnService } from "./services/vpn-service.mjs";
+import { AtvService } from "./services/atv-service.mjs";
 
 const loggerService = new LoggerService({});
 const configService = new ConfigService({ config: Config });
@@ -22,12 +23,17 @@ const vpnService = new VpnService({
   configService,
   filesService,
 });
+const atvService = new AtvService({ ansibleService });
 const rabbit = new BrokerService({ configService, loggerService });
 
 const serviceQueueName = configService.get("Rabbit.AnsibleQueueName");
 
 const handleQueueMessage = (_, channel) => async (msg) => {
-  const { name, props } = JSON.parse(msg.content.toString());
+  const {
+    name,
+    props,
+    args: { command },
+  } = JSON.parse(msg.content.toString());
   let ansibleOutput = {};
 
   switch (name) {
@@ -42,6 +48,9 @@ const handleQueueMessage = (_, channel) => async (msg) => {
     case ActionTypes.Ansible.LoadVpnFiles: {
       ansibleOutput = await vpnService.loadVpnFiles();
       break;
+    }
+    case ActionTypes.SmartDevices.AppleTvExecute: {
+      ansibleOutput = await atvService.execute(command);
     }
   }
 

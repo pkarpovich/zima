@@ -6,7 +6,6 @@ export const ActionTypes = {
     TurnOffYeelight: "turn-off-yeelight",
     StartFlowMode: "start-flow-mode",
     StopFlowMode: "stop-flow-mode",
-    AppleTvExecute: "apple-tv-execute",
   },
 
   Ansible: {
@@ -14,6 +13,7 @@ export const ActionTypes = {
     VpnStop: "stop-vpn",
     VpnStatus: "vpn-status",
     LoadVpnFiles: "load-vpn-files",
+    AppleTvExecute: "apple-tv-execute",
   },
 
   Meetings: {

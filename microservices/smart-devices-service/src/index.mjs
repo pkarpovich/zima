@@ -24,7 +24,6 @@ const yeelightService = new YeelightService({
 const simpleTriggerService = new SimpleTriggerService({
   config: devicesConfig.triggers,
 });
-const appleTvService = new AppleTvService({});
 
 const serviceQueueName = configService.get("Rabbit.SmartDevicesQueueName");
 
@@ -47,10 +46,6 @@ const handleQueueMessage = (_, channel) => async (msg) => {
     }
     case ActionTypes.SmartDevices.TurnOffYeelight: {
       await yeelightService.setPower(false, zones);
-      break;
-    }
-    case ActionTypes.SmartDevices.AppleTvExecute: {
-      appleTvService.execute(command);
       break;
     }
   }

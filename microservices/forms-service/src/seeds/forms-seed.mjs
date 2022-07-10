@@ -140,11 +140,11 @@ export const FormsSeed = [
   {
     name: "Apple TV",
     globalKeywords: ["atv"],
-    queueName: Config.Rabbit.SmartDevicesQueueName,
+    queueName: Config.Rabbit.AnsibleQueueName,
     actions: [
       {
         keywords: ["execute"],
-        actionType: ActionTypes.SmartDevices.AppleTvExecute,
+        actionType: ActionTypes.Ansible.AppleTvExecute,
       },
     ],
   },
