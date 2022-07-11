@@ -49,7 +49,7 @@ const handleQueueMessage = (_, channel) => async (msg) => {
       ansibleOutput = await vpnService.loadVpnFiles();
       break;
     }
-    case ActionTypes.SmartDevices.AppleTvExecute: {
+    case ActionTypes.Ansible.AppleTvExecute: {
       ansibleOutput = await atvService.execute(command);
     }
   }

@@ -4,7 +4,12 @@ COPY package*.json /usr/src/app/
 RUN --mount=type=secret,mode=0644,id=npmrc,target=/usr/src/app/.npmrc npm ci --only=production
 
 # --------------> The production image
-FROM alpine/ansible:latest
+FROM python:slim
+RUN apt-get update && \
+    apt-get -y install gcc curl sudo dumb-init openssh-server sshpass ansible
+RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash
+RUN apt-get -y install nodejs
+RUN pip3 install pyatv
 
 ENV NODE_ENV production
 ARG SSHPASS
@@ -14,7 +19,6 @@ ENV SSH_USER=$SSH_USER
 ARG SSH_HOST
 ENV SSH_HOST=$SSH_HOST
 
-RUN apk update && apk add dumb-init openssh sshpass nodejs npm
 RUN ssh-keygen -q -t rsa -N '' -f /root/.ssh/id_rsa
 RUN sshpass -e ssh-copy-id -f -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST
 

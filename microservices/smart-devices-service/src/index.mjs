@@ -13,7 +13,6 @@ import { ActionTypes } from "shared/constants.mjs";
 
 import { YeelightService } from "./services/yeelight-service.mjs";
 import { SimpleTriggerService } from "./services/simple-trigger-service.mjs";
-import { AppleTvService } from "./services/apple-tv-service.mjs";
 
 const loggerService = new LoggerService({});
 const configService = new ConfigService({ config: Config });
