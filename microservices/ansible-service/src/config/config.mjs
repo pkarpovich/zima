@@ -21,4 +21,9 @@ export const Config = {
   VPN: {
     FolderFilesPath: process.env.VPN_FILES_PATH,
   },
+
+  SSH: {
+    Host: process.env.SSH_HOST,
+    Username: process.env.SSH_USER,
+  },
 };

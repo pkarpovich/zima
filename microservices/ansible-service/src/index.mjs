@@ -23,7 +23,7 @@ const vpnService = new VpnService({
   configService,
   filesService,
 });
-const atvService = new AtvService({ ansibleService });
+const atvService = new AtvService({ configService });
 const rabbit = new BrokerService({ configService, loggerService });
 
 const serviceQueueName = configService.get("Rabbit.AnsibleQueueName");

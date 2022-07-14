@@ -1,4 +1,4 @@
 - hosts: all
   tasks:
     - name: "Execute ATV command"
-      command: atvremote --id {{ lookup('env','ATV_ID') }} --companion-credentials {{ lookup('env','ATV_COMPANION_CREDENTIALS') }} {{ command }}
+      shell: /home/pi/.local/bin/atvremote --id {{ ansible_env.ATV_ID }} --companion-credentials {{ ansible_env.ATV_COMPANION_CREDENTIALS }} {{ command }}
