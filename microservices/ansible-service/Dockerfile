@@ -4,12 +4,8 @@ COPY package*.json /usr/src/app/
 RUN --mount=type=secret,mode=0644,id=npmrc,target=/usr/src/app/.npmrc npm ci --only=production
 
 # --------------> The production image
-FROM python:slim
-RUN apt-get update && \
-    apt-get -y install gcc curl sudo dumb-init openssh-server sshpass ansible
-RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash
-RUN apt-get -y install nodejs
-RUN pip3 install pyatv
+FROM python:alpine
+RUN apk update && apk add dumb-init openssh sshpass nodejs npm ansible
 
 ENV NODE_ENV production
 ARG SSHPASS
