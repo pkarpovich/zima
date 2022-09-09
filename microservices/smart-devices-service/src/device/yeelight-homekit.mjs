@@ -8,7 +8,7 @@ export class YeelightHomekit {
   sat = 45;
   temp = 588;
   brightness = 100;
-  power = true;
+  power = false;
 
   saturationService = null;
   powerService = null;
@@ -23,6 +23,7 @@ export class YeelightHomekit {
 
     this.setTemperature = this.setTemperature.bind(this);
     this.setPowerState = this.setPowerState.bind(this);
+    this.getPowerState = this.getPowerState.bind(this);
     this.setBrightness = this.setBrightness.bind(this);
     this.setSaturation = this.setSaturation.bind(this);
     this.setHue = this.setHue.bind(this);
@@ -42,6 +43,7 @@ export class YeelightHomekit {
     this.powerService = lightService
       .getCharacteristic(On)
       .on(CharacteristicEventTypes.SET, this.setPowerState)
+      .on(CharacteristicEventTypes.GET, this.getPowerState)
       .updateValue(this.power);
 
     lightService
@@ -95,6 +97,11 @@ export class YeelightHomekit {
     callback(undefined);
   }
 
+  async getPowerState(callback) {
+    this.power = await this.instance.getPower();
+    callback(undefined, this.power);
+  }
+
   async setHue(h, callback) {
     this.hue = h;
     await this.setColor();
@@ -109,8 +116,11 @@ export class YeelightHomekit {
   }
 
   async setTemperature(value, callback) {
-    this.temp = value;
-    await this.instance.setTemperature(value);
+    if (this.power) {
+      this.temp = value;
+      await this.instance.setTemperature(value);
+    }
+
     callback(null);
   }
 
