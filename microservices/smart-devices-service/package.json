@@ -11,18 +11,17 @@
   "author": "Pavel Karpovich",
   "license": "ISC",
   "dependencies": {
-    "amqplib": "^0.8.0",
+    "amqplib": "^0.10.3",
     "color-convert": "^2.0.1",
-    "dotenv": "^10.0.0",
-    "hap-nodejs": "^0.9.8",
+    "dotenv": "^16.0.2",
+    "hap-nodejs": "^0.10.2",
     "miio-api": "^0.4.1",
-    "nanoid": "^3.1.30",
+    "nanoid": "^4.0.0",
     "node-yeelight-wifi-extended": "^0.1.5",
-    "pm2": "^5.2.0",
     "promise-retry": "^2.0.1",
     "yeelight-node": "^1.1.5"
   },
   "devDependencies": {
-    "nodemon": "^2.0.14"
+    "nodemon": "^2.0.19"
   }
 }
