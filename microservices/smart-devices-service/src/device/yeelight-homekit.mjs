@@ -49,6 +49,7 @@ export class YeelightHomekit {
     lightService
       .getCharacteristic(Brightness)
       .on(CharacteristicEventTypes.SET, this.setBrightness)
+      .on(CharacteristicEventTypes.GET, this.getBrightness)
       .updateValue(this.brightness);
 
     if (hasRGB) {
@@ -89,6 +90,11 @@ export class YeelightHomekit {
     this.brightness = value;
     await this.instance.setBrightness(value);
     callback(undefined);
+  }
+
+  async getBrightness(callback) {
+    this.brightness = await this.instance.getBrightness();
+    callback(undefined, this.brightness);
   }
 
   async setPowerState(value, callback) {

@@ -23,6 +23,17 @@ export class YeelightDevice {
     }
   }
 
+  async getBrightness() {
+    try {
+      const resp = await this.#instance.get_prop("bright");
+      const { result } = this.#processGetResponse(resp);
+
+      return result[0];
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   async setHsv(hue, sat) {
     try {
       console.log(`Try to change HUE on device ${this.id} to ${hue}K`);
