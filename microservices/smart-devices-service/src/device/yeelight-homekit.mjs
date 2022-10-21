@@ -25,6 +25,7 @@ export class YeelightHomekit {
     this.setPowerState = this.setPowerState.bind(this);
     this.getPowerState = this.getPowerState.bind(this);
     this.setBrightness = this.setBrightness.bind(this);
+    this.getBrightness = this.getBrightness.bind(this);
     this.setSaturation = this.setSaturation.bind(this);
     this.setHue = this.setHue.bind(this);
 
