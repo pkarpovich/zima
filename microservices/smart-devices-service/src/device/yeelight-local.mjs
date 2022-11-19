@@ -24,14 +24,12 @@ export class YeelightDevice {
   }
 
   async getBrightness() {
-    try {
-      const resp = await this.#instance.get_prop("bright");
-      const { result } = this.#processGetResponse(resp);
+    return this.#getProp("bright", 0);
+  }
 
-      return result[0];
-    } catch (e) {
-      console.error(e);
-    }
+  async getPower() {
+    const result = await this.#getProp("power", "off");
+    return result === "on";
   }
 
   async setHsv(hue, sat) {
@@ -73,17 +71,6 @@ export class YeelightDevice {
     }
   }
 
-  async getPower() {
-    try {
-      const resp = await this.#instance.get_prop("power");
-      const { result } = this.#processGetResponse(resp);
-
-      return result[0] === "on";
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
   #connectToLocalInstance = (address, port) => {
     return () =>
       new Promise(async (resolve, reject) => {
@@ -109,5 +96,21 @@ export class YeelightDevice {
 
   #processGetResponse = (resp) => {
     return JSON.parse(resp);
+  };
+
+  #getProp = async (name, defaultValue) => {
+    try {
+      const resp = await this.#instance.get_prop(name);
+      const { result } = this.#processGetResponse(resp);
+
+      return result[0];
+    } catch (e) {
+      console.error(
+        `Error while getting property ${name} from device ${this.id}`,
+        e
+      );
+    }
+
+    return defaultValue;
   };
 }
