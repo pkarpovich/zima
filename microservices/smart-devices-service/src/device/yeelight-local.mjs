@@ -1,13 +1,19 @@
 import { Yeelight } from "yeelight-node";
 import { retry } from "../utils/retry.mjs";
+import { LogService } from "../services/log.service.mjs";
 
 export class YeelightDevice {
   id = null;
 
   #instance = null;
 
+  #logService = null;
   constructor({ id }) {
     this.id = id;
+    this.#logService = new LogService();
+    this.#logService.context = {
+      scope: this.#logService.createScope(id),
+    };
   }
 
   async connect({ ip: address, port }) {
@@ -15,12 +21,29 @@ export class YeelightDevice {
   }
 
   async setBrightness(b) {
-    try {
-      console.log(`Try to change Brightness on device ${this.id} to ${b}`);
-      await this.#instance.set_bright(b);
-    } catch (e) {
-      console.error(e);
-    }
+    this.#logService.info(`Try to change brightness to ${b} %`);
+    return this.#setProp("set_bright", b);
+  }
+
+  async setHsv(hue, sat) {
+    this.#logService.info(`Try to change color to hue ${hue} and sat ${sat}`);
+    return this.#setProp("set_hsv", hue, sat, "smooth", 400);
+  }
+
+  async setTemperature(mired) {
+    const kelvin = 10 ** 6 / mired;
+    this.#logService.info(`Try to change temperature to ${kelvin} K`);
+    return this.#setProp("set_ct_abx", kelvin, "smooth", 400);
+  }
+
+  async setColor(rgb) {
+    this.#logService.info(`Try to change color to rgb ${rgb}`);
+    return this.#setProp("set_rgb", rgb);
+  }
+
+  async setPower(p) {
+    this.#logService.info(`Try to change power to ${p}`);
+    return this.#setProp("set_power", p ? "on" : "off");
   }
 
   async getBrightness() {
@@ -32,61 +55,25 @@ export class YeelightDevice {
     return result === "on";
   }
 
-  async setHsv(hue, sat) {
-    try {
-      console.log(`Try to change HUE on device ${this.id} to ${hue}K`);
-      return this.#instance.set_hsv(hue, sat, "smooth", 400);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  async setTemperature(mired) {
-    try {
-      const kelvin = 10 ** 6 / mired;
-      console.log(
-        `Try to change temperature on device ${this.id} to ${kelvin}K`
-      );
-      return this.#instance.set_ct_abx(kelvin, "smooth", 400);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  async setColor(rgb) {
-    try {
-      console.log(`Try to change color on device ${this.id} to color ${rgb}`);
-      return this.#instance.set_rgb(rgb);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  async setPower(p) {
-    try {
-      console.log(`Try to change power status on device ${this.id} to ${p}`);
-      return this.#instance.set_power(p ? "on" : "off");
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
   #connectToLocalInstance = (address, port) => {
     return () =>
       new Promise(async (resolve, reject) => {
-        console.log(
-          `Try to connect to device ${this.id} on ${address}:${port}`
+        this.#logService.info(
+          `Try to connect to local yeelight device, ip: ${address}, port: ${port}`
         );
+
         try {
           this.#instance = new Yeelight({ ip: address, port: port });
 
           await this.#instance.get_prop("power");
-          console.log(`Connected to device ${this.id} on ${address}:${port}`);
+          this.#logService.success(
+            `Yeelight device connected, ip: ${address}, port: ${port}`
+          );
           resolve(this.#instance);
         } catch (e) {
-          console.log(
-            `Error while connecting to device ${this.id} on ${address}:${port}`,
-            e.code
+          this.#logService.error(
+            `Can't connect to yeelight device, ip: ${address}, port: ${port}, error`,
+            e
           );
 
           reject(e);
@@ -105,12 +92,23 @@ export class YeelightDevice {
 
       return result[0];
     } catch (e) {
-      console.error(
-        `Error while getting property ${name} from device ${this.id}`,
+      this.#logService.error(
+        `Can't get property ${name} from yeelight device, error: `,
         e
       );
     }
 
     return defaultValue;
+  };
+
+  #setProp = async (name, ...value) => {
+    try {
+      return this.#instance[name](...value);
+    } catch (e) {
+      this.#logService.error(
+        `Can't set property ${name} to ${value} on yeelight device, error: `,
+        e
+      );
+    }
   };
 }

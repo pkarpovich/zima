@@ -15,10 +15,9 @@
     "color-convert": "^2.0.1",
     "dotenv": "^16.0.2",
     "hap-nodejs": "^0.10.2",
-    "miio-api": "^0.4.1",
     "nanoid": "^4.0.0",
-    "node-yeelight-wifi-extended": "^0.1.5",
     "promise-retry": "^2.0.1",
+    "signale": "^1.4.0",
     "yeelight-node": "^1.1.5"
   },
   "devDependencies": {
