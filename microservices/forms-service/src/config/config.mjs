@@ -1,13 +1,3 @@
-import dotenv from "dotenv";
-import path from "path";
-
-dotenv.config({
-  path: path.resolve(
-    process.cwd(),
-    process.env.NODE_ENV === "production" ? "prod.env" : "local.env"
-  ),
-});
-
 export const Config = {
   Database: {
     ConnectionString: `mongodb://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`,

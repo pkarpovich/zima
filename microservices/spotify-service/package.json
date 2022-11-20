@@ -14,9 +14,7 @@
     "express": "^4.17.1",
     "lowdb": "^3.0.0",
     "nanoid": "^3.3.4",
-    "spotify-web-api-node": "^5.0.2"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.14"
+    "spotify-web-api-node": "^5.0.2",
+    "shared": "workspace:*"
   }
 }
