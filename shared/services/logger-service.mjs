@@ -1,19 +1,58 @@
+import signale from "signale";
+const { Signale } = signale;
+
 export class LoggerService {
   #logger = null;
 
-  constructor({ logger = console }) {
-    this.#logger = logger;
+  #context = null;
+
+  get defaultContext() {
+    return {
+      scope: this.#logger,
+    };
   }
 
-  log(message) {
-    this.#logger.log(`[INFO] ${message}`);
+  constructor() {
+    signale.config({
+      displayTimestamp: true,
+      displayDate: true,
+    });
+    this.#logger = signale.scope("global");
   }
 
-  warn(message) {
-    this.#logger.warn(`[WARNING] ${message}`);
+  set context(value) {
+    this.#context = value;
   }
 
-  error(message) {
-    this.#logger.error(`[ERROR] ${message}`);
+  get context() {
+    return this.#context || this.defaultContext;
+  }
+
+  log(...message) {
+    this.context.scope.info(...message);
+  }
+
+  info(...message) {
+    this.context.scope.info(...message);
+  }
+
+  warn(...message) {
+    this.context.scope.warn(...message);
+  }
+
+  success(...message) {
+    this.context.scope.success(...message);
+  }
+
+  error(...message) {
+    this.context.scope.error(...message);
+  }
+
+  await(...message) {
+    this.context.scope.await(...message);
+  }
+
+  createScope(name) {
+    return signale.scope(name);
   }
 }

@@ -71,7 +71,6 @@ importers:
       has-bigints: ^1.0.2
       promise-retry: ^2.0.1
       shared: workspace:*
-      signale: ^1.4.0
       yeelight-node: ^1.1.6
     dependencies:
       color-convert: 2.0.1
@@ -79,7 +78,6 @@ importers:
       has-bigints: 1.0.2
       promise-retry: 2.0.1
       shared: link:../../shared
-      signale: 1.4.0
       yeelight-node: 1.1.6
 
   microservices/spotify-service:
@@ -100,11 +98,13 @@ importers:
     specifiers:
       amqplib: ^0.10.3
       dotenv: ^16.0.3
-      nanoid: 4.0.0
+      nanoid: ^4.0.0
+      signale: ^1.4.0
     dependencies:
       amqplib: 0.10.3
       dotenv: 16.0.3
       nanoid: 4.0.0
+      signale: 1.4.0
 
 packages:
 

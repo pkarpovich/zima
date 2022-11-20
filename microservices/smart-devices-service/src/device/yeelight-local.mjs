@@ -1,6 +1,6 @@
 import { Yeelight } from "yeelight-node";
 import { retry } from "../utils/retry.mjs";
-import { LogService } from "../services/log.service.mjs";
+import { LoggerService } from "shared/services/logger-service.mjs";
 
 export class YeelightDevice {
   id = null;
@@ -10,7 +10,7 @@ export class YeelightDevice {
   #logService = null;
   constructor({ id }) {
     this.id = id;
-    this.#logService = new LogService();
+    this.#logService = new LoggerService();
     this.#logService.context = {
       scope: this.#logService.createScope(id),
     };

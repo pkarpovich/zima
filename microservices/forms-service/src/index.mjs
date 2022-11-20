@@ -98,4 +98,4 @@ const handleSystemAction = async (action, channel, msgProps) => {
 
 await brokerService.subscribeToChannel(queueName, handleFormsMsg);
 
-console.log(`Start listening queue ${queueName}`);
+loggerService.log(`Start listening queue ${queueName}`);

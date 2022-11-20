@@ -64,5 +64,5 @@ app.use(errorHandler);
 
 app.listen(httpPort, () => {
   // eslint-disable-next-line no-console
-  console.log(`Listening on port ${httpPort}`);
+  loggerService.log(`Listening on port ${httpPort}`);
 });

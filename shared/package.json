@@ -6,7 +6,8 @@
   "dependencies": {
     "amqplib": "^0.10.3",
     "dotenv": "^16.0.3",
-    "nanoid": "4.0.0"
+    "nanoid": "^4.0.0",
+    "signale": "^1.4.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

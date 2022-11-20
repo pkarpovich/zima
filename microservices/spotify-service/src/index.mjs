@@ -22,8 +22,12 @@ const authStoreService = new AuthStoreService(db);
 await authStoreService.init();
 
 const configService = new ConfigService({ config: Config() });
-const spotifyService = new SpotifyService({ authStoreService, configService });
 const loggerService = new LoggerService({});
+const spotifyService = new SpotifyService({
+  authStoreService,
+  configService,
+  loggerService,
+});
 const brokerService = new BrokerService({ configService, loggerService });
 
 const defaultDeviceType = "TV";
@@ -34,7 +38,7 @@ app.get("/callback", async (req, resp) => {
 
   resp.json({ ok: true });
 });
-app.listen(3000, () => console.log("Listen on port 3000"));
+app.listen(3000, () => loggerService.log("Listen on port 3000"));
 
 await spotifyService.init();
 

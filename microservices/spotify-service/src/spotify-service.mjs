@@ -8,13 +8,15 @@ export class SpotifyService {
 
   #configService = null;
 
+  #loggerService = null;
+
   #scopes = [
     "user-read-playback-state",
     "user-modify-playback-state",
     "user-read-currently-playing",
   ];
 
-  constructor({ authStoreService, configService }) {
+  constructor({ authStoreService, configService, loggerService }) {
     const spotifyApi = new SpotifyWebApi({
       clientId: configService.get("Spotify.ClientId"),
       clientSecret: configService.get("Spotify.ClientSecret"),
@@ -24,6 +26,7 @@ export class SpotifyService {
     this.#spotifyApi = spotifyApi;
     this.#authStoreService = authStoreService;
     this.#configService = configService;
+    this.#loggerService = loggerService;
   }
 
   async init() {
@@ -32,7 +35,7 @@ export class SpotifyService {
     if (!refreshToken) {
       const authState = nanoid();
       const authURL = await this.createAuthorizeURL(authState);
-      console.log(`Authorization URL: ${authURL}`);
+      this.#loggerService.log(`Authorization URL: ${authURL}`);
     } else {
       await this.setRefreshToken(refreshToken);
       await this.refreshAccess();
