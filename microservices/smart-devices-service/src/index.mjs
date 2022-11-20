@@ -15,7 +15,7 @@ import { YeelightService } from "./services/yeelight-service.mjs";
 import { SimpleTriggerService } from "./services/simple-trigger-service.mjs";
 
 const loggerService = new LoggerService({});
-const configService = new ConfigService({ config: Config });
+const configService = new ConfigService({ config: Config() });
 const rabbit = new BrokerService({ configService, loggerService });
 const yeelightService = new YeelightService({
   yeelightConfig: devicesConfig.lights,

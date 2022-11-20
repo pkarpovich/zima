@@ -1,4 +1,4 @@
-export const Config = {
+export const Config = () => ({
   Rabbit: {
     Url: process.env.AMQP_SERVER_URL,
     FormsQueueName: process.env.AMQP_FORMS_QUEUE_NAME,
@@ -7,4 +7,4 @@ export const Config = {
   General: {
     Port: process.env.PORT,
   },
-};
+});

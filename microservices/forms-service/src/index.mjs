@@ -18,7 +18,7 @@ import { CommandsService } from "./services/commands-service.mjs";
 import { FormTypes } from "shared/form-types.mjs";
 
 const loggerService = new LoggerService({});
-const configService = new ConfigService({ config: Config });
+const configService = new ConfigService({ config: Config() });
 const brokerService = new BrokerService({ configService, loggerService });
 const formsService = new FormsService({ formModel: Form });
 const commandsService = new CommandsService({ commandModel: Command });

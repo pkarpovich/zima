@@ -145,10 +145,9 @@ services:
       - zima
 
   forms-db:
-    image: mongo:4.4-bionic
+    image: mongo:5.0
     container_name: forms-db
     restart: unless-stopped
-    command: mongod --serviceExecutor adaptive
     ports:
       - ${MONGO_PORT}:${MONGO_PORT}
     environment:

@@ -1,4 +1,4 @@
-export const Config = {
+export const Config = () => ({
   Database: {
     ConnectionString: `mongodb://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`,
   },
@@ -10,4 +10,4 @@ export const Config = {
     SpotifyQueueName: process.env.AMQP_SPOTIFY_QUEUE_NAME,
     FormsQueueName: process.env.AMQP_FORMS_QUEUE_NAME,
   },
-};
+});

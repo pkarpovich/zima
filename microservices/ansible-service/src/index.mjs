@@ -15,7 +15,7 @@ import { VpnService } from "./services/vpn-service.mjs";
 import { AtvService } from "./services/atv-service.mjs";
 
 const loggerService = new LoggerService({});
-const configService = new ConfigService({ config: Config });
+const configService = new ConfigService({ config: Config() });
 const ansibleService = new AnsibleService({ configService });
 const filesService = new FilesService(fs);
 const vpnService = new VpnService({

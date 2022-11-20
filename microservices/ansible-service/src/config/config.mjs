@@ -1,4 +1,4 @@
-export const Config = {
+export const Config = () => ({
   Ansible: {
     PlaybooksDir: process.env.PLAYBOOKS_DIR,
   },
@@ -16,4 +16,4 @@ export const Config = {
     Host: process.env.SSH_HOST,
     Username: process.env.SSH_USER,
   },
-};
+});

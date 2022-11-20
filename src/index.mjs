@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 app.use(morgan("tiny"));
 
 const loggerService = new LoggerService({});
-const configService = new ConfigService({ config: Config });
+const configService = new ConfigService({ config: Config() });
 const rabbitService = new BrokerService({ configService, loggerService });
 
 const httpPort = configService.get("General.Port") || 3000;

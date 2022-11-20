@@ -11,10 +11,10 @@
   "author": "Pavel Karpovich",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1",
-    "lowdb": "^3.0.0",
-    "nanoid": "^3.3.4",
-    "spotify-web-api-node": "^5.0.2",
-    "shared": "workspace:*"
+    "express": "^4.18.2",
+    "lowdb": "^5.0.5",
+    "nanoid": "^4.0.0",
+    "shared": "workspace:*",
+    "spotify-web-api-node": "^5.0.2"
   }
 }

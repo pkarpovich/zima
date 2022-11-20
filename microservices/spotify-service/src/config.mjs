@@ -1,4 +1,4 @@
-export const Config = {
+export const Config = () => ({
   Rabbit: {
     Url: process.env.AMQP_SERVER_URL,
     SpotifyQueueName: process.env.AMQP_SPOTIFY_QUEUE_NAME,
@@ -8,4 +8,4 @@ export const Config = {
     ClientSecret: process.env.SPOTIFY_CLIENT_SECRET,
     RedirectUri: process.env.SPOTIFY_REDIRECT_URI,
   },
-};
+});

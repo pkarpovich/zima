@@ -1,6 +1,7 @@
 import express from "express";
-import { Low, JSONFile } from "lowdb";
-import { join } from "path";
+import { Low } from "lowdb";
+import { JSONFile } from "lowdb/node";
+import { join } from "node:path";
 import {
   ConfigService,
   BrokerService,
@@ -20,7 +21,7 @@ const db = new Low(adapter);
 const authStoreService = new AuthStoreService(db);
 await authStoreService.init();
 
-const configService = new ConfigService({ config: Config });
+const configService = new ConfigService({ config: Config() });
 const spotifyService = new SpotifyService({ authStoreService, configService });
 const loggerService = new LoggerService({});
 const brokerService = new BrokerService({ configService, loggerService });
