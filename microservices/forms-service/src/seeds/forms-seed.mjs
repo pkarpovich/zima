@@ -6,7 +6,7 @@ export const FormsSeed = [
   {
     name: "Yeelight devices",
     globalKeywords: ["light"],
-    queueName: Config.Rabbit.SmartDevicesQueueName,
+    queueName: Config().Rabbit.SmartDevicesQueueName,
     actions: [
       {
         keywords: ["turn on flow mode"],
@@ -38,7 +38,7 @@ export const FormsSeed = [
   {
     name: "Spotify",
     globalKeywords: ["spotify"],
-    queueName: Config.Rabbit.SpotifyQueueName,
+    queueName: Config().Rabbit.SpotifyQueueName,
     actions: [
       {
         keywords: ["resume track"],
@@ -89,14 +89,14 @@ export const FormsSeed = [
   {
     name: "Meetings",
     globalKeywords: ["meeting"],
-    queueName: Config.Rabbit.MeetingsQueueName,
+    queueName: Config().Rabbit.MeetingsQueueName,
     actions: [{ keywords: ["start"], actionType: ActionTypes.Meetings.Start }],
   },
 
   {
     name: "VPN Form",
     globalKeywords: ["vpn"],
-    queueName: Config.Rabbit.AnsibleQueueName,
+    queueName: Config().Rabbit.AnsibleQueueName,
     actions: [
       {
         keywords: ["start"],
@@ -140,7 +140,7 @@ export const FormsSeed = [
   {
     name: "Apple TV",
     globalKeywords: ["atv"],
-    queueName: Config.Rabbit.AnsibleQueueName,
+    queueName: Config().Rabbit.AnsibleQueueName,
     actions: [
       {
         keywords: ["execute"],

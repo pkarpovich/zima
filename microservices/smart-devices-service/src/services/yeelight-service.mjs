@@ -64,11 +64,13 @@ export class YeelightService {
     }
   }
 
-  async setPower(status, zones) {
+  async setPower(status, zones, brightness) {
     const devices = this.#getTargetDevicesByZones(zones);
 
     for (const device of devices) {
       await device.setPower(status);
+      await device.setBrightness(brightness);
+      this.#getHomekitDevicesById(device.id)?.powerService.updateValue(status);
       this.#getHomekitDevicesById(device.id)?.powerService.updateValue(status);
     }
   }

@@ -27,8 +27,14 @@ const simpleTriggerService = new SimpleTriggerService({
 const serviceQueueName = configService.get("Rabbit.SmartDevicesQueueName");
 
 const handleQueueMessage = (_, channel) => async (msg) => {
-  const { name, args: { zones, command } = { zones: [], command: "" } } =
-    JSON.parse(msg.content.toString());
+  const {
+    name,
+    args: { zones, brightness, command } = {
+      zones: [],
+      command: "",
+      brightness: 100,
+    },
+  } = JSON.parse(msg.content.toString());
 
   switch (name) {
     case ActionTypes.SmartDevices.SetYeelightRandomColor: {
@@ -40,7 +46,7 @@ const handleQueueMessage = (_, channel) => async (msg) => {
       break;
     }
     case ActionTypes.SmartDevices.TurnOnYeelight: {
-      await yeelightService.setPower(true, zones);
+      await yeelightService.setPower(true, zones, brightness);
       break;
     }
     case ActionTypes.SmartDevices.TurnOffYeelight: {
