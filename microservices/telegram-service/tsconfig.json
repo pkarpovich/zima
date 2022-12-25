@@ -1,0 +1,22 @@
+{
+  "extends": "@tsconfig/node18/tsconfig.json",
+  "compilerOptions": {
+    "typeRoots": [
+      "node_modules/@types",
+      "src/@types"
+    ],
+    "outDir": "dist",
+    "module": "es2022",
+    "target": "es2022",
+    "moduleResolution": "node",
+    // Needed for CommonJS modules
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"],
+  "ts-node": {
+    "transpileOnly": true,
+    "esm": true
+  }
+}

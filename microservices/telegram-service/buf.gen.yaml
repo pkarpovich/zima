@@ -1,0 +1,14 @@
+version: v1
+
+plugins:
+  - name: ts
+    path: ./node_modules/.bin/protoc-gen-ts_proto
+    out: ./src/grpc/__generated__
+    opt:
+      - esModuleInterop=true
+      - forceLong=long
+      - oneof=unions
+      - env=node
+      - outputServices=nice-grpc
+      - outputServices=generic-definitions
+      - useExactTypes=false
