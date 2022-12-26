@@ -6,7 +6,7 @@ import {
   ConfigService,
   BrokerService,
   LoggerService,
-} from "shared/services.mjs";
+} from "shared/src/services.ts";
 
 import { Config } from "./config.mjs";
 import { SpotifyService } from "./spotify-service.mjs";

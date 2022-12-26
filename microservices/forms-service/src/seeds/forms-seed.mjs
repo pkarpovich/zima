@@ -1,6 +1,6 @@
-import { ActionTypes, TokenTypes } from "shared/constants.mjs";
+import { ActionTypes, TokenTypes } from "shared/src/constants.ts";
 import { Config } from "../config/config.mjs";
-import { FormTypes } from "shared/form-types.mjs";
+import { FormTypes } from "shared/src/form-types.ts";
 
 export const FormsSeed = [
   {

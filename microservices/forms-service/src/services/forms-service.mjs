@@ -1,6 +1,6 @@
 import { difference as _difference } from "lodash-es";
-import { TokenTypes } from "shared/constants.mjs";
-import { FormTypes } from "shared/form-types.mjs";
+import { TokenTypes } from "shared/src/constants.ts";
+import { FormTypes } from "shared/src/form-types.ts";
 
 export class FormsService {
   #formModel = null;

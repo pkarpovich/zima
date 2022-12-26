@@ -2,8 +2,8 @@ import {
   ConfigService,
   BrokerService,
   LoggerService,
-} from "shared/services.mjs";
-import { ActionTypes, CommandRespStatuses } from "shared/constants.mjs";
+} from "shared/src/services.ts";
+import { ActionTypes, CommandRespStatuses } from "shared/src/constants.ts";
 
 import { Config } from "./config/config.mjs";
 import { Database } from "./database/database.mjs";
@@ -15,7 +15,7 @@ import { Command } from "./models/commands-model.mjs";
 
 import { FormsService } from "./services/forms-service.mjs";
 import { CommandsService } from "./services/commands-service.mjs";
-import { FormTypes } from "shared/form-types.mjs";
+import { FormTypes } from "shared/src/form-types.ts";
 
 const loggerService = new LoggerService({});
 const configService = new ConfigService({ config: Config() });

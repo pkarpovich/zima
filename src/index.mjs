@@ -9,8 +9,8 @@ import {
   ConfigService,
   BrokerService,
   LoggerService,
-} from "shared/services.mjs";
-import { CommandRespStatuses } from "shared/constants.mjs";
+} from "shared/src/services.ts";
+import { CommandRespStatuses } from "shared/src/constants.ts";
 
 const app = express();
 app.use(bodyParser.json());

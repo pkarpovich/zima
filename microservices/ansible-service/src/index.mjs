@@ -5,8 +5,8 @@ import {
   BrokerService,
   LoggerService,
   FilesService,
-} from "shared/services.mjs";
-import { ActionTypes } from "shared/constants.mjs";
+} from "shared/src/services.ts";
+import { ActionTypes } from "shared/src/constants.ts";
 
 import { Config } from "./config/config.mjs";
 

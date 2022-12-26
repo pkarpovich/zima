@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 import { ActionSchema } from "./actions-model.mjs";
-import { FormTypes } from "shared/form-types.mjs";
+import { FormTypes } from "shared/src/form-types.ts";
 
 export const FormSchema = new Schema({
   name: {

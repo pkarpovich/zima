@@ -1,11 +1,11 @@
-type IConfig = {
+export type IConfig = {
   Telegram: {
     ApiId: number;
     ApiHash: string;
     SessionString: string;
     Auth: {
       PhoneNumber: string;
-      Password?: string;
+      Password: string;
       PhoneCode?: string;
     };
   };
@@ -18,7 +18,7 @@ export const Config = (): IConfig => ({
     SessionString: process.env.TELEGRAM_SESSION_STRING || "",
     Auth: {
       PhoneNumber: String(process.env.TELEGRAM_AUTH_PHONE_NUMBER),
-      Password: String(process.env.TELERAM_AUTH_PASSWORD),
+      Password: process.env.TELERAM_AUTH_PASSWORD || "",
       PhoneCode: String(process.env.TELEGRAM_AUTH_PHONE_CODE),
     },
   },

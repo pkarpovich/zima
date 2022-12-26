@@ -2,7 +2,8 @@
   "name": "shared",
   "version": "1.0.1",
   "description": "",
-  "main": "index.mjs",
+  "main": "src/index.ts",
+  "type": "module",
   "dependencies": {
     "amqplib": "^0.10.3",
     "dotenv": "^16.0.3",
@@ -21,5 +22,9 @@
   "bugs": {
     "url": "https://github.com/pkarpovich/local-ansible-runner/issues"
   },
-  "homepage": "https://github.com/pkarpovich/local-ansible-runner#readme"
+  "homepage": "https://github.com/pkarpovich/local-ansible-runner#readme",
+  "devDependencies": {
+    "@types/amqplib": "^0.10.1",
+    "@types/signale": "^1.4.4"
+  }
 }

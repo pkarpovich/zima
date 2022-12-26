@@ -8,8 +8,8 @@ import {
   ConfigService,
   BrokerService,
   LoggerService,
-} from "shared/services.mjs";
-import { ActionTypes } from "shared/constants.mjs";
+} from "shared/src/services.ts";
+import { ActionTypes } from "shared/src/constants.ts";
 
 import { YeelightService } from "./services/yeelight-service.mjs";
 import { SimpleTriggerService } from "./services/simple-trigger-service.mjs";
