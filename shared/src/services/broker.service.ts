@@ -1,8 +1,11 @@
-import rabbit, { Channel, Connection, Replies } from "amqplib";
+import rabbit, { Connection, Replies } from "amqplib";
 import { nanoid } from "nanoid";
-import { ConfigService } from "./config-service.js";
-import { LoggerService } from "./logger-service.js";
-import AssertQueue = Replies.AssertQueue;
+import { ConfigService } from "./config.service.js";
+import { LoggerService } from "./logger.service.js";
+
+export type AssertQueue = Replies.AssertQueue;
+export type Channel = rabbit.Channel;
+export type ConsumeMessage = rabbit.ConsumeMessage;
 
 export class BrokerService {
   private readonly configService: ConfigService<unknown>;
@@ -23,8 +26,9 @@ export class BrokerService {
   }
 
   async createConnection() {
-    const url = this.configService.get("Rabbit.Url");
+    const url = this.configService.get<string>("Rabbit.Url");
     this.connection = await rabbit.connect(url);
+    this.loggerService.info("Connected to RabbitMQ");
 
     return this.connection;
   }
@@ -75,7 +79,7 @@ export class BrokerService {
 
   async subscribeToChannel(
     queueName: string,
-    cb: (q: AssertQueue, c: Channel) => (message: unknown) => void
+    cb: (q: AssertQueue, c: Channel) => (message: ConsumeMessage) => void
   ): Promise<void> {
     if (!this.connection) {
       return;
@@ -83,12 +87,12 @@ export class BrokerService {
 
     const channel = await this.connection.createChannel();
     const q = await channel.assertQueue(queueName);
+    this.loggerService.log(`Subscribed to queue ${q.queue}`);
 
     await channel.consume(
       queueName,
       (msg) => {
         if (!msg) {
-          cb(q, channel)(msg);
           return;
         }
 

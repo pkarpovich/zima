@@ -16,8 +16,8 @@ export class ConfigService<T> {
     this.config = config;
   }
 
-  get(path: string) {
-    return this.resolvePath(this.config, path);
+  get<K>(path: string): K {
+    return this.resolvePath(this.config, path) as K;
   }
 
   private resolvePath<K extends keyof T>(obj: T, path: string): T[K] {

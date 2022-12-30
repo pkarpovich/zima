@@ -10,4 +10,8 @@ export class FilesService {
   async getDirFiles(folderPath: string): Promise<string[]> {
     return this.fileSystem.readdir(folderPath);
   }
+
+  async createFolderIfNeeded(path: string): Promise<string | undefined> {
+    return this.fileSystem.mkdir(path, { recursive: true });
+  }
 }

@@ -13,7 +13,7 @@ import GetFullChat = Api.messages.GetFullChat;
 
 export type ISendMessageParams = SendMessageParams;
 
-const CONNECION_RETRIES = 5;
+const CONNECTION_RETRIES = 5;
 
 export class TelegramService {
   private client: TelegramClient;
@@ -28,7 +28,7 @@ export class TelegramService {
     const stringSession = new StringSession(SessionString);
 
     this.client = new TelegramClient(stringSession, ApiId, ApiHash, {
-      connectionRetries: CONNECION_RETRIES,
+      connectionRetries: CONNECTION_RETRIES,
     });
   }
 
