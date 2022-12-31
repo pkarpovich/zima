@@ -1,7 +1,14 @@
 import mongoose from "mongoose";
+
 const { Schema } = mongoose;
 
-export const PropSchema = new Schema({
+export interface IPropSchema {
+  name: string;
+  type: string;
+  clarifyingQuestion: string;
+}
+
+export const PropSchema: mongoose.Schema<IPropSchema> = new Schema({
   name: {
     type: String,
     required: true,

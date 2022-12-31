@@ -1,8 +1,9 @@
-import { ActionTypes, TokenTypes } from "shared/src/constants.ts";
-import { Config } from "../config/config.mjs";
-import { FormTypes } from "shared/src/form-types.ts";
+import { ActionTypes, TokenTypes } from "shared/src/constants.js";
+import { FormTypes } from "shared/src/enums.js";
+import { Config } from "../config/config.js";
+import { IFormSchema } from "../models/forms-model.js";
 
-export const FormsSeed = [
+export const FormsSeed: IFormSchema[] = [
   {
     name: "Yeelight devices",
     globalKeywords: ["light"],

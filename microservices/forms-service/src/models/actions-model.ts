@@ -1,9 +1,15 @@
 import mongoose from "mongoose";
+import { IPropSchema, PropSchema } from "./props-model.js";
+
 const { Schema } = mongoose;
 
-import { PropSchema } from "./props-model.mjs";
+export interface IActionSchema {
+  keywords: string[];
+  actionType: string;
+  props?: IPropSchema[];
+}
 
-export const ActionSchema = new Schema({
+export const ActionSchema: mongoose.Schema<IActionSchema> = new Schema({
   keywords: {
     type: [String],
     default: [],
