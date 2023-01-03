@@ -40,7 +40,10 @@ export class BrokerService {
     return null;
   }
 
-  async sendToChannelWithResponse(queueName: string, message: unknown) {
+  async sendToChannelWithResponse<T>(
+    queueName: string,
+    message: unknown
+  ): Promise<T | null> {
     if (!this.connection) {
       return null;
     }

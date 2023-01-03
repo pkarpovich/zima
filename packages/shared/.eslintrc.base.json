@@ -1,5 +1,5 @@
 {
-  "plugins": ["@typescript-eslint", "file-extension-in-import-ts"],
+  "plugins": ["@typescript-eslint", "file-extension-in-import-ts", "import", "prettier"],
   "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
   "parser": "@typescript-eslint/parser",
   "rules": {

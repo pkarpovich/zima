@@ -166,6 +166,12 @@ importers:
     devDependencies:
       nodemon: 2.0.20
 
+  packages/zima-controller:
+    specifiers:
+      shared: workspace:*
+    dependencies:
+      shared: link:../shared
+
 packages:
 
   /@acuminous/bitsyntax/0.1.2:
