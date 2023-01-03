@@ -37,7 +37,7 @@ importers:
       morgan: 1.10.0
       nanoid: 4.0.0
       node-ansible-control: 0.6.0
-      shared: link:shared
+      shared: link:microservices/shared
     devDependencies:
       '@babel/core': 7.20.2
       '@babel/eslint-parser': 7.19.1_ustmoyzvfgos66cf2wvsplsloa
@@ -65,7 +65,7 @@ importers:
       shared: workspace:*
     dependencies:
       node-ansible-control: 0.6.0
-      shared: link:../../shared
+      shared: link:../shared
 
   microservices/forms-service:
     specifiers:
@@ -77,69 +77,12 @@ importers:
     dependencies:
       lodash-es: 4.17.21
       mongoose: 6.7.2
-      shared: link:../../shared
+      shared: link:../shared
     devDependencies:
       '@types/lodash-es': 4.17.6
       migrate-mongo: 9.0.0
 
-  microservices/smart-devices-service:
-    specifiers:
-      '@types/color-convert': ^2.0.0
-      '@types/promise-retry': ^1.1.3
-      color-convert: ^2.0.1
-      hap-nodejs: ^0.11.0
-      has-bigints: ^1.0.2
-      promise-retry: ^2.0.1
-      shared: workspace:*
-      yeelight-node: ^1.1.6
-    dependencies:
-      color-convert: 2.0.1
-      hap-nodejs: 0.11.0
-      has-bigints: 1.0.2
-      promise-retry: 2.0.1
-      shared: link:../../shared
-      yeelight-node: 1.1.6
-    devDependencies:
-      '@types/color-convert': 2.0.0
-      '@types/promise-retry': 1.1.3
-
-  microservices/spotify-service:
-    specifiers:
-      '@types/spotify-web-api-node': ^5.0.7
-      nanoid: ^4.0.0
-      shared: workspace:*
-      spotify-web-api-node: ^5.0.2
-    dependencies:
-      nanoid: 4.0.0
-      shared: link:../../shared
-      spotify-web-api-node: 5.0.2
-    devDependencies:
-      '@types/spotify-web-api-node': 5.0.7
-
-  microservices/telegram-service:
-    specifiers:
-      big-integer: ^1.6.51
-      long: ^5.2.1
-      nice-grpc: ^2.0.1
-      nice-grpc-common: ^2.0.0
-      nodemon: ^2.0.20
-      protobufjs: ^7.1.2
-      shared: workspace:*
-      telegram: ^2.15.2
-      ts-proto: ^1.136.1
-    dependencies:
-      big-integer: 1.6.51
-      long: 5.2.1
-      nice-grpc: 2.0.1
-      nice-grpc-common: 2.0.0
-      protobufjs: 7.1.2
-      shared: link:../../shared
-      telegram: 2.15.2
-      ts-proto: 1.136.1
-    devDependencies:
-      nodemon: 2.0.20
-
-  shared:
+  microservices/shared:
     specifiers:
       '@types/amqplib': ^0.10.1
       '@types/express': ^4.17.15
@@ -165,6 +108,63 @@ importers:
       '@types/amqplib': 0.10.1
       '@types/express': 4.17.15
       '@types/signale': 1.4.4
+
+  microservices/smart-devices-service:
+    specifiers:
+      '@types/color-convert': ^2.0.0
+      '@types/promise-retry': ^1.1.3
+      color-convert: ^2.0.1
+      hap-nodejs: ^0.11.0
+      has-bigints: ^1.0.2
+      promise-retry: ^2.0.1
+      shared: workspace:*
+      yeelight-node: ^1.1.6
+    dependencies:
+      color-convert: 2.0.1
+      hap-nodejs: 0.11.0
+      has-bigints: 1.0.2
+      promise-retry: 2.0.1
+      shared: link:../shared
+      yeelight-node: 1.1.6
+    devDependencies:
+      '@types/color-convert': 2.0.0
+      '@types/promise-retry': 1.1.3
+
+  microservices/spotify-service:
+    specifiers:
+      '@types/spotify-web-api-node': ^5.0.7
+      nanoid: ^4.0.0
+      shared: workspace:*
+      spotify-web-api-node: ^5.0.2
+    dependencies:
+      nanoid: 4.0.0
+      shared: link:../shared
+      spotify-web-api-node: 5.0.2
+    devDependencies:
+      '@types/spotify-web-api-node': 5.0.7
+
+  microservices/telegram-service:
+    specifiers:
+      big-integer: ^1.6.51
+      long: ^5.2.1
+      nice-grpc: ^2.0.1
+      nice-grpc-common: ^2.0.0
+      nodemon: ^2.0.20
+      protobufjs: ^7.1.2
+      shared: workspace:*
+      telegram: ^2.15.2
+      ts-proto: ^1.136.1
+    dependencies:
+      big-integer: 1.6.51
+      long: 5.2.1
+      nice-grpc: 2.0.1
+      nice-grpc-common: 2.0.0
+      protobufjs: 7.1.2
+      shared: link:../shared
+      telegram: 2.15.2
+      ts-proto: 1.136.1
+    devDependencies:
+      nodemon: 2.0.20
 
 packages:
 
