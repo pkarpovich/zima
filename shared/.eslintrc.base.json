@@ -4,7 +4,6 @@
   "parser": "@typescript-eslint/parser",
   "rules": {
     "prettier/prettier": "error",
-    "@typescript-eslint/no-unused-vars": "error",
     "@typescript-eslint/no-explicit-any": "error",
     "import/no-unresolved": "error",
     "import/extensions": [
@@ -17,7 +16,16 @@
     ],
     "import/no-duplicates": ["error", { "considerQueryString": true }],
     "file-extension-in-import-ts/file-extension-in-import-ts": "error",
-    "no-useless-constructor": "off"
+    "no-useless-constructor": "off",
+    "no-await-in-loop": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ]
   },
   "settings": {
     "import/parsers": {

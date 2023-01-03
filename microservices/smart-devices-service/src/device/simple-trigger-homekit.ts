@@ -1,18 +1,21 @@
-import hap from "hap-nodejs";
+import * as hap from "hap-nodejs";
+import { IHomekitDevice } from "../types/homekit-device.type";
+
+const { Accessory, Characteristic, CharacteristicEventTypes, Service } = hap;
 
 export class SimpleTriggerHomekit {
-  instance = null;
+  private state: hap.CharacteristicValue = false;
 
-  state = false;
-
-  constructor({ uuid, name, username, pincode, homekitPort: port }) {
+  constructor({
+    uuid,
+    name,
+    username,
+    pincode,
+    homekitPort: port,
+  }: IHomekitDevice) {
     this.getState = this.getState.bind(this);
     this.setState = this.setState.bind(this);
 
-    const Accessory = hap.Accessory;
-    const Characteristic = hap.Characteristic;
-    const CharacteristicEventTypes = hap.CharacteristicEventTypes;
-    const Service = hap.Service;
     const { On } = Characteristic;
 
     const accessoryUuid = hap.uuid.generate(uuid);
@@ -34,11 +37,14 @@ export class SimpleTriggerHomekit {
     });
   }
 
-  getState(callback) {
+  getState(callback: hap.CharacteristicGetCallback) {
     callback(undefined, this.state);
   }
 
-  setState(value, callback) {
+  setState(
+    value: hap.CharacteristicValue,
+    callback: hap.CharacteristicSetCallback
+  ) {
     this.state = value;
     callback(undefined);
   }

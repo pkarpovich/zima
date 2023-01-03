@@ -1,22 +1,39 @@
-import hap from "hap-nodejs";
+import * as hap from "hap-nodejs";
+import { Nullable } from "shared/src/types.js";
+import { IHomekitDevice } from "../types/homekit-device.type.js";
+import { YeelightDevice } from "./yeelight-local.js";
 
 export class YeelightHomekit {
-  id = null;
-  instance = null;
+  public id: string;
 
-  hue = 255;
-  sat = 45;
-  temp = 588;
-  brightness = 100;
-  power = false;
+  private instance: YeelightDevice;
 
-  saturationService = null;
-  powerService = null;
-  hueService = null;
+  private hue: hap.CharacteristicValue = 255;
+
+  private sat: hap.CharacteristicValue = 45;
+
+  private temp: hap.CharacteristicValue = 588;
+
+  private brightness: hap.CharacteristicValue = 100;
+
+  private power: hap.CharacteristicValue = false;
+
+  readonly powerService: hap.Characteristic;
+
+  readonly saturationService: Nullable<hap.Characteristic> = null;
+
+  readonly hueService: Nullable<hap.Characteristic> = null;
 
   constructor(
-    instance,
-    { uuid, name, username, pincode, homekitPort: port, hasRGB = false }
+    instance: YeelightDevice,
+    {
+      uuid,
+      name,
+      username,
+      pincode,
+      homekitPort: port,
+      hasRGB = false,
+    }: IHomekitDevice
   ) {
     this.instance = instance;
     this.id = uuid;
@@ -29,10 +46,9 @@ export class YeelightHomekit {
     this.setSaturation = this.setSaturation.bind(this);
     this.setHue = this.setHue.bind(this);
 
-    const Accessory = hap.Accessory;
-    const Characteristic = hap.Characteristic;
-    const CharacteristicEventTypes = hap.CharacteristicEventTypes;
-    const Service = hap.Service;
+    const { Accessory, Characteristic, CharacteristicEventTypes, Service } =
+      hap;
+
     const { On, Hue, Brightness, Saturation, ColorTemperature } =
       Characteristic;
 
@@ -87,56 +103,75 @@ export class YeelightHomekit {
     });
   }
 
-  async setBrightness(value, callback) {
+  async setBrightness(
+    value: hap.CharacteristicValue,
+    callback: hap.CharacteristicSetCallback
+  ) {
     this.brightness = value;
-    await this.instance.setBrightness(value);
+    await this.instance.setBrightness(+value);
     callback(undefined);
   }
 
-  async getBrightness(callback) {
+  async getBrightness(callback: hap.CharacteristicGetCallback) {
     this.brightness = await this.instance.getBrightness();
     callback(undefined, this.brightness);
   }
 
-  async setPowerState(value, callback) {
+  async setPowerState(
+    value: hap.CharacteristicValue,
+    callback: hap.CharacteristicSetCallback
+  ) {
     this.power = value;
-    await this.instance.setPower(value);
+    await this.instance.setPower(value as boolean);
     callback(undefined);
   }
 
-  async getPowerState(callback) {
+  async getPowerState(callback: hap.CharacteristicGetCallback) {
     this.power = await this.instance.getPower();
     callback(undefined, this.power);
   }
 
-  async setHue(h, callback) {
+  async setHue(
+    h: hap.CharacteristicValue,
+    callback: hap.CharacteristicSetCallback
+  ) {
     this.hue = h;
     await this.setColor();
 
     callback(undefined);
   }
 
-  async setSaturation(s, callback) {
+  async setSaturation(
+    s: hap.CharacteristicValue,
+    callback: hap.CharacteristicSetCallback
+  ) {
     this.sat = s;
     await this.setColor();
     callback(undefined);
   }
 
-  async setTemperature(value, callback) {
+  async setTemperature(
+    value: hap.CharacteristicValue,
+    callback: hap.CharacteristicSetCallback
+  ) {
     if (this.power) {
       this.temp = value;
-      await this.instance.setTemperature(value);
+      await this.instance.setTemperature(+value);
     }
 
     callback(null);
   }
 
   async setColor() {
-    await this.instance.setHsv(this.hue, this.sat);
+    await this.instance.setHsv(+this.hue, +this.sat);
   }
 
-  updateColor(h, s) {
-    this.hueService.updateValue(h);
-    this.saturationService.updateValue(s);
+  updateColor(
+    h: hap.CharacteristicValue,
+    s: hap.CharacteristicValue,
+    _v?: hap.CharacteristicValue
+  ) {
+    this.hueService?.updateValue(h);
+    this.saturationService?.updateValue(s);
   }
 }

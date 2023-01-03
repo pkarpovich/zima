@@ -2,10 +2,22 @@
   "name": "smart-devices-service",
   "version": "1.0.0",
   "description": "",
-  "main": "index.mjs",
+  "main": "./dist/index.js",
+  "exports": {
+    "./*": "./dist/*"
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "dist/*"
+      ]
+    }
+  },
+  "type": "module",
   "scripts": {
-    "start": "node ./src/index.mjs",
-    "start:dev": "nodemon -e mjs ./src/index.mjs",
+    "start": "ts-node src/index.ts",
+    "dev": "nodemon src/index.ts",
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Pavel Karpovich",
@@ -17,5 +29,9 @@
     "promise-retry": "^2.0.1",
     "shared": "workspace:*",
     "yeelight-node": "^1.1.6"
+  },
+  "devDependencies": {
+    "@types/color-convert": "^2.0.0",
+    "@types/promise-retry": "^1.1.3"
   }
 }

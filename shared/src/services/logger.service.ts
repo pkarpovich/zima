@@ -5,7 +5,7 @@ export interface LoggerContext {
 }
 
 export class LoggerService {
-  private readonly logger: Signale;
+  private logger: Signale;
 
   get defaultContext() {
     return {
@@ -19,6 +19,10 @@ export class LoggerService {
       displayDate: true,
     });
     this.logger = signale.scope("global");
+  }
+
+  setDefaultContext(name: string): void {
+    this.logger = signale.scope(name);
   }
 
   log(message: string, context: LoggerContext = this.defaultContext): void {
@@ -46,9 +50,5 @@ export class LoggerService {
 
   await(message: string, context: LoggerContext = this.defaultContext): void {
     context.scope.await(message);
-  }
-
-  createScope(name: string): Signale {
-    return signale.scope(name);
   }
 }
