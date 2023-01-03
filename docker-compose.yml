@@ -35,7 +35,7 @@ services:
 
   meetings-service:
     build:
-      context: ./microservices/meeting-service
+      context: packages/meeting-service
       dockerfile: Dockerfile
     container_name: meetings-service
     volumes:
@@ -53,7 +53,7 @@ services:
   spotify-service:
     build:
       context: .
-      dockerfile: microservices/spotify-service/Dockerfile
+      dockerfile: packages/spotify-service/Dockerfile
     container_name: spotify-service
     hostname: spotify-service
     volumes:
@@ -73,7 +73,7 @@ services:
   smart-devices-service:
     build:
       context: .
-      dockerfile: microservices/smart-devices-service/Dockerfile
+      dockerfile: packages/smart-devices-service/Dockerfile
     container_name: smart-devices-service
     hostname: smart-devices-service
     volumes:
@@ -94,7 +94,7 @@ services:
   ansible-service:
     build:
       context: .
-      dockerfile: microservices/ansible-service/Dockerfile
+      dockerfile: packages/ansible-service/Dockerfile
       args:
         SSH_HOST: ${SSH_HOST}
         SSH_USER: ${SSH_USER}
@@ -166,7 +166,7 @@ services:
   forms-service:
     build:
       context: .
-      dockerfile: microservices/forms-service/Dockerfile
+      dockerfile: packages/forms-service/Dockerfile
     container_name: forms-service
     hostname: forms-service
     environment:
