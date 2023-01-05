@@ -1,6 +1,6 @@
 import { Yeelight } from "yeelight-node";
-import { LoggerService } from "shared/src/services.js";
-import { Nullable } from "shared/src/types.js";
+import { LoggerService } from "shared/services";
+import { Nullable } from "shared/types";
 import { retry } from "../utils/retry.js";
 
 type Arr = readonly unknown[];

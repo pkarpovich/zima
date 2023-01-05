@@ -1,6 +1,6 @@
 import { difference as _difference } from "lodash-es";
-import { TokenTypes } from "shared/src/constants.js";
-import { FormTypes } from "shared/src/enums.js";
+import { TokenTypes } from "shared/constants";
+import { FormTypes } from "shared/enums";
 import { IForm, IFormSchema } from "../models/forms-model.js";
 import { IActionSchema } from "../models/actions-model.js";
 

@@ -1,5 +1,5 @@
-import { Router } from "shared/src/controllers.js";
-import { HttpService } from "shared/src/services.js";
+import { Router } from "shared/controllers";
+import { HttpService } from "shared/services";
 
 import { SpotifyController } from "./spotify.controller.js";
 

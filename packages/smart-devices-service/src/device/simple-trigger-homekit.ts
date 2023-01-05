@@ -1,5 +1,5 @@
 import * as hap from "hap-nodejs";
-import { IHomekitDevice } from "../types/homekit-device.type";
+import { IHomekitDevice } from "../types/homekit-device.type.js";
 
 const { Accessory, Characteristic, CharacteristicEventTypes, Service } = hap;
 

@@ -1,5 +1,5 @@
 import Ansible from "node-ansible-control";
-import { ConfigService } from "shared/src/services.js";
+import { ConfigService } from "shared/services";
 import { IConfig } from "../config/config.js";
 
 export class AnsibleService {

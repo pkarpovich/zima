@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { FormTypes } from "shared/src/enums.js";
+import { FormTypes } from "shared/enums";
 import { ActionSchema, IActionSchema } from "./actions-model.js";
 
 const { Schema } = mongoose;

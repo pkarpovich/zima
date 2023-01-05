@@ -1,4 +1,4 @@
-import { ConfigService, FilesService } from "shared/src/services.js";
+import { ConfigService, FilesService } from "shared/services";
 import { AnsibleService } from "./ansible-service.js";
 import { IConfig } from "../config/config.js";
 

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import { ConfigService, LoggerService } from "shared/src/services.js";
-import { Nullable } from "shared/src/types.js";
+import { ConfigService, LoggerService } from "shared/services";
+import { Nullable } from "shared/types";
 import { IConfig } from "../config/config.js";
 
 export class Database {

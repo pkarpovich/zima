@@ -1,10 +1,5 @@
-import {
-  Request,
-  Response,
-  Router,
-  BaseController,
-} from "shared/src/controllers.js";
-import { LoggerService, HttpService } from "shared/src/services.js";
+import { Request, Response, Router, BaseController } from "shared/controllers";
+import { LoggerService, HttpService } from "shared/services";
 
 import { SpotifyService } from "../services/spotify-service.js";
 

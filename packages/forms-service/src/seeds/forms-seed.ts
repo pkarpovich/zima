@@ -1,5 +1,5 @@
-import { ActionTypes, TokenTypes } from "shared/src/constants.js";
-import { FormTypes } from "shared/src/enums.js";
+import { ActionTypes, TokenTypes } from "shared/constants";
+import { FormTypes } from "shared/enums";
 import { Config } from "../config/config.js";
 import { IFormSchema } from "../models/forms-model.js";
 

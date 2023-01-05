@@ -1,6 +1,6 @@
 import promiseRetry from "promise-retry";
 
-import { LoggerService } from "shared/src/services.js";
+import { LoggerService } from "shared/services";
 
 const loggerService = new LoggerService();
 

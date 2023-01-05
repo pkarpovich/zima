@@ -37,36 +37,27 @@ RUN pnpm prune --prod && \
     pnpm prune --prod -C ${SHARED_SERVICE_PATH} && \
     pnpm prune --prod -C ${SERVICE_PATH}
 
-FROM python:3.11-alpine
-RUN apk update && apk add dumb-init openssh sshpass nodejs npm ansible
+FROM node:18-alpine
 
-ARG SSHPASS
-ENV SSHPASS=$SSHPASS
-ARG SSH_USER
-ENV SSH_USER=$SSH_USER
-ARG SSH_HOST
-ENV SSH_HOST=$SSH_HOST
 ENV NODE_ENV production
 ARG SHARED_SERVICE_PATH
 ARG SERVICE_PATH
 ARG PACKAGE_NAME
-ARG PNPM_VERSION=7.16.1
-RUN npm install -g pnpm@${PNPM_VERSION}
-
-RUN ssh-keygen -q -t rsa -N '' -f /root/.ssh/id_rsa
-RUN sshpass -e ssh-copy-id -f -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST
 
 WORKDIR /usr/src/app
+RUN apk add dumb-init
 
-COPY --from=build /usr/src/app/node_modules node_modules
+USER node
 
-COPY --from=build /usr/src/app/${SHARED_SERVICE_PATH}/node_modules ${SHARED_SERVICE_PATH}/node_modules
-COPY --from=build /usr/src/app/${SHARED_SERVICE_PATH}/package.json ${SHARED_SERVICE_PATH}
-COPY --from=build /usr/src/app/${SHARED_SERVICE_PATH}/dist ${SHARED_SERVICE_PATH}/dist
+COPY --chown=node:node --from=build /usr/src/app/node_modules node_modules
 
-COPY --from=build /usr/src/app/${SERVICE_PATH}/node_modules ${SERVICE_PATH}/node_modules
-COPY --from=build /usr/src/app/${SERVICE_PATH}/package.json ${SERVICE_PATH}
-COPY --from=build /usr/src/app/${SERVICE_PATH}/dist ${SERVICE_PATH}
+COPY --chown=node:node --from=build /usr/src/app/${SHARED_SERVICE_PATH}/node_modules ${SHARED_SERVICE_PATH}/node_modules
+COPY --chown=node:node --from=build /usr/src/app/${SHARED_SERVICE_PATH}/package.json ${SHARED_SERVICE_PATH}
+COPY --chown=node:node --from=build /usr/src/app/${SHARED_SERVICE_PATH}/dist ${SHARED_SERVICE_PATH}/dist
+
+COPY --chown=node:node --from=build /usr/src/app/${SERVICE_PATH}/node_modules ${SERVICE_PATH}/node_modules
+COPY --chown=node:node --from=build /usr/src/app/${SERVICE_PATH}/package.json ${SERVICE_PATH}
+COPY --chown=node:node --from=build /usr/src/app/${SERVICE_PATH}/dist ${SERVICE_PATH}
 
 WORKDIR /usr/src/app/${SERVICE_PATH}
 

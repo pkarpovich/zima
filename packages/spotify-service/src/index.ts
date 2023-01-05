@@ -8,15 +8,15 @@ import {
   HttpService,
   Channel,
   ConsumeMessage,
-} from "shared/src/services.js";
-import { ActionTypes } from "shared/src/constants.js";
-import { runFunctionWithRetry } from "shared/src/utils.js";
+} from "shared/services";
+import { ActionTypes } from "shared/constants";
+import { runFunctionWithRetry } from "shared/utils";
 
 import { Config } from "./config.js";
 import { IAuthStore } from "./store.js";
 import { SpotifyService } from "./services/spotify-service.js";
-import { initApiController } from "./controllers/api.controller";
-import { SpotifyController } from "./controllers/spotify.controller";
+import { initApiController } from "./controllers/api.controller.js";
+import { SpotifyController } from "./controllers/spotify.controller.js";
 
 const DEFAULT_STORE_VALUE: IAuthStore = { refreshToken: null };
 

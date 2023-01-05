@@ -1,8 +1,8 @@
 import colorConvert from "color-convert";
-import { Nullable } from "shared/src/types.js";
+import { Nullable } from "shared/types";
 import { YeelightDevice } from "../device/yeelight-local.js";
 import { YeelightHomekit } from "../device/yeelight-homekit.js";
-import { IHomekitDevice } from "../types/homekit-device.type";
+import { IHomekitDevice } from "../types/homekit-device.type.js";
 
 export class YeelightService {
   devices = new Map<string, YeelightDevice[]>();

@@ -7,8 +7,8 @@ import {
   FilesService,
   Channel,
   ConsumeMessage,
-} from "shared/src/services.js";
-import { ActionTypes } from "shared/src/constants.js";
+} from "shared/services";
+import { ActionTypes } from "shared/constants";
 
 import { Config } from "./config/config.js";
 

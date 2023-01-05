@@ -1,5 +1,5 @@
 import * as hap from "hap-nodejs";
-import { Nullable } from "shared/src/types.js";
+import { Nullable } from "shared/types";
 import { IHomekitDevice } from "../types/homekit-device.type.js";
 import { YeelightDevice } from "./yeelight-local.js";
 

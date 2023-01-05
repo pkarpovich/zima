@@ -1,10 +1,6 @@
 import SpotifyWebApi from "spotify-web-api-node";
 import { nanoid } from "nanoid";
-import {
-  LoggerService,
-  ConfigService,
-  LocalDbService,
-} from "shared/src/services.js";
+import { LoggerService, ConfigService, LocalDbService } from "shared/services";
 
 import { IConfig } from "../config.js";
 import { IAuthStore } from "../store.js";

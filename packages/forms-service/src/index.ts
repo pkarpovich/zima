@@ -4,9 +4,9 @@ import {
   LoggerService,
   Channel,
   ConsumeMessage,
-} from "shared/src/services.js";
-import { ActionTypes, CommandRespStatuses } from "shared/src/constants.js";
-import { FormTypes } from "shared/src/enums.js";
+} from "shared/services";
+import { ActionTypes, CommandRespStatuses } from "shared/constants";
+import { FormTypes } from "shared/enums";
 
 import { Config, IConfig } from "./config/config.js";
 import { Database } from "./database/database.js";

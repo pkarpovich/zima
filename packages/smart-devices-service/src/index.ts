@@ -5,8 +5,8 @@ import {
   LoggerService,
   Channel,
   ConsumeMessage,
-} from "shared/src/services.js";
-import { ActionTypes } from "shared/src/constants.js";
+} from "shared/services";
+import { ActionTypes } from "shared/constants";
 import { Config } from "./config/config.js";
 
 import { YeelightService } from "./services/yeelight-service.js";

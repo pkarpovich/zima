@@ -1,5 +1,5 @@
 import { exec } from "child_process";
-import { ConfigService, LoggerService } from "shared/src/services.js";
+import { ConfigService, LoggerService } from "shared/services";
 import { IConfig } from "../config/config.js";
 
 export class AtvService {
