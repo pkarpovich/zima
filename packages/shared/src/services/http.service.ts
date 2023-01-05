@@ -1,5 +1,6 @@
 import express, { Router, NextFunction, Request, Response } from "express";
 import helmet from "helmet";
+import bodyParser from "body-parser";
 import "express-async-errors";
 
 import { ConfigService } from "./config.service.js";
@@ -15,6 +16,7 @@ export class HttpService {
   ) {
     this.app = express();
     this.app.use(helmet());
+    this.app.use(bodyParser.json());
 
     this.handleError = this.handleError.bind(this);
   }
