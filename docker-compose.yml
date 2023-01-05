@@ -19,6 +19,7 @@ services:
       context: .
       dockerfile: packages/zima-controller/Dockerfile
       args:
+        SHARED_SERVICE_PATH: packages/shared
         SERVICE_PATH: packages/zima-controller
         PACKAGE_NAME: zima-controller
     container_name: zima
