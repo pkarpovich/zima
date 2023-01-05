@@ -1,5 +1,5 @@
-import { Router } from "shared/src/controllers.js";
-import { HttpService } from "shared/src/services.js";
+import { Router } from "shared/controllers";
+import { HttpService } from "shared/services";
 
 import { CommandController } from "./command.controller.js";
 
@@ -7,9 +7,9 @@ export function initApiController(
   commandController: CommandController
 ): Router {
   const router = HttpService.newRouter();
-  const spotifyRouter = commandController.getRoutes();
+  const commandRouter = commandController.getRoutes();
 
-  router.use("/command", spotifyRouter);
+  router.use("/command", commandRouter);
 
   return router;
 }

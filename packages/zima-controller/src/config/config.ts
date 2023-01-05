@@ -3,8 +3,8 @@ export interface IConfig {
     Url: string;
     FormsQueueName: string;
   };
-  General: {
-    Port: number;
+  http: {
+    port: number;
   };
 }
 
@@ -15,8 +15,8 @@ export function Config(): IConfig {
       FormsQueueName: String(process.env.AMQP_FORMS_QUEUE_NAME),
     },
 
-    General: {
-      Port: Number(process.env.PORT),
+    http: {
+      port: Number(process.env.PORT),
     },
   };
 }

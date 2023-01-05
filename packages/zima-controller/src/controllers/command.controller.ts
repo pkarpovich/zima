@@ -1,16 +1,11 @@
-import {
-  Request,
-  Response,
-  Router,
-  BaseController,
-} from "shared/src/controllers.js";
+import { Request, Response, Router, BaseController } from "shared/controllers";
 import {
   LoggerService,
   HttpService,
   BrokerService,
   ConfigService,
-} from "shared/src/services.js";
-import { CommandRespStatuses } from "shared/src/constants.js";
+} from "shared/services";
+import { CommandRespStatuses } from "shared/constants";
 import { IConfig } from "../config/config.js";
 
 interface CommandResponse {

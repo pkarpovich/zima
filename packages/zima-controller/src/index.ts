@@ -1,10 +1,10 @@
-import { Config, IConfig } from "./config/config.js";
 import {
   ConfigService,
-  BrokerService,
   LoggerService,
+  BrokerService,
   HttpService,
-} from "shared/src/services.js";
+} from "shared/services";
+import { Config, IConfig } from "./config/config.js";
 import { initApiController } from "./controllers/api.controller.js";
 import { CommandController } from "./controllers/command.controller.js";
 

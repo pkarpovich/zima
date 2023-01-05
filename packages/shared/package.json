@@ -1,9 +1,37 @@
 {
   "name": "shared",
   "version": "1.0.1",
-  "description": "",
-  "main": "src/index.ts",
   "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./services": {
+      "types": "./dist/services.d.ts",
+      "import": "./dist/services.js"
+    },
+    "./controllers": {
+      "types": "./dist/controllers.d.ts",
+      "import": "./dist/controllers.js"
+    },
+    "./constants": {
+      "types": "./dist/constants.d.ts",
+      "import": "./dist/constants.js"
+    },
+    "./utils": {
+      "types": "./dist/utils.d.ts",
+      "import": "./dist/utils.js"
+    },
+    "./types": {
+      "types": "./dist/types.d.ts",
+      "import": "./dist/types.js"
+    },
+    "./enums": {
+      "types": "./dist/enums.d.ts",
+      "import": "./dist/enums.js"
+    }
+  },
   "dependencies": {
     "amqplib": "^0.10.3",
     "dotenv": "^16.0.3",
@@ -15,6 +43,8 @@
     "signale": "^1.4.0"
   },
   "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc -w",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

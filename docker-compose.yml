@@ -7,15 +7,20 @@ services:
       - 15672:15672 # for serve RabbitMQ GUI
     restart: unless-stopped
     healthcheck:
-      test: rabbitmq-diagnostics -q ping
+      test: rabbitmq-diagnostics -q pingx
       interval: 30s
       timeout: 30s
       retries: 3
     labels:
       reproxy.port: 15672
 
-  zima:
-    build: .
+  zima-controller:
+    build:
+      context: .
+      dockerfile: packages/zima-controller/Dockerfile
+      args:
+        SERVICE_PATH: packages/zima-controller
+        PACKAGE_NAME: zima-controller
     container_name: zima
     ports:
       - ${PORT}:${PORT}
@@ -142,7 +147,7 @@ services:
     depends_on:
       - message-broker
       - meetings-service
-      - zima
+      - zima-controller
 
   forms-db:
     image: mongo:4.4-bionic

@@ -1,18 +1,8 @@
 {
-  "name": "zima",
+  "name": "zima-controller",
   "version": "1.0.0",
   "description": "",
   "main": "./dist/index.js",
-  "exports": {
-    "./*": "./dist/*"
-  },
-  "typesVersions": {
-    "*": {
-      "*": [
-        "dist/*"
-      ]
-    }
-  },
   "type": "module",
   "scripts": {
     "start": "ts-node src/index.ts",
