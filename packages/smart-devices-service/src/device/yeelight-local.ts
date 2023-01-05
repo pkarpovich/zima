@@ -105,12 +105,12 @@ export class YeelightDevice {
     return defaultValue;
   }
 
-  private setProp<T extends Arr, U extends Arr, R>(
-    f?: (...args: [...T, ...U]) => R,
+  private setProp<T extends Arr, R>(
+    f?: (...args: [...T]) => R,
     ...headArgs: T
   ) {
     try {
-      return (...tailArgs: U) => f?.(...headArgs, ...tailArgs);
+      return f?.bind(this.instance)(...headArgs);
     } catch (e) {
       this.logService.error(
         `Can't set property ${f?.name} to ${headArgs} on yeelight device, error: `
