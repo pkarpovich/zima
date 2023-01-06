@@ -11,3 +11,8 @@ scrape_configs:
     static_configs:
       - targets:
           - reproxy:8081
+  - job_name: zima
+    metrics_path: /metrics
+    static_configs:
+      - targets:
+          - zima-controller:3001

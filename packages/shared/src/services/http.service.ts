@@ -1,3 +1,4 @@
+import { createRequire } from "node:module";
 import express, { Router, NextFunction, Request, Response } from "express";
 import helmet from "helmet";
 import bodyParser from "body-parser";
@@ -5,6 +6,11 @@ import "express-async-errors";
 
 import { ConfigService } from "./config.service.js";
 import { LoggerService } from "./logger.service.js";
+
+const require = createRequire(import.meta.url);
+
+// eslint-disable-next-line import/no-commonjs
+const apiMetrics = require("prometheus-api-metrics");
 
 export class HttpService {
   private readonly app: express.Application;
@@ -15,6 +21,13 @@ export class HttpService {
     private readonly apiRouter: express.Router
   ) {
     this.app = express();
+    this.app.use(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      apiMetrics({
+        metricsPath: "/metrics",
+      })
+    );
     this.app.use(helmet());
     this.app.use(bodyParser.json());
 

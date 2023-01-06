@@ -41,6 +41,8 @@
     "helmet": "^6.0.1",
     "lowdb": "^5.0.5",
     "nanoid": "^4.0.0",
+    "prom-client": "^14.1.1",
+    "prometheus-api-metrics": "^3.2.2",
     "signale": "^1.4.0"
   },
   "scripts": {
