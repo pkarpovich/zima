@@ -35,9 +35,9 @@ services:
     depends_on:
       - message-broker
     labels:
-      reproxy.server: '*'
-      reproxy.route: '^/(.*)'
-      reproxy.dest: '/$$1'
+      reproxy.server: "*"
+      reproxy.route: "^/(.*)"
+      reproxy.dest: "/$$1"
 
   meetings-service:
     build:
@@ -135,33 +135,6 @@ services:
     labels:
       reproxy.enabled: 0
 
-  reproxy:
-    image: umputun/reproxy:master
-    container_name: zima-api
-    hostname: reproxy
-    ports:
-      - "80:8080"
-      - "443:8443"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    environment:
-      - TZ=Europe/Warsaw
-      - LISTEN=0.0.0.0:8080
-      - DOCKER_ENABLED=true
-      - DOCKER_AUTO=true
-      - DEBUG=true
-      - TIMEOUT_RESP_HEADER=640s
-      - TIMEOUT_WRITE=640s
-      - TIMEOUT_IDLE=640s
-      - TIMEOUT_DIAL=640s
-      - TIMEOUT_KEEP_ALIVE=640s
-      - MAX_SIZE=0
-    restart: unless-stopped
-    depends_on:
-      - message-broker
-      - meetings-service
-      - zima-controller
-
   forms-db:
     image: mongo:4.4-bionic
     container_name: forms-db
@@ -210,6 +183,59 @@ services:
     labels:
       reproxy.enabled: no
 
+  reproxy:
+    image: umputun/reproxy:master
+    container_name: zima-api
+    hostname: reproxy
+    ports:
+      - "80:8080"
+      - "443:8443"
+      - 8081
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - TZ=Europe/Warsaw
+      - LISTEN=0.0.0.0:8080
+      - DOCKER_ENABLED=true
+      - DOCKER_AUTO=true
+      - DEBUG=true
+      - TIMEOUT_RESP_HEADER=640s
+      - TIMEOUT_WRITE=640s
+      - TIMEOUT_IDLE=640s
+      - TIMEOUT_DIAL=640s
+      - TIMEOUT_KEEP_ALIVE=640s
+      - MAX_SIZE=0
+      - MGMT_ENABLED=true
+    restart: unless-stopped
+    depends_on:
+      - message-broker
+      - meetings-service
+      - zima-controller
+
+  prometheus:
+    image: prom/prometheus:v2.41.0
+    container_name: prometheus
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+      - prometheus-data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+      - "--web.console.templates=/usr/share/prometheus/consoles"
+    ports:
+      - 9090:9090
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3100:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+
 volumes:
   formsdbdata:
   persist-homekit:
+  grafana-storage:
+  prometheus-data:
