@@ -15,7 +15,6 @@
   "license": "ISC",
   "dependencies": {
     "big-integer": "^1.6.51",
-    "nice-grpc": "^2.0.1",
     "shared": "workspace:*",
     "shared-grpc-services": "workspace:*",
     "telegram": "^2.15.2"

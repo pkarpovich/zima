@@ -4,3 +4,4 @@ export * from "./services/config.service.js";
 export * from "./services/logger.service.js";
 export * from "./services/files.service.js";
 export * from "./services/http.service.js";
+export * from "./services/grpc.service.js";

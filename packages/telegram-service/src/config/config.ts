@@ -13,6 +13,9 @@ export interface ITelegramConfig {
 
 export type IConfig = {
   Telegram: ITelegramConfig;
+  grpc: {
+    address: string;
+  };
 };
 
 export const Config = (): IConfig => ({
@@ -25,5 +28,8 @@ export const Config = (): IConfig => ({
       Password: process.env.TELERAM_AUTH_PASSWORD || "",
       PhoneCode: String(process.env.TELEGRAM_AUTH_PHONE_CODE),
     },
+  },
+  grpc: {
+    address: process.env.GRPC_ADDRESS || "",
   },
 });

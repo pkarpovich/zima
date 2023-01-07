@@ -25,7 +25,8 @@
         "varsIgnorePattern": "^_",
         "caughtErrorsIgnorePattern": "^_"
       }
-    ]
+    ],
+    "no-empty-function": "off"
   },
   "settings": {
     "import/parsers": {
