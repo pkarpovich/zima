@@ -1,14 +1,18 @@
+export interface ITelegramAuthConfig {
+  PhoneNumber: string;
+  Password: string;
+  PhoneCode?: string;
+}
+
+export interface ITelegramConfig {
+  ApiId: number;
+  ApiHash: string;
+  SessionString: string;
+  Auth: ITelegramAuthConfig;
+}
+
 export type IConfig = {
-  Telegram: {
-    ApiId: number;
-    ApiHash: string;
-    SessionString: string;
-    Auth: {
-      PhoneNumber: string;
-      Password: string;
-      PhoneCode?: string;
-    };
-  };
+  Telegram: ITelegramConfig;
 };
 
 export const Config = (): IConfig => ({

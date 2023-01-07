@@ -5,10 +5,10 @@ import {
   TelegramServiceImplementation,
   TelegramServiceDefinition,
   CallRequest,
-} from "./__generated__/services/v1/telegram_service.js";
+} from "shared-grpc-services/services/telegram_service.js";
 import { TelegramService } from "../services/telegram-service.js";
 
-export class TelegramServiceGrpc implements TelegramServiceImplementation {
+export class TelegramController implements TelegramServiceImplementation {
   constructor(private readonly telegramService: TelegramService) {}
 
   async call(request: CallRequest): Promise<DeepPartial<CallResponse>> {

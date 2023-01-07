@@ -1,11 +1,11 @@
 import { Api, TelegramClient } from "telegram";
 // eslint-disable-next-line file-extension-in-import-ts/file-extension-in-import-ts
 import { StringSession } from "telegram/sessions";
-// eslint-disable-next-line file-extension-in-import-ts/file-extension-in-import-ts
-import { SendMessageParams } from "telegram/client/messages";
+import { SendMessageParams } from "telegram/client/messages.js";
 import { BigInteger } from "big-integer";
-import { ConfigService, LoggerService } from "shared/src/services";
-import { IConfig } from "../config/config.js";
+
+import { ConfigService, LoggerService } from "shared/services";
+import { IConfig, ITelegramConfig } from "../config/config.js";
 import { input } from "../utils/input.js";
 
 import SendMessage = Api.messages.SendMessage;
@@ -23,7 +23,7 @@ export class TelegramService {
     private readonly loggerService: LoggerService
   ) {
     const { ApiId, ApiHash, SessionString } =
-      this.configService.get("Telegram");
+      this.configService.get<ITelegramConfig>("Telegram");
 
     const stringSession = new StringSession(SessionString);
 
@@ -33,7 +33,8 @@ export class TelegramService {
   }
 
   async start(): Promise<void> {
-    const { SessionString, Auth } = this.configService.get("Telegram");
+    const { SessionString, Auth } =
+      this.configService.get<ITelegramConfig>("Telegram");
 
     await this.client.start({
       phoneNumber: () => Promise.resolve(Auth.PhoneNumber),

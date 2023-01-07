@@ -1,0 +1,28 @@
+{
+  "name": "shared-grpc-services",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "exports": {
+    "./services/*": {
+      "types": "./dist/*",
+      "import": "./dist/*"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "proto:generate": "buf generate"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "nice-grpc-common": "^2.0.0",
+    "protobufjs": "^7.1.2",
+    "shared": "workspace:^1.0.1",
+    "ts-proto": "^1.137.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}

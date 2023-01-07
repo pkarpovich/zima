@@ -12,6 +12,7 @@
   "ext": "ts,js,json",
   "ts-node": {
     "transpileOnly": true,
-    "esm": true
+    "esm": true,
+    "esModuleInterop": true
   }
 }
