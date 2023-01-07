@@ -15,6 +15,6 @@ await telegramService.start();
 
 const telegramServiceGrpc = new TelegramController(telegramService);
 
-const grpcService = new GrpcService();
+const grpcService = new GrpcService(configService);
 grpcService.addService(TelegramServiceDefinition, telegramServiceGrpc);
 await grpcService.start();
