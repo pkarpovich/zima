@@ -1,5 +1,6 @@
 export interface IServicesConfig {
   telegramServiceAddress: string;
+  smartDevicesServiceAddress: string;
 }
 
 export interface IConfig {
@@ -25,6 +26,9 @@ export function Config(): IConfig {
     },
     services: {
       telegramServiceAddress: String(process.env.TELEGRAM_SERVICE_ADDRESS),
+      smartDevicesServiceAddress: String(
+        process.env.SMART_DEVICES_SERVICE_ADDRESS
+      ),
     },
   };
 }

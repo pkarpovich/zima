@@ -30,6 +30,7 @@ services:
       AMQP_SERVER_URL: ${AMQP_SERVER_URL}
       AMQP_FORMS_QUEUE_NAME: ${AMQP_FORMS_QUEUE_NAME}
       TELEGRAM_SERVICE_ADDRESS: ${TELEGRAM_SERVICE_ADDRESS}
+      SMART_DEVICES_SERVICE_ADDRESS: ${SMART_DEVICES_SERVICE_ADDRESS}
     restart: unless-stopped
     depends_on:
       - message-broker
@@ -94,6 +95,9 @@ services:
       AMQP_SMART_DEVICES_QUEUE_NAME: ${AMQP_SMART_DEVICES_QUEUE_NAME}
       ATV_ID: ${ATV_ID}
       ATV_COMPANION_CREDENTIALS: ${ATV_COMPANION_CREDENTIALS}
+      GRPC_ADDRESS: ${SMART_DEVICES_GRPC_ADDRESS}
+    expose:
+      - 50051
     network_mode: host
     restart: unless-stopped
     depends_on:

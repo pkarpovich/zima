@@ -5,12 +5,15 @@ import {
   LoggerService,
   Channel,
   ConsumeMessage,
+  GrpcService,
 } from "shared/services";
 import { ActionTypes } from "shared/constants";
 import { Config } from "./config/config.js";
 
 import { YeelightService } from "./services/yeelight-service.js";
 import { SimpleTriggerService } from "./services/simple-trigger-service.js";
+import { SmartDevicesController } from "./controllers/smart-devices.controller.js";
+import { SmartDevicesServiceDefinition } from "shared-grpc-services/services/smart_devices_service.js";
 
 const require = createRequire(import.meta.url);
 
@@ -27,6 +30,12 @@ const simpleTriggerService = new SimpleTriggerService(devicesConfig.triggers);
 const serviceQueueName = configService.get<string>(
   "Rabbit.SmartDevicesQueueName"
 );
+
+const smartDevicesController = new SmartDevicesController(yeelightService);
+
+const grpcService = new GrpcService(configService);
+grpcService.addService(SmartDevicesServiceDefinition, smartDevicesController);
+await grpcService.start();
 
 const handleQueueMessage =
   (_: unknown, channel: Channel) => async (msg: ConsumeMessage) => {

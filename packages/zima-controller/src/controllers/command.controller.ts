@@ -9,6 +9,7 @@ import {
 } from "shared/services";
 import { CommandRespStatuses } from "shared/constants";
 import { TelegramServiceDefinition } from "shared-grpc-services/services/telegram_service.js";
+import { SmartDevicesServiceDefinition } from "shared-grpc-services/services/smart_devices_service.js";
 import { IConfig, IServicesConfig } from "../config/config.js";
 import { GrpcServiceTypes } from "../constants/grpc-services.enum.js";
 
@@ -96,7 +97,7 @@ export class CommandController implements BaseController {
   }
 
   private getServiceInfoByType(type: GrpcServiceTypes): IServiceInfo {
-    const { telegramServiceAddress } =
+    const { telegramServiceAddress, smartDevicesServiceAddress } =
       this.configService.get<IServicesConfig>("services");
 
     switch (type) {
@@ -104,6 +105,12 @@ export class CommandController implements BaseController {
         return {
           definition: TelegramServiceDefinition,
           address: telegramServiceAddress,
+        };
+      }
+      case GrpcServiceTypes.SmartDevices: {
+        return {
+          definition: SmartDevicesServiceDefinition,
+          address: smartDevicesServiceAddress,
         };
       }
       default: {

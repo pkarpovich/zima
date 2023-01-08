@@ -8,6 +8,7 @@ specifiers:
   has-bigints: ^1.0.2
   promise-retry: ^2.0.1
   shared: workspace:*
+  shared-grpc-services: workspace:^1.0.0
   yeelight-node: ^1.1.6
 
 dependencies:
@@ -16,6 +17,7 @@ dependencies:
   has-bigints: 1.0.2
   promise-retry: 2.0.1
   shared: link:../shared
+  shared-grpc-services: link:../shared-grpc-services
   yeelight-node: 1.1.6
 
 devDependencies:
