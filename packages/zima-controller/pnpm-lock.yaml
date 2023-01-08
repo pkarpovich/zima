@@ -2,6 +2,8 @@ lockfileVersion: 5.4
 
 specifiers:
   shared: workspace:*
+  shared-grpc-services: workspace:^1.0.0
 
 dependencies:
   shared: link:../shared
+  shared-grpc-services: link:../shared-grpc-services

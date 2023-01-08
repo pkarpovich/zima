@@ -1,3 +1,7 @@
+export interface IServicesConfig {
+  telegramServiceAddress: string;
+}
+
 export interface IConfig {
   Rabbit: {
     Url: string;
@@ -6,6 +10,7 @@ export interface IConfig {
   http: {
     port: number;
   };
+  services: IServicesConfig;
 }
 
 export function Config(): IConfig {
@@ -17,6 +22,9 @@ export function Config(): IConfig {
 
     http: {
       port: Number(process.env.PORT),
+    },
+    services: {
+      telegramServiceAddress: String(process.env.TELEGRAM_SERVICE_ADDRESS),
     },
   };
 }

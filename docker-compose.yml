@@ -19,9 +19,7 @@ services:
       context: .
       dockerfile: Dockerfile.base
       args:
-        SHARED_SERVICE_PATH: packages/shared
         SERVICE_PATH: packages/zima-controller
-        PACKAGE_NAME: zima-controller
     container_name: zima
     ports:
       - ${PORT}:${PORT}
@@ -31,6 +29,7 @@ services:
       PORT: ${PORT}
       AMQP_SERVER_URL: ${AMQP_SERVER_URL}
       AMQP_FORMS_QUEUE_NAME: ${AMQP_FORMS_QUEUE_NAME}
+      TELEGRAM_SERVICE_ADDRESS: ${TELEGRAM_SERVICE_ADDRESS}
     restart: unless-stopped
     depends_on:
       - message-broker
@@ -61,9 +60,7 @@ services:
       context: .
       dockerfile: Dockerfile.base
       args:
-        SHARED_SERVICE_PATH: packages/shared
         SERVICE_PATH: packages/spotify-service
-        PACKAGE_NAME: spotify-service
     container_name: spotify-service
     hostname: spotify-service
     volumes:
@@ -86,9 +83,7 @@ services:
       context: .
       dockerfile: Dockerfile.base
       args:
-        SHARED_SERVICE_PATH: packages/shared
         SERVICE_PATH: packages/smart-devices-service
-        PACKAGE_NAME: smart-devices-service
     container_name: smart-devices-service
     hostname: smart-devices-service
     volumes:
@@ -111,9 +106,7 @@ services:
       context: .
       dockerfile: packages/ansible-service/Dockerfile
       args:
-        SHARED_SERVICE_PATH: packages/shared
         SERVICE_PATH: packages/ansible-service
-        PACKAGE_NAME: ansible-service
         SSH_HOST: ${SSH_HOST}
         SSH_USER: ${SSH_USER}
         SSHPASS: ${SSH_PASS}
@@ -159,9 +152,7 @@ services:
       context: .
       dockerfile: Dockerfile.base
       args:
-        SHARED_SERVICE_PATH: packages/shared
         SERVICE_PATH: packages/forms-service
-        PACKAGE_NAME: forms-service
     container_name: forms-service
     hostname: forms-service
     environment:
@@ -182,6 +173,31 @@ services:
       - forms-db
     labels:
       reproxy.enabled: no
+
+  telegram-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.base
+      args:
+        SERVICE_PATH: packages/telegram-service
+    container_name: telegram-service
+    hostname: telegram-service
+    environment:
+      GRPC_ADDRESS: ${TELEGRAM_GRPC_ADDRESS}
+      TELEGRAM_API_ID: ${TELEGRAM_API_ID}
+      TELEGRAM_API_HASH: ${TELEGRAM_API_HASH}
+      TELEGRAM_AUTH_PASSWORD: ${TELEGRAM_AUTH_PASSWORD}
+      TELEGRAM_SESSION_STRING: ${TELEGRAM_SESSION_STRING}
+      TELEGRAM_AUTH_PHONE_CODE: ${TELEGRAM_AUTH_PHONE_CODE}
+      TELEGRAM_AUTH_PHONE_NUMBER: ${TELEGRAM_AUTH_PHONE_NUMBER}
+    expose:
+      - 50051
+    restart: unless-stopped
+    depends_on:
+      - zima-controller
+    labels:
+      reproxy.enabled: no
+
 
   reproxy:
     image: umputun/reproxy:master
