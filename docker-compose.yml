@@ -91,17 +91,15 @@ services:
       - ./packages/smart-devices-service/devices.json:/usr/src/app/packages/devices.json
       - persist-homekit:/usr/src/app/packages/smart-devices-service/persist
     environment:
-      AMQP_SERVER_URL: ${HOST_AMQP_SERVER_URL}
-      AMQP_SMART_DEVICES_QUEUE_NAME: ${AMQP_SMART_DEVICES_QUEUE_NAME}
-      ATV_ID: ${ATV_ID}
-      ATV_COMPANION_CREDENTIALS: ${ATV_COMPANION_CREDENTIALS}
       GRPC_ADDRESS: ${SMART_DEVICES_GRPC_ADDRESS}
+      ERRORS_IS_CATCH_ENABLE: true
+      ERRORS_NAME: smart-devices-service
+      ERRORS_ENVIRONMENT: production
+      ERRORS_DSN: ${ERRORS_DSN}
     expose:
       - 50051
     network_mode: host
     restart: unless-stopped
-    depends_on:
-      - message-broker
     labels:
       reproxy.enabled: 0
 

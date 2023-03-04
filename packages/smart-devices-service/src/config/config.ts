@@ -1,22 +1,23 @@
-export interface IConfig {
-  Rabbit: {
-    Url: string;
-    SmartDevicesQueueName: string;
-  };
+import { IErrorCatchingConfig } from "shared/services";
 
+export interface IConfig {
   grpc: {
     address: string;
   };
+
+  errors: IErrorCatchingConfig;
 }
 
 export function Config(): IConfig {
   return {
-    Rabbit: {
-      Url: String(process.env.AMQP_SERVER_URL),
-      SmartDevicesQueueName: String(process.env.AMQP_SMART_DEVICES_QUEUE_NAME),
-    },
     grpc: {
       address: String(process.env.GRPC_ADDRESS),
+    },
+    errors: {
+      isEnable: Boolean(process.env.ERRORS_IS_CATCH_ENABLE),
+      name: String(process.env.ERRORS_NAME),
+      environment: String(process.env.ERRORS_ENVIRONMENT),
+      dsn: String(process.env.ERRORS_DSN),
     },
   };
 }
