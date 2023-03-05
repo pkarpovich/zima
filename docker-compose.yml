@@ -13,6 +13,8 @@ services:
       retries: 3
     labels:
       reproxy.port: 15672
+      homepage.group: Zima
+      homepage.name: Message broker
 
   zima-controller:
     build:
@@ -38,6 +40,8 @@ services:
       reproxy.server: "*"
       reproxy.route: "^/(.*)"
       reproxy.dest: "/$$1"
+      homepage.group: Zima
+      homepage.name: Zima Controller
 
   meetings-service:
     build:
@@ -55,6 +59,8 @@ services:
       - message-broker
     labels:
       reproxy.enabled: 0
+      homepage.group: Zima
+      homepage.name: Meetings Service
 
   spotify-service:
     build:
@@ -78,6 +84,9 @@ services:
       - message-broker
     expose:
       - 3000
+    labels:
+      homepage.group: Zima
+      homepage.name: Spotify Service
 
   smart-devices-service:
     build:
@@ -102,6 +111,8 @@ services:
     restart: unless-stopped
     labels:
       reproxy.enabled: 0
+      homepage.group: Zima
+      homepage.name: Smart Devices Service
 
   ansible-service:
     build:
@@ -129,6 +140,8 @@ services:
       - message-broker
     labels:
       reproxy.enabled: 0
+      homepage.group: Zima
+      homepage.name: Ansible Service
 
   forms-db:
     image: mongo:4.4-bionic
@@ -148,6 +161,8 @@ services:
       - formsdbdata:/data/db
     labels:
       reproxy.enabled: no
+      homepage.group: Zima
+      homepage.name: Forms DB
 
   forms-service:
     build:
@@ -175,6 +190,8 @@ services:
       - forms-db
     labels:
       reproxy.enabled: no
+      homepage.group: Zima
+      homepage.name: Forms Service
 
   telegram-service:
     build:
@@ -199,6 +216,8 @@ services:
       - zima-controller
     labels:
       reproxy.enabled: no
+      homepage.group: Zima
+      homepage.name: Telegram Service
 
 
   reproxy:
@@ -229,6 +248,9 @@ services:
       - message-broker
       - meetings-service
       - zima-controller
+    labels:
+      homepage.group: Zima
+      homepage.name: Zima API
 
   prometheus:
     image: prom/prometheus:v2.41.0
