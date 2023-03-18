@@ -8,4 +8,5 @@ export interface IHomekitDevice {
   homekitPort: number;
   hasRGB?: boolean;
   zone?: string;
+  defaultValue?: string;
 }

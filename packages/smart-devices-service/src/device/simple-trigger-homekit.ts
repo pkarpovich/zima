@@ -11,10 +11,13 @@ export class SimpleTriggerHomekit {
     name,
     username,
     pincode,
+    defaultValue,
     homekitPort: port,
   }: IHomekitDevice) {
     this.getState = this.getState.bind(this);
     this.setState = this.setState.bind(this);
+
+    this.state = defaultValue === "true";
 
     const { On } = Characteristic;
 
