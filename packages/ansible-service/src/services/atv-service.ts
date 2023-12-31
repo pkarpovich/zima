@@ -13,7 +13,7 @@ export class AtvService {
     const user = this.configService.get("SSH.Username");
 
     return exec(
-      `ssh ${user}@${host} '$HOME/.local/bin/atvremote --id $ATV_ID --companion-credentials $ATV_COMPANION_CREDENTIALS ${command}'`,
+      `ssh ${user}@${host} 'pyenv exec atvremote --id $ATV_ID --companion-credentials $ATV_COMPANION_CREDENTIALS ${command}'`,
       {
         env: {
           PATH: process.env.PATH,
