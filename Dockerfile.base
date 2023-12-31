@@ -3,7 +3,7 @@ FROM node:18-alpine AS base
 ARG SHARED_SERVICE_PATH=packages/shared
 ARG SHARED_GRPC_SERVICE_PATH=packages/shared-grpc-services
 ARG SERVICE_PATH
-ARG PNPM_VERSION=7.16.1
+ARG PNPM_VERSION=8.13.1
 
 RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 RUN apk --no-cache add --virtual .builds-deps build-base python3
