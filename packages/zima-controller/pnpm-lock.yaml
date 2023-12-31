@@ -1,9 +1,13 @@
-lockfileVersion: 5.4
+lockfileVersion: '6.0'
 
-specifiers:
-  shared: workspace:*
-  shared-grpc-services: workspace:^1.0.0
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
 
 dependencies:
-  shared: link:../shared
-  shared-grpc-services: link:../shared-grpc-services
+  shared:
+    specifier: workspace:*
+    version: link:../shared
+  shared-grpc-services:
+    specifier: workspace:^1.0.0
+    version: link:../shared-grpc-services
