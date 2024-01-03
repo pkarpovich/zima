@@ -7,7 +7,7 @@ services:
       - 15672:15672 # for serve RabbitMQ GUI
     restart: unless-stopped
     healthcheck:
-      test: rabbitmq-diagnostics -q pingx
+      test: rabbitmq-diagnostics -q ping
       interval: 30s
       timeout: 30s
       retries: 3
@@ -71,7 +71,7 @@ services:
     container_name: spotify-service
     hostname: spotify-service
     volumes:
-      - ./packages/spotify-service/auth.json:/app/auth.json
+      - ./packages/spotify-service/db/auth.json:/app/db/auth.json
     environment:
       HTTP_PORT: 3000
       AMQP_SERVER_URL: ${AMQP_SERVER_URL}
@@ -79,6 +79,7 @@ services:
       SPOTIFY_CLIENT_ID: ${SPOTIFY_CLIENT_ID}
       SPOTIFY_CLIENT_SECRET: ${SPOTIFY_CLIENT_SECRET}
       SPOTIFY_REDIRECT_URI: ${SPOTIFY_REDIRECT_URI}
+      AUTH_DB_PATH: /app/db/auth.json
     restart: unless-stopped
     depends_on:
       - message-broker

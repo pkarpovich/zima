@@ -51,8 +51,10 @@ ARG SHARED_SERVICE_PATH=packages/shared
 ARG SHARED_GRPC_SERVICE_PATH=packages/shared-grpc-services
 ARG SERVICE_PATH
 
-WORKDIR /usr/src/app
 RUN apk add dumb-init
+
+WORKDIR /usr/src/app
+RUN chown node:node /usr/src/app
 
 USER node
 

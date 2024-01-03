@@ -27,6 +27,7 @@ const localDbService = new LocalDbService<IAuthStore>(
   configService,
   filesService
 );
+await localDbService.start()
 const loggerService = new LoggerService();
 const brokerService = new BrokerService({ configService, loggerService });
 const spotifyService = new SpotifyService({

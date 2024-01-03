@@ -23,7 +23,7 @@
   "author": "Pavel Karpovich",
   "license": "ISC",
   "dependencies": {
-    "nanoid": "^4.0.0",
+    "nanoid": "^5.0.4",
     "shared": "workspace:*",
     "spotify-web-api-node": "^5.0.2"
   },

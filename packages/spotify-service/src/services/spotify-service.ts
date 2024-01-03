@@ -38,6 +38,8 @@ export class SpotifyService {
     this.localDbService = localDbService;
     this.configService = configService;
     this.loggerService = loggerService;
+
+    this.refreshAccess = this.refreshAccess.bind(this);
   }
 
   async init() {
