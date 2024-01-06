@@ -1,20 +1,13 @@
 services:
   message-broker:
-    image: rabbitmq:3-management-alpine
+    image: rabbitmq:3.12-alpine
     container_name: message-broker
-    ports:
-      - 5672:5672 # for sender and consumer connections
-      - 15672:15672 # for serve RabbitMQ GUI
     restart: unless-stopped
     healthcheck:
       test: rabbitmq-diagnostics -q ping
       interval: 30s
       timeout: 30s
       retries: 3
-    labels:
-      reproxy.port: 15672
-      homepage.group: Zima
-      homepage.name: Message broker
 
   zima-controller:
     build:
@@ -22,13 +15,11 @@ services:
       dockerfile: Dockerfile.base
       args:
         SERVICE_PATH: packages/zima-controller
-    container_name: zima
-    ports:
-      - ${PORT}:${PORT}
+    container_name: zima-controller
     expose:
-      - ${PORT}
+      - 8080
     environment:
-      PORT: ${PORT}
+      PORT: 8080
       AMQP_SERVER_URL: ${AMQP_SERVER_URL}
       AMQP_FORMS_QUEUE_NAME: ${AMQP_FORMS_QUEUE_NAME}
       TELEGRAM_SERVICE_ADDRESS: ${TELEGRAM_SERVICE_ADDRESS}
@@ -36,12 +27,16 @@ services:
     restart: unless-stopped
     depends_on:
       - message-broker
+    networks:
+      - proxy
+      - default
     labels:
-      reproxy.server: "*"
-      reproxy.route: "^/(.*)"
-      reproxy.dest: "/$$1"
-      homepage.group: Zima
-      homepage.name: Zima Controller
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.zima-controller.rule=PathPrefix(`/zima-controller`)"
+      - "traefik.http.routers.zima-controller.entrypoints=http"
+      - "traefik.http.middlewares.zima-controller-strip.stripprefix.prefixes=/zima-controller/"
+      - "traefik.http.routers.zima-controller.middlewares=zima-controller-strip"
 
   meetings-service:
     build:
@@ -57,10 +52,6 @@ services:
     restart: unless-stopped
     depends_on:
       - message-broker
-    labels:
-      reproxy.enabled: 0
-      homepage.group: Zima
-      homepage.name: Meetings Service
 
   spotify-service:
     build:
@@ -71,7 +62,7 @@ services:
     container_name: spotify-service
     hostname: spotify-service
     volumes:
-      - ./packages/spotify-service/db/auth.json:/app/db/auth.json
+      - ./packages/spotify-service/db:/app/db
     environment:
       HTTP_PORT: 3000
       AMQP_SERVER_URL: ${AMQP_SERVER_URL}
@@ -85,9 +76,16 @@ services:
       - message-broker
     expose:
       - 3000
+    networks:
+      - proxy
+      - default
     labels:
-      homepage.group: Zima
-      homepage.name: Spotify Service
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.zima-spotify.rule=PathPrefix(`/zima-spotify`)"
+      - "traefik.http.routers.zima-spotify.entrypoints=http"
+      - "traefik.http.middlewares.zima-spotify-strip.stripprefix.prefixes=/zima-spotify"
+      - "traefik.http.routers.zima-spotify.middlewares=zima-spotify-strip"
 
   smart-devices-service:
     build:
@@ -110,10 +108,6 @@ services:
       - 50051
     network_mode: host
     restart: unless-stopped
-    labels:
-      reproxy.enabled: 0
-      homepage.group: Zima
-      homepage.name: Smart Devices Service
 
   ansible-service:
     build:
@@ -139,18 +133,12 @@ services:
     restart: unless-stopped
     depends_on:
       - message-broker
-    labels:
-      reproxy.enabled: 0
-      homepage.group: Zima
-      homepage.name: Ansible Service
 
   forms-db:
     image: mongo:4.4-bionic
     container_name: forms-db
     restart: unless-stopped
     command: mongod --serviceExecutor adaptive
-    ports:
-      - ${MONGO_PORT}:${MONGO_PORT}
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
@@ -160,10 +148,6 @@ services:
     volumes:
       - ./mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh
       - formsdbdata:/data/db
-    labels:
-      reproxy.enabled: no
-      homepage.group: Zima
-      homepage.name: Forms DB
 
   forms-service:
     build:
@@ -189,10 +173,6 @@ services:
     depends_on:
       - message-broker
       - forms-db
-    labels:
-      reproxy.enabled: no
-      homepage.group: Zima
-      homepage.name: Forms Service
 
   telegram-service:
     build:
@@ -215,66 +195,11 @@ services:
     restart: unless-stopped
     depends_on:
       - zima-controller
-    labels:
-      reproxy.enabled: no
-      homepage.group: Zima
-      homepage.name: Telegram Service
-
-
-  reproxy:
-    image: umputun/reproxy:master
-    container_name: zima-api
-    hostname: reproxy
-    ports:
-      - "18080:8080"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    environment:
-      - TZ=Europe/Warsaw
-      - LISTEN=0.0.0.0:8080
-      - DOCKER_ENABLED=true
-      - DOCKER_AUTO=true
-      - DEBUG=true
-      - TIMEOUT_RESP_HEADER=640s
-      - TIMEOUT_WRITE=640s
-      - TIMEOUT_IDLE=640s
-      - TIMEOUT_DIAL=640s
-      - TIMEOUT_KEEP_ALIVE=640s
-      - MAX_SIZE=0
-      - MGMT_ENABLED=true
-    restart: unless-stopped
-    depends_on:
-      - message-broker
-      - meetings-service
-      - zima-controller
-    labels:
-      homepage.group: Zima
-      homepage.name: Zima API
-
-  prometheus:
-    image: prom/prometheus:v2.41.0
-    container_name: prometheus
-    volumes:
-      - ./prometheus/:/etc/prometheus/
-      - prometheus-data:/prometheus
-    command:
-      - "--config.file=/etc/prometheus/prometheus.yml"
-      - "--storage.tsdb.path=/prometheus"
-      - "--web.console.libraries=/usr/share/prometheus/console_libraries"
-      - "--web.console.templates=/usr/share/prometheus/consoles"
-    ports:
-      - 9090:9090
-
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
-    ports:
-      - "3100:3000"
-    volumes:
-      - grafana-storage:/var/lib/grafana
 
 volumes:
   formsdbdata:
   persist-homekit:
-  grafana-storage:
-  prometheus-data:
+
+networks:
+  proxy:
+    external: true
