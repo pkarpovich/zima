@@ -6,6 +6,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node dist/index.js",
+    "test": "node --test",
     "build": "pnpm exec tsc",
     "watch": "pnpm exec tsx --watch ./src/index.ts"
   },
