@@ -1,0 +1,18 @@
+{
+  "name": "discovery-service",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "build": "pnpm exec tsc",
+    "watch": "pnpm exec tsx --watch ./src/index.ts"
+  },
+  "author": "Pavel Karpovich <pavel.karpovich@outlook.com>",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "tsx": "^4.16.2",
+    "typescript": "^5.5.4"
+  }
+}
