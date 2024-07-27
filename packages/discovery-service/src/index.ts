@@ -1,15 +1,18 @@
-import { DiscoveryService } from "./services/discovery.service.js";
+import { ConfigService, HttpService, LoggerService } from "shared/services";
 
+import { Config } from "./config/config.js";
+import { DiscoveryService } from "./services/discovery.service.js";
+import { DiscoveryController } from "./controllers/discovery.controller.js";
+import { getApiController } from "./controllers/api.controller.js";
+
+const loggerService = new LoggerService();
+const configService = new ConfigService({ config: Config });
 const discoveryService = new DiscoveryService();
 
-discoveryService.register({
-    name: "spotify-service",
-    address: "http://localhost:3001",
-});
+const discoveryController = new DiscoveryController(loggerService, discoveryService);
 
-discoveryService.register({
-    name: "smart-devices-service",
-    address: "http://localhost:3002",
-});
+const apiController = getApiController(discoveryController);
 
-discoveryService.getModule("spotify-service");
+const httpService = new HttpService(loggerService, configService, apiController);
+
+httpService.start();
