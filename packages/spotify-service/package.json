@@ -3,31 +3,23 @@
   "version": "1.0.0",
   "description": "",
   "main": "./dist/index.js",
-  "exports": {
-    "./*": "./dist/*"
-  },
-  "typesVersions": {
-    "*": {
-      "*": [
-        "dist/*"
-      ]
-    }
-  },
   "type": "module",
   "scripts": {
-    "start": "ts-node src/index.ts",
-    "dev": "nodemon src/index.ts",
-    "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node dist/index.js",
+    "test": "node --test",
+    "build": "pnpm exec tsc",
+    "watch": "pnpm exec tsx --watch ./src/index.ts"
   },
   "author": "Pavel Karpovich",
   "license": "ISC",
   "dependencies": {
     "nanoid": "^5.0.4",
-    "shared": "workspace:*",
+    "shared": "link:../shared",
     "spotify-web-api-node": "^5.0.2"
   },
   "devDependencies": {
-    "@types/spotify-web-api-node": "^5.0.7"
+    "@types/spotify-web-api-node": "^5.0.7",
+    "tsx": "^4.16.2",
+    "typescript": "^5.5.4"
   }
 }

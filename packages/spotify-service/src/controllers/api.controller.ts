@@ -2,14 +2,16 @@ import { Router } from "shared/controllers";
 import { HttpService } from "shared/services";
 
 import { SpotifyController } from "./spotify.controller.js";
+import { CommandsController } from "./commands.controller.js";
 
 export function initApiController(
-  spotifyController: SpotifyController
+    spotifyController: SpotifyController,
+    commandsController: CommandsController
 ): Router {
-  const router = HttpService.newRouter();
-  const spotifyRouter = spotifyController.getRoutes();
+    const router = HttpService.newRouter();
 
-  router.use("/spotify", spotifyRouter);
+    router.use("/spotify", spotifyController.getRoutes());
+    router.use("/commands", commandsController.getRoutes());
 
-  return router;
+    return router;
 }
