@@ -1,23 +1,23 @@
-import { IErrorCatchingConfig } from "shared/services";
+import { DiscoveryConfig } from "shared/services";
+import { ActionTypes } from "../constants/action-types.js";
 
 export interface IConfig {
-  grpc: {
-    address: string;
-  };
-
-  errors: IErrorCatchingConfig;
+    http: {
+        port: number;
+    };
+    discovery: DiscoveryConfig;
 }
 
 export function Config(): IConfig {
-  return {
-    grpc: {
-      address: String(process.env.GRPC_ADDRESS),
-    },
-    errors: {
-      isEnable: Boolean(process.env.ERRORS_IS_CATCH_ENABLE),
-      name: String(process.env.ERRORS_NAME),
-      environment: String(process.env.ERRORS_ENVIRONMENT),
-      dsn: String(process.env.ERRORS_DSN),
-    },
-  };
+    return {
+        http: {
+            port: Number(process.env.PORT) || 3200,
+        },
+        discovery: {
+            name: String(process.env.DISCOVERY_NAME),
+            address: String(process.env.DISCOVERY_ADDRESS),
+            actions: Object.values(ActionTypes),
+            registryAddress: String(process.env.DISCOVERY_SERVER_ADDRESS),
+        },
+    };
 }

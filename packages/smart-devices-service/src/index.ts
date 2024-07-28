@@ -1,27 +1,25 @@
-import { createRequire } from "module";
-import { ConfigService, GrpcService, initErrorCatching } from "shared/services";
+import { ConfigService, HttpService, LoggerService, DiscoveryClientService, HttpClientService } from "shared/services";
 import { Config } from "./config/config.js";
 
 import { YeelightService } from "./services/yeelight-service.js";
-import { SimpleTriggerService } from "./services/simple-trigger-service.js";
-import { SmartDevicesController } from "./controllers/smart-devices.controller.js";
-import { SmartDevicesServiceDefinition } from "shared-grpc-services/services/smart_devices_service.js";
+import { CommandsController } from "./controllers/commands.controller.js";
+import { initApiController } from "./controllers/api.controller.js";
 
-const require = createRequire(import.meta.url);
+import devicesConfig from "../devices.json";
 
-// eslint-disable-next-line import/no-commonjs
-const devicesConfig = require("../devices.json");
+(async () => {
+    const configService = new ConfigService({ config: Config() });
 
-const configService = new ConfigService({ config: Config() });
+    const loggerService = new LoggerService();
+    const yeelightService = new YeelightService(devicesConfig.lights);
 
-initErrorCatching(configService);
+    const commandsController = new CommandsController(yeelightService, loggerService);
+    const apiController = initApiController(commandsController);
 
-const yeelightService = new YeelightService(devicesConfig.lights);
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const simpleTriggerService = new SimpleTriggerService(devicesConfig.triggers);
+    const httpService = new HttpService(loggerService, configService, apiController);
+    httpService.start();
 
-const smartDevicesController = new SmartDevicesController(yeelightService);
-
-const grpcService = new GrpcService(configService);
-grpcService.addService(SmartDevicesServiceDefinition, smartDevicesController);
-await grpcService.start();
+    const httpClientService = new HttpClientService();
+    const discoveryService = new DiscoveryClientService(httpClientService, loggerService, configService);
+    await discoveryService.registerModule();
+})();
