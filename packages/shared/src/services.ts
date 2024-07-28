@@ -7,3 +7,5 @@ export * from "./services/http.service.js";
 export * from "./services/grpc.service.js";
 export * from "./services/grpc-client.service.js";
 export * from "./services/errors.service.js";
+export * from "./services/discovery-client.service.js";
+export * from "./services/http-client.service.js";

@@ -1,4 +1,4 @@
-import { ConfigService, HttpService, LoggerService } from "shared/services";
+import { ConfigService, HttpClientService, HttpService, LoggerService } from "shared/services";
 
 import { Config } from "./config/config.js";
 import { DiscoveryService } from "./services/discovery.service.js";
@@ -8,8 +8,9 @@ import { getApiController } from "./controllers/api.controller.js";
 const loggerService = new LoggerService();
 const configService = new ConfigService({ config: Config });
 const discoveryService = new DiscoveryService();
+const httpClientService = new HttpClientService();
 
-const discoveryController = new DiscoveryController(loggerService, discoveryService);
+const discoveryController = new DiscoveryController(loggerService, discoveryService, httpClientService);
 
 const apiController = getApiController(discoveryController);
 

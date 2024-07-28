@@ -1,5 +1,13 @@
 import * as fs from "node:fs/promises";
-import { ConfigService, LoggerService, LocalDbService, FilesService, HttpService } from "shared/services";
+import {
+    ConfigService,
+    LoggerService,
+    LocalDbService,
+    FilesService,
+    HttpService,
+    DiscoveryClientService,
+    HttpClientService,
+} from "shared/services";
 
 import { Config } from "./config.js";
 import { IAuthStore } from "./store.js";
@@ -20,9 +28,13 @@ const spotifyService = new SpotifyService({
     configService,
     loggerService,
 });
+const httpClientService = new HttpClientService();
+const discoveryClientService = new DiscoveryClientService(httpClientService, loggerService, configService);
 
 const spotifyController = new SpotifyController(spotifyService, loggerService);
 const commandsController = new CommandsController(spotifyService, loggerService);
 const apiRouter = initApiController(spotifyController, commandsController);
 const httpService = new HttpService(loggerService, configService, apiRouter);
+
+await discoveryClientService.registerModule();
 httpService.start();

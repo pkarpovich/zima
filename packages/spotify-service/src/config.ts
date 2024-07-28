@@ -1,3 +1,6 @@
+import { type DiscoveryConfig } from "shared/services";
+import { ActionTypes } from "./constants/action-types.js";
+
 export type IConfig = {
     Rabbit: {
         Url: string;
@@ -12,6 +15,7 @@ export type IConfig = {
     http: {
         port: number;
     };
+    discovery: DiscoveryConfig;
 };
 
 export function Config(): IConfig {
@@ -27,7 +31,13 @@ export function Config(): IConfig {
         },
         dbPath: String(process.env.AUTH_DB_PATH),
         http: {
-            port: Number(process.env.HTTP_PORT) || 3000,
+            port: Number(process.env.HTTP_PORT) || 3100,
+        },
+        discovery: {
+            name: String(process.env.DISCOVERY_NAME),
+            address: String(process.env.DISCOVERY_ADDRESS),
+            actions: Object.values(ActionTypes),
+            registryAddress: String(process.env.DISCOVERY_SERVER_ADDRESS),
         },
     };
 }

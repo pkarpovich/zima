@@ -1,6 +1,7 @@
 type Module = {
     name: string;
     address: string;
+    actions: string[];
 };
 
 export class DiscoveryService {
@@ -14,7 +15,11 @@ export class DiscoveryService {
         this._modules.delete(name);
     }
 
-    getModule(name: string) {
-        return this._modules.get(name);
+    getModule(name: string): Module | null {
+        return this._modules.get(name) ?? null;
+    }
+
+    getModuleByAction(action: string): Module | null {
+        return Array.from(this._modules.values()).find((module) => module.actions.includes(action)) ?? null;
     }
 }
