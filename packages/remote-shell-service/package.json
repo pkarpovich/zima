@@ -1,0 +1,20 @@
+{
+  "name": "ansible-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node dist/index.js",
+    "test": "node --test",
+    "build": "pnpm exec tsc",
+    "watch": "pnpm exec tsx --watch ./src/index.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.16.2",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "shared": "link:../shared"
+  }
+}

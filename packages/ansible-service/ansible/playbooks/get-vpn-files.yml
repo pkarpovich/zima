@@ -1,8 +1,0 @@
----
-- hosts: all
-  tasks:
-    - name: "Get list of VPN files"
-      command: "ls -la ~/ovpn"
-      register: out
-
-    - debug: var=out.stdout_lines

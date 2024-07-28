@@ -10,12 +10,10 @@ services:
     environment:
       HTTP_PORT: 3000
     restart: unless-stopped
-    ports:
-      - 8080:3000
     expose:
       - 3000
     networks:
-#      - proxy
+      - proxy
       - default
     labels:
       - "traefik.enable=true"
@@ -48,13 +46,13 @@ services:
     expose:
       - 3000
     networks:
-#      - proxy
+      - proxy
       - default
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=proxy"
-      - "traefik.http.routers.zima-spotify.rule=PathPrefix(`/zima-spotify`)"
       - "traefik.http.routers.zima-spotify.entrypoints=http"
+      - "traefik.http.routers.zima-spotify.rule=Host(`zima.${DOMAIN}`) && PathPrefix(`/zima-spotify`)"
       - "traefik.http.middlewares.zima-spotify-strip.stripprefix.prefixes=/zima-spotify"
       - "traefik.http.routers.zima-spotify.middlewares=zima-spotify-strip"
 
@@ -68,44 +66,42 @@ services:
     hostname: smart-devices-service
     volumes:
       - ./packages/smart-devices-service/devices.json:/usr/src/app/packages/devices.json
-#      - persist-homekit:/usr/src/app/packages/smart-devices-service/persist
+      - persist-homekit:/usr/src/app/packages/smart-devices-service/persist
     environment:
       PORT: 3000
       DISCOVERY_NAME: smart-devices-service
       DISCOVERY_ADDRESS: http://smart-devices-service:3000/commands/execute
       DISCOVERY_SERVER_ADDRESS: http://discovery-service:3000/discovery/register
     networks:
-#      - proxy
       - default
       - homekit
     depends_on:
       - discovery-service
     restart: unless-stopped
 
-#  ansible-service:
-#    build:
-#      context: .
-#      dockerfile: packages/ansible-service/Dockerfile
-#      args:
-#        SERVICE_PATH: packages/ansible-service
-#        SSH_HOST: ${SSH_HOST}
-#        SSH_USER: ${SSH_USER}
-#        SSHPASS: ${SSH_PASS}
-#    container_name: ansible-service
-#    hostname: ansible-service
-#    volumes:
-#      - ./packages/ansible-service/ansible/playbooks:/usr/src/app/packages/ansible-service/ansible/playbooks
-#      - ${LOCAL_VPN_FILES_PATH}:${VPN_FILES_PATH}
-#    environment:
-#      AMQP_SERVER_URL: ${AMQP_SERVER_URL}
-#      AMQP_ANSIBLE_QUEUE_NAME: ${AMQP_ANSIBLE_QUEUE_NAME}
-#      PLAYBOOKS_DIR: ${PLAYBOOKS_DIR}
-#      VPN_FILES_PATH: ${VPN_FILES_PATH}
-#      SSH_USER: ${SSH_USER}
-#      SSH_HOST: ${SSH_HOST}
-#    restart: unless-stopped
-#    depends_on:
-#      - message-broker
+  remote-shell-service:
+    build:
+      context: .
+      dockerfile: packages/remote-shell-service/Dockerfile
+      args:
+        SERVICE_PATH: packages/remote-shell-service
+        SSH_HOST: ${SSH_HOST}
+        SSH_USER: ${SSH_USER}
+        SSHPASS: ${SSH_PASS}
+    container_name: remote-shell-service
+    hostname: remote-shell-service
+    environment:
+      SSH_USER: ${SSH_USER}
+      SSH_HOST: ${SSH_HOST}
+      PORT: 3000
+      DISCOVERY_NAME: remote-shell-service
+      DISCOVERY_ADDRESS: http://remote-shell-service:3000/commands/execute
+      DISCOVERY_SERVER_ADDRESS: http://discovery-service:3000/discovery/register
+    networks:
+      - default
+    restart: unless-stopped
+    depends_on:
+      - discovery-service
 
 volumes:
   persist-homekit:
@@ -120,7 +116,5 @@ networks:
         - subnet: 192.168.198.0/24
           gateway: 192.168.198.1
           ip_range: 192.168.198.16/32
-
-#networks:
-#  proxy:
-#    external: true
+  proxy:
+    external: true

@@ -1,5 +1,0 @@
----
-- hosts: all
-  tasks:
-    - name: "Echo"
-      command: "echo 'ok'"
