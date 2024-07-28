@@ -21,7 +21,6 @@ export class DiscoveryController implements BaseController {
 
     register(req: Request, res: Response) {
         const module = req.body;
-        console.log(module);
 
         this.loggerService.info(`Registering module: ${module.name}`);
         this.discoveryService.register(module);

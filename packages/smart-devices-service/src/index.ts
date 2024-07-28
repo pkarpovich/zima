@@ -1,11 +1,12 @@
+import * as fs from "node:fs";
 import { ConfigService, HttpService, LoggerService, DiscoveryClientService, HttpClientService } from "shared/services";
-import { Config } from "./config/config.js";
 
 import { YeelightService } from "./services/yeelight-service.js";
 import { CommandsController } from "./controllers/commands.controller.js";
 import { initApiController } from "./controllers/api.controller.js";
+import { Config } from "./config/config.js";
 
-import devicesConfig from "../devices.json";
+const devicesConfig = JSON.parse(fs.readFileSync("../devices.json", "utf-8"));
 
 (async () => {
     const configService = new ConfigService({ config: Config() });

@@ -1,42 +1,52 @@
-lockfileVersion: '6.0'
+lockfileVersion: '9.0'
 
 settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-dependencies:
-  node-ansible-control:
-    specifier: ^0.6.0
-    version: 0.6.0
-  shared:
-    specifier: workspace:*
-    version: link:../shared
+importers:
+
+  .:
+    dependencies:
+      node-ansible-control:
+        specifier: ^0.6.0
+        version: 0.6.0
+      shared:
+        specifier: workspace:*
+        version: link:../shared
 
 packages:
 
-  /mock-spawn@0.2.6:
+  mock-spawn@0.2.6:
     resolution: {integrity: sha512-cMSfGmQlTiCF54a7taY1cUVXuuEKqDR8vLrfN7pI4LCskxwRedupMQB7o5d5Hg5L6rctvtyZJwUxMl3czTd4tg==}
+
+  node-ansible-control@0.6.0:
+    resolution: {integrity: sha512-ZAMI4H7Z9F206jS5D1pyr0MQ+RmQEatA1RCTo/Pae7Cvi2C4JtiLG+QT8PLOUikcR7Kas8M4OKfuxcnVVEs2qg==}
+
+  q@1.5.1:
+    resolution: {integrity: sha512-kV/CThkXo6xyFEZUugw/+pIOywXcDbFYgSct5cT3gqlbkBE1SJdwy6UQoZvodiWF/ckQLZyDE/Bu1M6gVu5lVw==}
+    engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
+
+  through@2.3.8:
+    resolution: {integrity: sha512-w89qg7PI8wAdvX60bMDP+bFoD5Dvhm9oLheFp5O4a2QF0cSBGsBX4qZmadPMvVqlLJBBci+WqGGOAPvcDeNSVg==}
+
+  underscore@1.11.0:
+    resolution: {integrity: sha512-xY96SsN3NA461qIRKZ/+qox37YXPtSBswMGfiNptr+wrt6ds4HaMw23TP612fEyGekRE6LNRiLYr/aqbHXNedw==}
+
+snapshots:
+
+  mock-spawn@0.2.6:
     dependencies:
       through: 2.3.8
-    dev: false
 
-  /node-ansible-control@0.6.0:
-    resolution: {integrity: sha512-ZAMI4H7Z9F206jS5D1pyr0MQ+RmQEatA1RCTo/Pae7Cvi2C4JtiLG+QT8PLOUikcR7Kas8M4OKfuxcnVVEs2qg==}
+  node-ansible-control@0.6.0:
     dependencies:
       mock-spawn: 0.2.6
       q: 1.5.1
       underscore: 1.11.0
-    dev: false
 
-  /q@1.5.1:
-    resolution: {integrity: sha512-kV/CThkXo6xyFEZUugw/+pIOywXcDbFYgSct5cT3gqlbkBE1SJdwy6UQoZvodiWF/ckQLZyDE/Bu1M6gVu5lVw==}
-    engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
-    dev: false
+  q@1.5.1: {}
 
-  /through@2.3.8:
-    resolution: {integrity: sha512-w89qg7PI8wAdvX60bMDP+bFoD5Dvhm9oLheFp5O4a2QF0cSBGsBX4qZmadPMvVqlLJBBci+WqGGOAPvcDeNSVg==}
-    dev: false
+  through@2.3.8: {}
 
-  /underscore@1.11.0:
-    resolution: {integrity: sha512-xY96SsN3NA461qIRKZ/+qox37YXPtSBswMGfiNptr+wrt6ds4HaMw23TP612fEyGekRE6LNRiLYr/aqbHXNedw==}
-    dev: false
+  underscore@1.11.0: {}

@@ -2,10 +2,6 @@ import { type DiscoveryConfig } from "shared/services";
 import { ActionTypes } from "./constants/action-types.js";
 
 export type IConfig = {
-    Rabbit: {
-        Url: string;
-        SpotifyQueueName: string;
-    };
     Spotify: {
         ClientId: string;
         ClientSecret: string;
@@ -20,10 +16,6 @@ export type IConfig = {
 
 export function Config(): IConfig {
     return {
-        Rabbit: {
-            Url: String(process.env.AMQP_SERVER_URL),
-            SpotifyQueueName: String(process.env.AMQP_SPOTIFY_QUEUE_NAME),
-        },
         Spotify: {
             ClientId: String(process.env.SPOTIFY_CLIENT_ID),
             ClientSecret: String(process.env.SPOTIFY_CLIENT_SECRET),

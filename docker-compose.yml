@@ -1,57 +1,27 @@
 services:
-  message-broker:
-    image: rabbitmq:3.12-alpine
-    container_name: message-broker
-    restart: unless-stopped
-    healthcheck:
-      test: rabbitmq-diagnostics -q ping
-      interval: 30s
-      timeout: 30s
-      retries: 3
-
-  zima-controller:
+  discovery-service:
     build:
       context: .
       dockerfile: Dockerfile.base
       args:
-        SERVICE_PATH: packages/zima-controller
-    container_name: zima-controller
-    expose:
-      - 8080
+        SERVICE_PATH: packages/discovery-service
+    container_name: discovery-service
+    hostname: discovery-service
     environment:
-      PORT: 8080
-      AMQP_SERVER_URL: ${AMQP_SERVER_URL}
-      AMQP_FORMS_QUEUE_NAME: ${AMQP_FORMS_QUEUE_NAME}
-      TELEGRAM_SERVICE_ADDRESS: ${TELEGRAM_SERVICE_ADDRESS}
-      SMART_DEVICES_SERVICE_ADDRESS: ${SMART_DEVICES_SERVICE_ADDRESS}
+      HTTP_PORT: 3000
     restart: unless-stopped
-    depends_on:
-      - message-broker
+    ports:
+      - 8080:3000
+    expose:
+      - 3000
     networks:
-      - proxy
+#      - proxy
       - default
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=proxy"
-      - "traefik.http.routers.zima-controller.rule=PathPrefix(`/zima-controller`)"
-      - "traefik.http.routers.zima-controller.entrypoints=http"
-      - "traefik.http.middlewares.zima-controller-strip.stripprefix.prefixes=/zima-controller/"
-      - "traefik.http.routers.zima-controller.middlewares=zima-controller-strip"
-
-  meetings-service:
-    build:
-      context: packages/meeting-service
-      dockerfile: Dockerfile
-    container_name: meetings-service
-    volumes:
-      - ./packages/meeting-service/credentials.json:/app/credentials.json
-      - ./packages/meeting-service/token.json:/app/token.json
-    environment:
-      AMQP_MEETINGS_QUEUE_NAME: ${AMQP_MEETINGS_QUEUE_NAME}
-      AMQP_SERVER_URL: ${AMQP_SERVER_URL}
-    restart: unless-stopped
-    depends_on:
-      - message-broker
+      - "traefik.http.routers.zima-discovery.rule=Host(`zima.${DOMAIN}`)"
+      - "traefik.http.routers.zima-discovery.entrypoints=http"
 
   spotify-service:
     build:
@@ -65,19 +35,20 @@ services:
       - ./packages/spotify-service/db:/app/db
     environment:
       HTTP_PORT: 3000
-      AMQP_SERVER_URL: ${AMQP_SERVER_URL}
-      AMQP_SPOTIFY_QUEUE_NAME: ${AMQP_SPOTIFY_QUEUE_NAME}
       SPOTIFY_CLIENT_ID: ${SPOTIFY_CLIENT_ID}
       SPOTIFY_CLIENT_SECRET: ${SPOTIFY_CLIENT_SECRET}
       SPOTIFY_REDIRECT_URI: ${SPOTIFY_REDIRECT_URI}
       AUTH_DB_PATH: /app/db/auth.json
+      DISCOVERY_NAME: spotify-service
+      DISCOVERY_ADDRESS: http://spotify-service:3000/commands/execute
+      DISCOVERY_SERVER_ADDRESS: http://discovery-service:3000/discovery/register
     restart: unless-stopped
     depends_on:
-      - message-broker
+      - discovery-service
     expose:
       - 3000
     networks:
-      - proxy
+#      - proxy
       - default
     labels:
       - "traefik.enable=true"
@@ -97,109 +68,59 @@ services:
     hostname: smart-devices-service
     volumes:
       - ./packages/smart-devices-service/devices.json:/usr/src/app/packages/devices.json
-      - persist-homekit:/usr/src/app/packages/smart-devices-service/persist
+#      - persist-homekit:/usr/src/app/packages/smart-devices-service/persist
     environment:
-      GRPC_ADDRESS: ${SMART_DEVICES_GRPC_ADDRESS}
-      ERRORS_IS_CATCH_ENABLE: true
-      ERRORS_NAME: smart-devices-service
-      ERRORS_ENVIRONMENT: production
-      ERRORS_DSN: ${ERRORS_DSN}
-    expose:
-      - 50051
-    network_mode: host
-    restart: unless-stopped
-
-  ansible-service:
-    build:
-      context: .
-      dockerfile: packages/ansible-service/Dockerfile
-      args:
-        SERVICE_PATH: packages/ansible-service
-        SSH_HOST: ${SSH_HOST}
-        SSH_USER: ${SSH_USER}
-        SSHPASS: ${SSH_PASS}
-    container_name: ansible-service
-    hostname: ansible-service
-    volumes:
-      - ./packages/ansible-service/ansible/playbooks:/usr/src/app/packages/ansible-service/ansible/playbooks
-      - ${LOCAL_VPN_FILES_PATH}:${VPN_FILES_PATH}
-    environment:
-      AMQP_SERVER_URL: ${AMQP_SERVER_URL}
-      AMQP_ANSIBLE_QUEUE_NAME: ${AMQP_ANSIBLE_QUEUE_NAME}
-      PLAYBOOKS_DIR: ${PLAYBOOKS_DIR}
-      VPN_FILES_PATH: ${VPN_FILES_PATH}
-      SSH_USER: ${SSH_USER}
-      SSH_HOST: ${SSH_HOST}
-    restart: unless-stopped
+      PORT: 3000
+      DISCOVERY_NAME: smart-devices-service
+      DISCOVERY_ADDRESS: http://smart-devices-service:3000/commands/execute
+      DISCOVERY_SERVER_ADDRESS: http://discovery-service:3000/discovery/register
+    networks:
+#      - proxy
+      - default
+      - homekit
     depends_on:
-      - message-broker
-
-  forms-db:
-    image: mongo:4.4-bionic
-    container_name: forms-db
+      - discovery-service
     restart: unless-stopped
-    command: mongod --serviceExecutor adaptive
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
-      MONGO_USERNAME: ${MONGO_USERNAME}
-      MONGO_PASSWORD: ${MONGO_PASSWORD}
-      MONGO_DB: ${MONGO_DB}
-    volumes:
-      - ./mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh
-      - formsdbdata:/data/db
 
-  forms-service:
-    build:
-      context: .
-      dockerfile: Dockerfile.base
-      args:
-        SERVICE_PATH: packages/forms-service
-    container_name: forms-service
-    hostname: forms-service
-    environment:
-      AMQP_SERVER_URL: ${AMQP_SERVER_URL}
-      AMQP_ANSIBLE_QUEUE_NAME: ${AMQP_ANSIBLE_QUEUE_NAME}
-      AMQP_MEETINGS_QUEUE_NAME: ${AMQP_MEETINGS_QUEUE_NAME}
-      AMQP_SMART_DEVICES_QUEUE_NAME: ${AMQP_SMART_DEVICES_QUEUE_NAME}
-      AMQP_SPOTIFY_QUEUE_NAME: ${AMQP_SPOTIFY_QUEUE_NAME}
-      AMQP_FORMS_QUEUE_NAME: ${AMQP_FORMS_QUEUE_NAME}
-      MONGO_USERNAME: ${MONGO_USERNAME}
-      MONGO_PASSWORD: ${MONGO_PASSWORD}
-      MONGO_HOST: ${MONGO_HOST}
-      MONGO_PORT: ${MONGO_PORT}
-      MONGO_DB: ${MONGO_DB}
-    restart: unless-stopped
-    depends_on:
-      - message-broker
-      - forms-db
-
-  telegram-service:
-    build:
-      context: .
-      dockerfile: Dockerfile.base
-      args:
-        SERVICE_PATH: packages/telegram-service
-    container_name: telegram-service
-    hostname: telegram-service
-    environment:
-      GRPC_ADDRESS: ${TELEGRAM_GRPC_ADDRESS}
-      TELEGRAM_API_ID: ${TELEGRAM_API_ID}
-      TELEGRAM_API_HASH: ${TELEGRAM_API_HASH}
-      TELEGRAM_AUTH_PASSWORD: ${TELEGRAM_AUTH_PASSWORD}
-      TELEGRAM_SESSION_STRING: ${TELEGRAM_SESSION_STRING}
-      TELEGRAM_AUTH_PHONE_CODE: ${TELEGRAM_AUTH_PHONE_CODE}
-      TELEGRAM_AUTH_PHONE_NUMBER: ${TELEGRAM_AUTH_PHONE_NUMBER}
-    expose:
-      - 50051
-    restart: unless-stopped
-    depends_on:
-      - zima-controller
+#  ansible-service:
+#    build:
+#      context: .
+#      dockerfile: packages/ansible-service/Dockerfile
+#      args:
+#        SERVICE_PATH: packages/ansible-service
+#        SSH_HOST: ${SSH_HOST}
+#        SSH_USER: ${SSH_USER}
+#        SSHPASS: ${SSH_PASS}
+#    container_name: ansible-service
+#    hostname: ansible-service
+#    volumes:
+#      - ./packages/ansible-service/ansible/playbooks:/usr/src/app/packages/ansible-service/ansible/playbooks
+#      - ${LOCAL_VPN_FILES_PATH}:${VPN_FILES_PATH}
+#    environment:
+#      AMQP_SERVER_URL: ${AMQP_SERVER_URL}
+#      AMQP_ANSIBLE_QUEUE_NAME: ${AMQP_ANSIBLE_QUEUE_NAME}
+#      PLAYBOOKS_DIR: ${PLAYBOOKS_DIR}
+#      VPN_FILES_PATH: ${VPN_FILES_PATH}
+#      SSH_USER: ${SSH_USER}
+#      SSH_HOST: ${SSH_HOST}
+#    restart: unless-stopped
+#    depends_on:
+#      - message-broker
 
 volumes:
-  formsdbdata:
   persist-homekit:
 
 networks:
-  proxy:
-    external: true
+  homekit:
+    driver: macvlan
+    driver_opts:
+      parent: eth0
+    ipam:
+      config:
+        - subnet: 192.168.198.0/24
+          gateway: 192.168.198.1
+          ip_range: 192.168.198.16/32
+
+#networks:
+#  proxy:
+#    external: true
