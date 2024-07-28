@@ -24,7 +24,7 @@ export class CommandsController implements BaseController {
 
         const device = await this.getTargetDevice(deviceType);
         if (!device || !device.id) {
-            return resp.status(404).json({ message: "No active device found" });
+            return resp.status(500).json({ message: "No active device found" });
         }
 
         try {
