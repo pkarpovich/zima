@@ -18,8 +18,10 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=proxy"
-      - "traefik.http.routers.zima-discovery.rule=PathPrefix(`/zima-controller`)"
-      - "traefik.http.routers.zima-discovery.entrypoints=http"
+      - "traefik.http.routers.zima-controller.rule=PathPrefix(`/zima-controller`)"
+      - "traefik.http.routers.zima-controller.entrypoints=http"
+      - "traefik.http.middlewares.zima-controller-strip.stripprefix.prefixes=/zima-controller/"
+      - "traefik.http.routers.zima-controller.middlewares=zima-controller-strip"
 
   spotify-service:
     build:
@@ -108,13 +110,6 @@ volumes:
 
 networks:
   homekit:
-    driver: macvlan
-    driver_opts:
-      parent: eth0
-    ipam:
-      config:
-        - subnet: 192.168.198.0/24
-          gateway: 192.168.198.1
-          ip_range: 192.168.198.16/32
+    external: true
   proxy:
     external: true
