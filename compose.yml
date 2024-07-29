@@ -18,7 +18,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=proxy"
-      - "traefik.http.routers.zima-discovery.rule=Host(`zima.${DOMAIN}`)"
+      - "traefik.http.routers.zima-discovery.rule=PathPrefix(`/zima-controller`)"
       - "traefik.http.routers.zima-discovery.entrypoints=http"
 
   spotify-service:
@@ -52,7 +52,7 @@ services:
       - "traefik.enable=true"
       - "traefik.docker.network=proxy"
       - "traefik.http.routers.zima-spotify.entrypoints=http"
-      - "traefik.http.routers.zima-spotify.rule=Host(`zima.${DOMAIN}`) && PathPrefix(`/zima-spotify`)"
+      - "traefik.http.routers.zima-spotify.rule=PathPrefix(`/zima-spotify`)"
       - "traefik.http.middlewares.zima-spotify-strip.stripprefix.prefixes=/zima-spotify"
       - "traefik.http.routers.zima-spotify.middlewares=zima-spotify-strip"
 
