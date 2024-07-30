@@ -1,10 +1,9 @@
 import SpotifyWebApi from "spotify-web-api-node";
-import { nanoid } from "nanoid";
 import { LoggerService, ConfigService, LocalDbService } from "shared/services";
+import { generateUniqId } from "shared/utils";
 
 import { IConfig } from "../config.js";
 import { IAuthStore } from "../store.js";
-import * as console from "node:console";
 
 export class SpotifyService {
     private readonly spotifyApi: SpotifyWebApi;
@@ -12,8 +11,6 @@ export class SpotifyService {
     private readonly localDbService: LocalDbService<IAuthStore>;
 
     private readonly loggerService: LoggerService;
-
-    private readonly configService: ConfigService<IConfig>;
 
     private readonly scopes: string[] = [
         "user-read-playback-state",
@@ -37,7 +34,6 @@ export class SpotifyService {
         });
 
         this.localDbService = localDbService;
-        this.configService = configService;
         this.loggerService = loggerService;
 
         this.refreshAccess = this.refreshAccess.bind(this);
@@ -47,11 +43,11 @@ export class SpotifyService {
         const { refreshToken } = this.localDbService.get();
 
         if (!refreshToken) {
-            const authState = nanoid();
+            const authState = generateUniqId();
             const authURL = this.createAuthorizeURL(authState);
             this.loggerService.log(`Authorization URL: ${authURL}`);
         } else {
-            await this.setRefreshToken(refreshToken);
+            this.setRefreshToken(refreshToken);
             await this.refreshAccess();
         }
     }
@@ -63,14 +59,10 @@ export class SpotifyService {
     async authorizationCodeGrant(code: string) {
         const { body } = await this.spotifyApi.authorizationCodeGrant(code);
 
-        await this.spotifyApi.setAccessToken(body.access_token);
-        await this.spotifyApi.setRefreshToken(body.refresh_token);
+        this.spotifyApi.setAccessToken(body.access_token);
+        this.spotifyApi.setRefreshToken(body.refresh_token);
 
         await this.localDbService.set({ refreshToken: body.refresh_token });
-    }
-
-    setAccessToken(token: string) {
-        return this.spotifyApi.setAccessToken(token);
     }
 
     setRefreshToken(token: string) {
@@ -80,7 +72,7 @@ export class SpotifyService {
     async refreshAccess() {
         const { body } = await this.spotifyApi.refreshAccessToken();
 
-        await this.spotifyApi.setAccessToken(body.access_token);
+        this.spotifyApi.setAccessToken(body.access_token);
     }
 
     async getDevices() {

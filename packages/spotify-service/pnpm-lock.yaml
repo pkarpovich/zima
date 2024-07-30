@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      nanoid:
-        specifier: ^5.0.4
-        version: 5.0.4
       shared:
         specifier: link:../shared
         version: link:../shared
@@ -19,8 +16,8 @@ importers:
         version: 5.0.2
     devDependencies:
       '@types/spotify-web-api-node':
-        specifier: ^5.0.7
-        version: 5.0.7
+        specifier: ^5.0.11
+        version: 5.0.11
       tsx:
         specifier: ^4.16.2
         version: 4.16.2
@@ -171,8 +168,8 @@ packages:
   '@types/spotify-api@0.0.19':
     resolution: {integrity: sha512-tdtxjhZs7w/dN7kpeezRe492kXzWXvilW/1ibNMoM2ymcRwKCrK5exEeBNCZhwZMtG+S2eZMaAaBsnTnqun1PQ==}
 
-  '@types/spotify-web-api-node@5.0.7':
-    resolution: {integrity: sha512-8ajd4xS3+l4Zau1OyggPv7DjeSFEIGYvG5Q8PbbBMKiaRFD53IkcvU4Bx4Ijyzw+l+Kc09L5L+MXRj0wyVLx9Q==}
+  '@types/spotify-web-api-node@5.0.11':
+    resolution: {integrity: sha512-RS3IkSqH9geC61e8qd+Oy7giOTtiY7ywm0Z4bu5uYuc7XuOcLfDwKjmle85IbpTEdazeCgmIbo8nMLg7WDVvgw==}
 
   asynckit@0.4.0:
     resolution: {integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==}
@@ -267,11 +264,6 @@ packages:
 
   ms@2.1.2:
     resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==}
-
-  nanoid@5.0.4:
-    resolution: {integrity: sha512-vAjmBf13gsmhXSgBrtIclinISzFFy22WwCYoyilZlsrRXNIHSwgFQ1bEdjRwMT3aoadeIF6HMuDRlOxzfXV8ig==}
-    engines: {node: ^18 || >=20}
-    hasBin: true
 
   object-inspect@1.12.2:
     resolution: {integrity: sha512-z+cPxW0QGUp0mcqcsgQyLVRDoXFQbXOwBaqyF7VIgI4TWNQsDHrBpUQslRmIfAoYWdYzs6UlKJtB2XJpTaNSpQ==}
@@ -398,7 +390,7 @@ snapshots:
 
   '@types/spotify-api@0.0.19': {}
 
-  '@types/spotify-web-api-node@5.0.7':
+  '@types/spotify-web-api-node@5.0.11':
     dependencies:
       '@types/spotify-api': 0.0.19
 
@@ -497,8 +489,6 @@ snapshots:
   mime@2.6.0: {}
 
   ms@2.1.2: {}
-
-  nanoid@5.0.4: {}
 
   object-inspect@1.12.2: {}
 

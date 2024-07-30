@@ -13,12 +13,11 @@
   "author": "Pavel Karpovich",
   "license": "ISC",
   "dependencies": {
-    "nanoid": "^5.0.4",
     "shared": "link:../shared",
     "spotify-web-api-node": "^5.0.2"
   },
   "devDependencies": {
-    "@types/spotify-web-api-node": "^5.0.7",
+    "@types/spotify-web-api-node": "^5.0.11",
     "tsx": "^4.16.2",
     "typescript": "^5.5.4"
   }
