@@ -56,4 +56,19 @@ describe("DiscoveryService", () => {
     it("should return undefined if module is not found by action", () => {
         assert.equal(discoveryService.getModuleByAction("test"), null);
     });
+
+    it("should return all modules", () => {
+        const module1 = { name: "test1", address: "http://localhost:3000", actions: [] };
+        const module2 = { name: "test2", address: "http://localhost:3000", actions: [] };
+        discoveryService.register(module1);
+        discoveryService.register(module2);
+
+        assert.deepEqual(discoveryService.getModules(), [module1, module2]);
+        assert.equal(discoveryService.getModules().length, 2);
+    });
+
+    it("should return an empty array if no modules are registered", () => {
+        assert.deepEqual(discoveryService.getModules(), []);
+        assert.equal(discoveryService.getModules().length, 0);
+    });
 });

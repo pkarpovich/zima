@@ -1,5 +1,5 @@
 import { DiscoveryService } from "../services/discovery.service.js";
-import { HttpClientService, HttpService, LoggerService } from "shared/services";
+import { HttpClientService, HttpService, LoggerService, isHttpError } from "shared/services";
 import type { Request, Response, Router, BaseController } from "shared/controllers";
 import * as console from "node:console";
 
@@ -14,6 +14,7 @@ export class DiscoveryController implements BaseController {
         const router = HttpService.newRouter();
 
         router.post("/register", this.register.bind(this));
+        router.get("/health", this.healthCheck.bind(this));
         router.post("/invoke", this.invoke.bind(this));
 
         return router;
@@ -39,8 +40,39 @@ export class DiscoveryController implements BaseController {
             return;
         }
 
-        await this.httpClientService.post(module.address, req.body);
+        try {
+            const resp = await this.httpClientService.post(module.address, req.body);
+        } catch (e: unknown) {
+            if (!isHttpError(e)) {
+                this.loggerService.error(e as Error);
+                return res.status(500).send("Internal Server Error");
+            }
+
+            switch (e.code) {
+                case "ECONNREFUSED": {
+                    this.loggerService.error(`Error invoking action: ${name} - Connection Refused`);
+                    this.discoveryService.deregister(module.name);
+                    this.loggerService.info(`Deregistered module: ${module.name}`);
+                    break;
+                }
+                default: {
+                    this.loggerService.error(`Error invoking action: ${name} - ${e.message}`);
+                    break;
+                }
+            }
+
+            return res.status(500).json(e.toJSON());
+        }
 
         res.status(200).json({ message: "OK" });
+    }
+
+    healthCheck(_: Request, res: Response) {
+        const modules = this.discoveryService.getModules();
+
+        res.json({
+            modules: modules.length,
+            status: "OK",
+        });
     }
 }

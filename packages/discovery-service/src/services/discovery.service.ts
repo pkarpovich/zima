@@ -22,4 +22,8 @@ export class DiscoveryService {
     getModuleByAction(action: string): Module | null {
         return Array.from(this._modules.values()).find((module) => module.actions.includes(action)) ?? null;
     }
+
+    getModules(): Module[] {
+        return Array.from(this._modules.values());
+    }
 }

@@ -1,6 +1,8 @@
-import axios, { type AxiosInstance, type AxiosResponse, type AxiosRequestConfig } from "axios";
+import axios, { type AxiosInstance, type AxiosResponse, type AxiosRequestConfig, isAxiosError } from "axios";
 
 export type RequestOptions = AxiosRequestConfig;
+
+export const isHttpError = isAxiosError;
 
 export class HttpClientService {
     private _client: AxiosInstance;
