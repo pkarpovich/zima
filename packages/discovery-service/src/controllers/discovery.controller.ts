@@ -7,7 +7,7 @@ export class DiscoveryController implements BaseController {
     constructor(
         private readonly loggerService: LoggerService,
         private readonly discoveryService: DiscoveryService,
-        private readonly httpClientService: HttpClientService
+        private readonly httpClientService: HttpClientService,
     ) {}
 
     getRoutes(): Router {
@@ -57,6 +57,7 @@ export class DiscoveryController implements BaseController {
                 }
                 default: {
                     this.loggerService.error(`Error invoking action: ${name} - ${e.message}`);
+                    this.loggerService.error(e.toJSON().toString());
                     break;
                 }
             }
