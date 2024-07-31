@@ -99,6 +99,8 @@ services:
       DISCOVERY_NAME: remote-shell-service
       DISCOVERY_ADDRESS: http://remote-shell-service:3000/commands/execute
       DISCOVERY_SERVER_ADDRESS: http://discovery-service:3000/discovery/register
+      ATV_ID: ${ATV_ID}
+      ATV_COMPANION_CREDENTIALS: ${ATV_COMPANION_CREDENTIALS}
     networks:
       - default
     restart: unless-stopped

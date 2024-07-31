@@ -12,6 +12,10 @@ export interface IConfig {
         Username: string;
     };
     discovery: DiscoveryConfig;
+    atv: {
+        id: string;
+        companionCredentials: string;
+    };
 }
 
 export function Config(): IConfig {
@@ -30,6 +34,11 @@ export function Config(): IConfig {
         SSH: {
             Host: String(process.env.SSH_HOST),
             Username: String(process.env.SSH_USER),
+        },
+
+        atv: {
+            id: String(process.env.ATV_ID),
+            companionCredentials: String(process.env.ATV_COMPANION_CREDENTIALS),
         },
     };
 }
