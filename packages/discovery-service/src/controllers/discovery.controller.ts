@@ -57,7 +57,7 @@ export class DiscoveryController implements BaseController {
                 }
                 default: {
                     this.loggerService.error(`Error invoking action: ${name} - ${e.message}`);
-                    this.loggerService.error(e.toJSON().toString());
+                    console.error(e.toJSON());
                     break;
                 }
             }
