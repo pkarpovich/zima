@@ -9,7 +9,10 @@ type Args = {
 };
 
 export class CommandsController implements BaseController {
-    constructor(private readonly atvService: AtvService, private readonly loggerService: LoggerService) {}
+    constructor(
+        private readonly atvService: AtvService,
+        private readonly loggerService: LoggerService,
+    ) {}
 
     getRoutes(): Router {
         const router = HttpService.newRouter();
@@ -23,21 +26,22 @@ export class CommandsController implements BaseController {
         const { name, args } = req.body;
 
         try {
-            await this.handleAction(name, args);
+            const output = await this.handleAction(name, args);
 
-            return resp.status(200).json({ message: "OK" });
+            return resp.status(200).json({ message: "OK", response: output });
         } catch (e: any) {
             this.loggerService.error(e.message);
             return resp.status(500).json({ message: e.message });
         }
     }
 
-    private async handleAction(name: string, args: Args) {
+    private async handleAction(name: string, args: Args): Promise<string> {
         this.loggerService.log(`Executing action: ${name}`);
+        let output = "";
 
         switch (name) {
             case ActionTypes.AppleTvExecute: {
-                await this.atvService.execute(args.command);
+                output = await this.atvService.execute(args.command);
                 break;
             }
             default: {
@@ -46,5 +50,7 @@ export class CommandsController implements BaseController {
         }
 
         this.loggerService.success(`Action ${name} executed successfully`);
+
+        return output;
     }
 }

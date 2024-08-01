@@ -40,8 +40,13 @@ export class DiscoveryController implements BaseController {
             return;
         }
 
+        let response = null;
+
         try {
-            const resp = await this.httpClientService.post(module.address, req.body);
+            const { data } = await this.httpClientService.post(module.address, req.body);
+            if (data) {
+                response = data.response;
+            }
         } catch (e: unknown) {
             if (!isHttpError(e)) {
                 this.loggerService.error(e as Error);
@@ -65,7 +70,7 @@ export class DiscoveryController implements BaseController {
             return res.status(500).json(e.toJSON());
         }
 
-        res.status(200).json({ message: "OK" });
+        res.status(200).json({ message: "OK", response });
     }
 
     healthCheck(_: Request, res: Response) {
