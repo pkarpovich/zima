@@ -15,8 +15,8 @@ export class HttpClientService {
         return this._client.get(url, options);
     }
 
-    post(url: string, data?: unknown, options?: RequestOptions): Promise<AxiosResponse> {
-        return this._client.post(url, data, options);
+    post<T = unknown>(url: string, data?: unknown, options?: RequestOptions): Promise<AxiosResponse<T>> {
+        return this._client.post<T>(url, data, options);
     }
 
     put(url: string, data?: unknown, options?: RequestOptions): Promise<AxiosResponse> {

@@ -6,13 +6,17 @@ import "express-async-errors";
 import { ConfigService } from "./config.service.js";
 import { LoggerService } from "./logger.service.js";
 
+export type HttpServiceConfig = {
+    port: number;
+};
+
 export class HttpService {
     private readonly app: express.Application;
 
     constructor(
         private readonly logService: LoggerService,
         private readonly configService: ConfigService<unknown>,
-        private readonly apiRouter: express.Router
+        private readonly apiRouter: express.Router,
     ) {
         this.app = express();
         this.app.use(helmet());
@@ -30,7 +34,7 @@ export class HttpService {
         req: Request,
         res: Response,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        _: NextFunction
+        _: NextFunction,
     ): void {
         this.logService.error(err);
 
