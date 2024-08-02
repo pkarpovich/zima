@@ -40,6 +40,7 @@ export class DiscoveryController implements BaseController {
         const module = this.discoveryService.getModuleByAction(name);
 
         if (!module) {
+            this.loggerService.error(`Action not found: ${name}`);
             res.status(404).send("Not Found");
             return;
         }
