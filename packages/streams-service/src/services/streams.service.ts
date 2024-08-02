@@ -32,6 +32,13 @@ function wait(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function extractUrl(input: string) {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const urls = input.match(urlRegex);
+
+    return urls ? urls[0] : "";
+}
+
 export class StreamsService {
     constructor(
         private readonly configService: ConfigService<Config>,
@@ -40,7 +47,8 @@ export class StreamsService {
         private readonly httpClientService: HttpClientService,
     ) {}
 
-    async openUrl(url: string) {
+    async openUrl(input: string) {
+        const url = extractUrl(input);
         this.loggerService.info(`Opening url: ${url}`);
 
         await this.turnOnAppleTv();
@@ -85,8 +93,7 @@ export class StreamsService {
     private getDeeplinkByURL(link: string): [string, Providers] {
         const url = new URL(link);
 
-        // support for https://youtu.be/sFu2l0nz67o?si=jpjkEGSWbfsgYKlz
-        if (url.hostname === "www.youtube.com") {
+        if (url.hostname === "www.youtube.com" || url.hostname === "youtube.com") {
             const videoId = url.searchParams.get("v");
             return [`youtube://watch/${videoId}`, Providers.Youtube];
         } else if (url.hostname === "youtu.be") {
