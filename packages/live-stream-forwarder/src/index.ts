@@ -8,6 +8,10 @@ enum StreamProvider {
 const app = express();
 const port = Number(process.env.PORT) || 8080;
 
+app.get("/health", (req, res) => {
+    res.json({ status: "ok" });
+});
+
 app.get("/stream/:providerName/:streamId", (req, res) => {
     const { providerName, streamId } = req.params;
     const streamUrl = getStreamUrl(providerName, streamId);
