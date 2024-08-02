@@ -3,6 +3,10 @@ import { HttpClientService, HttpService, LoggerService, isHttpError } from "shar
 import type { Request, Response, Router, BaseController } from "shared/controllers";
 import * as console from "node:console";
 
+type BaseServiceResponse = {
+    response?: string;
+};
+
 export class DiscoveryController implements BaseController {
     constructor(
         private readonly loggerService: LoggerService,
@@ -43,7 +47,7 @@ export class DiscoveryController implements BaseController {
         let response = null;
 
         try {
-            const { data } = await this.httpClientService.post(module.address, req.body);
+            const { data } = await this.httpClientService.post<BaseServiceResponse>(module.address, req.body);
             if (data) {
                 response = data.response;
             }
