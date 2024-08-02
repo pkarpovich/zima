@@ -20,7 +20,7 @@ export function Config(): Config {
             registryAddress: String(process.env.DISCOVERY_SERVER_ADDRESS),
         },
         http: {
-            port: Number(process.env.HTTP_PORT) || 3400,
+            port: Number(process.env.PORT) || 3400,
         },
         liveStreamForwarder: {
             url: String(process.env.LIVE_STREAM_FORWARDER_URL),
