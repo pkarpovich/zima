@@ -85,8 +85,12 @@ export class StreamsService {
     private getDeeplinkByURL(link: string): [string, Providers] {
         const url = new URL(link);
 
+        // support for https://youtu.be/sFu2l0nz67o?si=jpjkEGSWbfsgYKlz
         if (url.hostname === "www.youtube.com") {
             const videoId = url.searchParams.get("v");
+            return [`youtube://watch/${videoId}`, Providers.Youtube];
+        } else if (url.hostname === "youtu.be") {
+            const videoId = url.pathname.split("/")[1];
             return [`youtube://watch/${videoId}`, Providers.Youtube];
         } else if (url.hostname === "www.twitch.tv") {
             const channel = url.pathname.split("/")[1];
