@@ -126,6 +126,26 @@ services:
       - discovery-service
     restart: unless-stopped
 
+  live-stream-forwarder:
+    build:
+      dockerfile: packages/live-stream-forwarder/Dockerfile
+      args:
+        SERVICE_PATH: packages/live-stream-forwarder
+    container_name: live-stream-forwarder
+    restart: unless-stopped
+    environment:
+      PORT: 8080
+    networks:
+      - default
+      - proxy
+    expose:
+      - 8080
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.live-stream-forwarder.entrypoints=http"
+      - "traefik.http.routers.live-stream-forwarder.rule=Host(`live-stream.${DOMAIN}`)"
+
 volumes:
   persist-homekit:
 
