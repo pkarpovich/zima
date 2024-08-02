@@ -113,7 +113,7 @@ services:
       dockerfile: Dockerfile.base
       args:
         SERVICE_PATH: packages/streams-service
-    container_name: smart-devices-service
+    container_name: streams-service
     hostname: streams-service
     environment:
       PORT: 3000
@@ -124,6 +124,7 @@ services:
       - default
     depends_on:
       - discovery-service
+      - live-stream-forwarder
     restart: unless-stopped
 
   live-stream-forwarder:
@@ -144,7 +145,7 @@ services:
       - "traefik.enable=true"
       - "traefik.docker.network=proxy"
       - "traefik.http.routers.live-stream-forwarder.entrypoints=http"
-      - "traefik.http.routers.live-stream-forwarder.rule=Host(`live-stream.${DOMAIN}`)"
+      - "traefik.http.routers.live-stream-forwarder.rule=Host(`live-stream.${ROOT_DOMAIN}`)"
 
 volumes:
   persist-homekit:
