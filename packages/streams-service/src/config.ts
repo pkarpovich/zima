@@ -5,6 +5,10 @@ import { ActionTypes } from "./action-types.js";
 export type Config = {
     discovery: DiscoveryConfig;
     http: HttpServiceConfig;
+    liveStreamForwarder: {
+        atvUrl: string;
+        url: string;
+    };
 };
 
 export function Config(): Config {
@@ -17,6 +21,10 @@ export function Config(): Config {
         },
         http: {
             port: Number(process.env.HTTP_PORT) || 3400,
+        },
+        liveStreamForwarder: {
+            url: String(process.env.LIVE_STREAM_FORWARDER_URL),
+            atvUrl: String(process.env.LIVE_STREAM_FORWARDER_ATV_URL),
         },
     };
 }

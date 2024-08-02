@@ -120,6 +120,8 @@ services:
       DISCOVERY_NAME: streams-service
       DISCOVERY_ADDRESS: http://streams-service:3000/commands/execute
       DISCOVERY_SERVER_ADDRESS: http://discovery-service:3000
+      LIVE_STREAM_FORWARDER_URL: ${LIVE_STREAM_FORWARDER_URL}
+      LIVE_STREAM_FORWARDER_ATV_URL: ${LIVE_STREAM_FORWARDER_ATV_URL}
     networks:
       - default
     depends_on:

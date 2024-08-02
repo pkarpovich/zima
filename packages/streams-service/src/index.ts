@@ -13,7 +13,7 @@ import { initApiController } from "./controllers/api.controller.js";
 
     await discoveryClientService.registerModule();
 
-    const streamsService = new StreamsService(configService, loggerService, discoveryClientService);
+    const streamsService = new StreamsService(configService, loggerService, discoveryClientService, httpClientService);
     const commandsController = new CommandsController(streamsService, loggerService);
     const apiController = initApiController(commandsController);
 

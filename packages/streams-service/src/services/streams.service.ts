@@ -1,4 +1,4 @@
-import type { ConfigService, DiscoveryClientService, LoggerService } from "shared/services";
+import { ConfigService, DiscoveryClientService, HttpClientService, LoggerService } from "shared/services";
 import { Config } from "../config.js";
 
 const AppleTvExecuteType = "apple-tv-execute";
@@ -22,6 +22,12 @@ enum AppleTvCommands {
     LaunchApp = "launch_app",
 }
 
+enum Providers {
+    Twitch = "twitch",
+    Youtube = "youtube",
+    Unrecognized = "unrecognized",
+}
+
 function wait(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -31,6 +37,7 @@ export class StreamsService {
         private readonly configService: ConfigService<Config>,
         private readonly loggerService: LoggerService,
         private readonly discoveryClientService: DiscoveryClientService,
+        private readonly httpClientService: HttpClientService,
     ) {}
 
     async openUrl(url: string) {
@@ -38,11 +45,14 @@ export class StreamsService {
 
         await this.turnOnAppleTv();
 
-        const deeplink = this.getDeeplinkByURL(url);
+        const [deeplink, provider] = this.getDeeplinkByURL(url);
         this.loggerService.info(`Opening deeplink: ${deeplink}`);
-        await this.launchApp(deeplink);
 
-        this.loggerService.info("Apple TV is on, url opened successfully");
+        await this.launchApp("com.celerity.DeepLink");
+        await wait(5000);
+        await this.openDeeplink(deeplink, provider);
+
+        this.loggerService.info("Url opened successfully");
     }
 
     private async checkPowerStatus(): Promise<boolean> {
@@ -75,14 +85,23 @@ export class StreamsService {
         }
     }
 
-    private getDeeplinkByURL(link: string): string {
+    private getDeeplinkByURL(link: string): [string, Providers] {
         const url = new URL(link);
+
         if (url.hostname === "www.youtube.com") {
             const videoId = url.searchParams.get("v");
-            return `youtube://watch/${videoId}`;
+            return [`youtube://watch/${videoId}`, Providers.Youtube];
+        } else if (url.hostname === "www.twitch.tv") {
+            const channel = url.pathname.split("/")[1];
+            const liveStreamForwarderUrl = this.configService.get<string>("liveStreamForwarder.url");
+            const atvUrl = this.configService.get<string>("liveStreamForwarder.atvUrl");
+
+            const streamUrl = `${liveStreamForwarderUrl}/live-stream/stream/twitch/${channel}`;
+            const deeplinkUrl = `${atvUrl}/open?target=vlc-x-callback://x-callback-url/stream?url=${encodeURIComponent(streamUrl)}`;
+            return [deeplinkUrl, Providers.Twitch];
         }
 
-        return link;
+        return [link, Providers.Unrecognized];
     }
 
     private async launchApp(appId: string) {
@@ -90,5 +109,22 @@ export class StreamsService {
         await this.discoveryClientService.invokeAction<AppleTvExecuteArgs, AppleTvExecuteResponse>(AppleTvExecuteType, {
             command: `${AppleTvCommands.LaunchApp}=${appId}`,
         });
+    }
+
+    private async openDeeplink(deeplink: string, provider: Providers) {
+        switch (provider) {
+            case Providers.Youtube: {
+                await this.launchApp(deeplink);
+                break;
+            }
+            case Providers.Twitch: {
+                await this.httpClientService.get(deeplink);
+                break;
+            }
+            case Providers.Unrecognized: {
+                this.loggerService.error(`Unrecognized provider for deeplink: ${deeplink}`);
+                break;
+            }
+        }
     }
 }
