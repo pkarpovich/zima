@@ -47,9 +47,6 @@ export class StreamsService {
 
         const [deeplink, provider] = this.getDeeplinkByURL(url);
         this.loggerService.info(`Opening deeplink: ${deeplink}`);
-
-        await this.launchApp("com.celerity.DeepLink");
-        await wait(5000);
         await this.openDeeplink(deeplink, provider);
 
         this.loggerService.info("Url opened successfully");
@@ -118,6 +115,9 @@ export class StreamsService {
                 break;
             }
             case Providers.Twitch: {
+                await this.launchApp("com.celerity.DeepLink");
+                await wait(5000);
+
                 await this.httpClientService.get(deeplink);
                 break;
             }
