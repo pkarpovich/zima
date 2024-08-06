@@ -1,5 +1,6 @@
 import { ConfigService, DiscoveryClientService, HttpClientService, LoggerService } from "shared/services";
 import { Config } from "../config.js";
+import { executeWithRetry } from "../utils/execute-with-retry.js";
 
 const AppleTvExecuteType = "apple-tv-execute";
 
@@ -20,6 +21,7 @@ enum AppleTvCommands {
     PowerState = "power_state",
     TurnOn = "turn_on",
     LaunchApp = "launch_app",
+    CurrentApp = "app",
 }
 
 enum Providers {
@@ -82,9 +84,8 @@ export class StreamsService {
         await this.discoveryClientService.invokeAction<AppleTvExecuteArgs, AppleTvExecuteResponse>(AppleTvExecuteType, {
             command: AppleTvCommands.TurnOn,
         });
-        await wait(5000);
 
-        isAppleTvOn = await this.checkPowerStatus();
+        isAppleTvOn = await executeWithRetry(this.checkPowerStatus.bind(this), true);
         if (!isAppleTvOn) {
             throw new Error("Failed to turn on Apple TV");
         }
@@ -127,7 +128,7 @@ export class StreamsService {
             }
             case Providers.Twitch: {
                 await this.launchApp("com.celerity.DeepLink");
-                await wait(5000);
+                await wait(8000);
 
                 await this.httpClientService.get(deeplink);
                 break;
