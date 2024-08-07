@@ -1,26 +1,33 @@
 import * as fs from "node:fs";
 import { ConfigService, HttpService, LoggerService, DiscoveryClientService, HttpClientService } from "shared/services";
+import { createContainer, registerFunction, registerService, registerValue } from "shared/container";
 
 import { YeelightService } from "./services/yeelight-service.js";
 import { CommandsController } from "./controllers/commands.controller.js";
 import { initApiController } from "./controllers/api.controller.js";
 import { Config } from "./config/config.js";
+import { IHomekitDevice } from "./types/homekit-device.type.js";
 
 const devicesConfig = JSON.parse(fs.readFileSync("../devices.json", "utf-8"));
 
 (async () => {
-    const configService = new ConfigService({ config: Config() });
+    const container = createContainer();
 
-    const loggerService = new LoggerService();
-    const yeelightService = new YeelightService(devicesConfig.lights);
+    container.register({
+        config: registerValue(Config()),
+        devices: registerValue<IHomekitDevice[]>(devicesConfig.lights),
+        loggerService: registerService(LoggerService),
+        httpClientService: registerService(HttpClientService),
+        configService: registerService(ConfigService),
+        discoveryService: registerService(DiscoveryClientService),
+        yeelightService: registerService(YeelightService),
+        commandsController: registerService(CommandsController),
+        apiRouter: registerFunction(initApiController),
+        httpService: registerService(HttpService),
+    });
 
-    const commandsController = new CommandsController(yeelightService, loggerService);
-    const apiController = initApiController(commandsController);
+    const { discoveryService, httpService } = container.cradle;
 
-    const httpService = new HttpService(loggerService, configService, apiController);
-    httpService.start();
-
-    const httpClientService = new HttpClientService();
-    const discoveryService = new DiscoveryClientService(httpClientService, loggerService, configService);
     await discoveryService.registerModule();
+    httpService.start();
 })();

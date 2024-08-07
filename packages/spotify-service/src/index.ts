@@ -8,6 +8,7 @@ import {
     DiscoveryClientService,
     HttpClientService,
 } from "shared/services";
+import { createContainer, registerFunction, registerService, registerValue } from "shared/container";
 
 import { Config } from "./config.js";
 import { IAuthStore } from "./store.js";
@@ -16,25 +17,32 @@ import { initApiController } from "./controllers/api.controller.js";
 import { SpotifyController } from "./controllers/spotify.controller.js";
 import { CommandsController } from "./controllers/commands.controller.js";
 
-const DEFAULT_STORE_VALUE: IAuthStore = { refreshToken: null };
+(async () => {
+    const container = createContainer();
+    const DEFAULT_STORE_VALUE: IAuthStore = { refreshToken: null };
 
-const filesService = new FilesService(fs);
-const configService = new ConfigService({ config: Config() });
-const localDbService = new LocalDbService<IAuthStore>(DEFAULT_STORE_VALUE, configService, filesService);
-await localDbService.start();
-const loggerService = new LoggerService();
-const spotifyService = new SpotifyService({
-    localDbService,
-    configService,
-    loggerService,
-});
-const httpClientService = new HttpClientService();
-const discoveryClientService = new DiscoveryClientService(httpClientService, loggerService, configService);
+    container.register({
+        config: registerValue(Config()),
+        loggerService: registerService(LoggerService),
+        httpClientService: registerService(HttpClientService),
+        configService: registerService(ConfigService),
+        filesService: registerService(FilesService).inject(() => ({ fileSystem: fs })),
+        localDbService: registerService(LocalDbService).inject(() => ({ initialData: DEFAULT_STORE_VALUE })),
+    });
 
-const spotifyController = new SpotifyController(spotifyService, loggerService);
-const commandsController = new CommandsController(spotifyService, loggerService);
-const apiRouter = initApiController(spotifyController, commandsController);
-const httpService = new HttpService(loggerService, configService, apiRouter);
+    await container.resolve("localDbService").start();
 
-await discoveryClientService.registerModule();
-httpService.start();
+    container.register({
+        spotifyService: registerService(SpotifyService),
+        discoveryService: registerService(DiscoveryClientService),
+        commandsController: registerService(CommandsController),
+        spotifyController: registerService(SpotifyController),
+        apiRouter: registerFunction(initApiController),
+        httpService: registerService(HttpService),
+    });
+
+    const { discoveryService, httpService } = container.cradle;
+
+    await discoveryService.registerModule();
+    httpService.start();
+})();

@@ -1,19 +1,26 @@
 import { ConfigService, HttpClientService, HttpService, LoggerService } from "shared/services";
+import { createContainer, registerFunction, registerService, registerValue } from "shared/container";
 
 import { Config } from "./config/config.js";
 import { DiscoveryService } from "./services/discovery.service.js";
 import { DiscoveryController } from "./controllers/discovery.controller.js";
 import { getApiController } from "./controllers/api.controller.js";
 
-const loggerService = new LoggerService();
-const configService = new ConfigService({ config: Config });
-const discoveryService = new DiscoveryService();
-const httpClientService = new HttpClientService();
+(async () => {
+    const container = createContainer();
 
-const discoveryController = new DiscoveryController(loggerService, discoveryService, httpClientService);
+    container.register({
+        config: registerValue(Config),
+        loggerService: registerService(LoggerService),
+        httpClientService: registerService(HttpClientService),
+        configService: registerService(ConfigService),
+        discoveryService: registerService(DiscoveryService),
+        discoveryController: registerService(DiscoveryController),
+        apiRouter: registerFunction(getApiController),
+        httpServer: registerService(HttpService),
+    });
 
-const apiController = getApiController(discoveryController);
+    const { httpServer } = container.cradle;
 
-const httpService = new HttpService(loggerService, configService, apiController);
-
-httpService.start();
+    httpServer.start();
+})();

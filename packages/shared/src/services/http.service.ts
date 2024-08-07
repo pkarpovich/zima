@@ -14,7 +14,7 @@ export class HttpService {
     private readonly app: express.Application;
 
     constructor(
-        private readonly logService: LoggerService,
+        private readonly loggerService: LoggerService,
         private readonly configService: ConfigService<unknown>,
         private readonly apiRouter: express.Router,
     ) {
@@ -36,7 +36,7 @@ export class HttpService {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _: NextFunction,
     ): void {
-        this.logService.error(err);
+        this.loggerService.error(err);
 
         res.status(500).json({
             error: "Internal Server Error",
@@ -50,6 +50,6 @@ export class HttpService {
         this.app.use("/", this.apiRouter);
         this.app.use(this.handleError);
 
-        this.app.listen(port, cb || (() => this.logService.info(`Http server listening on port ${port}`)));
+        this.app.listen(port, cb || (() => this.loggerService.info(`Http server listening on port ${port}`)));
     }
 }

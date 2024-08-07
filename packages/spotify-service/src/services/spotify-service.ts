@@ -18,15 +18,11 @@ export class SpotifyService {
         "user-read-currently-playing",
     ];
 
-    constructor({
-        localDbService,
-        configService,
-        loggerService,
-    }: {
-        localDbService: LocalDbService<IAuthStore>;
-        configService: ConfigService<IConfig>;
-        loggerService: LoggerService;
-    }) {
+    constructor(
+        localDbService: LocalDbService<IAuthStore>,
+        configService: ConfigService<IConfig>,
+        loggerService: LoggerService,
+    ) {
         this.spotifyApi = new SpotifyWebApi({
             clientId: configService.get("Spotify.ClientId"),
             clientSecret: configService.get("Spotify.ClientSecret"),

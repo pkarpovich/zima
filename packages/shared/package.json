@@ -30,6 +30,10 @@
     "./enums": {
       "types": "./dist/enums.d.ts",
       "import": "./dist/enums.js"
+    },
+    "./container": {
+      "types": "./dist/container/di-container.d.ts",
+      "import": "./dist/container/di-container.js"
     }
   },
   "scripts": {
@@ -40,6 +44,7 @@
   "author": "Pavel Karpovich",
   "license": "UNLICENSED",
   "dependencies": {
+    "awilix": "^10.0.2",
     "axios": "^1.7.2",
     "body-parser": "^1.20.2",
     "dotenv": "^16.4.5",

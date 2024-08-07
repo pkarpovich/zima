@@ -9,7 +9,7 @@ dotenv.config({
 export class ConfigService<T> {
     private readonly config: T;
 
-    constructor({ config }: { config: T }) {
+    constructor(config: T) {
         this.config = config;
     }
 

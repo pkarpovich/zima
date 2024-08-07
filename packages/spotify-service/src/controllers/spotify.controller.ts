@@ -4,7 +4,10 @@ import { LoggerService, HttpService } from "shared/services";
 import { SpotifyService } from "../services/spotify-service.js";
 
 export class SpotifyController implements BaseController {
-    constructor(private readonly spotifyService: SpotifyService, private readonly logService: LoggerService) {
+    constructor(
+        private readonly spotifyService: SpotifyService,
+        private readonly loggerService: LoggerService,
+    ) {
         spotifyService.init().catch(console.error);
     }
 
@@ -21,7 +24,7 @@ export class SpotifyController implements BaseController {
 
         await this.spotifyService.authorizationCodeGrant(code);
 
-        this.logService.success("Spotify authorization was successful");
+        this.loggerService.success("Spotify authorization was successful");
 
         res.status(200).send("OK");
     }
