@@ -11,10 +11,13 @@
     "watch": "pnpm exec tsx --watch ./src/index.ts"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.11",
     "tsx": "^4.16.2",
     "typescript": "^5.5.4"
   },
   "dependencies": {
+    "better-sqlite3": "^11.1.2",
+    "croner": "^8.1.1",
     "shared": "link:../shared"
   }
 }

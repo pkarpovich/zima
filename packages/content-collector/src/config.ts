@@ -5,6 +5,8 @@ import { ActionTypes } from "./action-types.js";
 export type Config = {
     discovery: DiscoveryConfig;
     http: HttpServiceConfig;
+    dbPath: string;
+    cronTriggerPattern: string;
 };
 
 export function Config(): Config {
@@ -18,5 +20,7 @@ export function Config(): Config {
         http: {
             port: Number(process.env.PORT) || 3500,
         },
+        dbPath: process.env.DB_PATH || ".db/content.db",
+        cronTriggerPattern: process.env.CRON_TRIGGER_PATTERN || "*/5 * * * *",
     };
 }

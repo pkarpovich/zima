@@ -1,4 +1,6 @@
 import { DiscoveryClientService, LoggerService } from "shared/services";
+import { ContentRepository, ContentWithPlayback } from "../repositories/content.repository.js";
+import { generateUniqId } from "shared/utils";
 
 const AppleTvExecuteType = "apple-tv-execute";
 
@@ -26,16 +28,64 @@ const IdleState = "Device state: Idle";
 export class CollectorService {
     constructor(
         private readonly discoveryClientService: DiscoveryClientService,
+        private readonly contentRepository: ContentRepository,
         private readonly loggerService: LoggerService,
     ) {}
 
-    async getAll() {
-        await this.getCurrentPlaying();
+    async getAll(): Promise<ContentWithPlayback[]> {
+        return this.contentRepository.getContentWithPlayback();
     }
 
-    create() {}
+    async create() {
+        const currentPlaying = await this.getCurrentPlaying();
+        const currentApp = await this.getCurrentApp();
 
-    async getCurrentPlaying() {
+        if (!currentPlaying || !currentApp) {
+            return;
+        }
+
+        const existingContent = this.contentRepository.findByTitleAndArtist(
+            currentPlaying.title,
+            currentPlaying.artist,
+        );
+
+        const contentId = existingContent ? existingContent.id : generateUniqId();
+        this.contentRepository.createOrReplaceContent({
+            id: contentId,
+            title: currentPlaying.title,
+            mediaType: currentPlaying.mediaType,
+            artist: currentPlaying.artist,
+            album: currentPlaying.album,
+            application: currentApp,
+            createdAt: existingContent ? existingContent.createdAt : new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+        });
+
+        this.contentRepository.createPlayback({
+            id: generateUniqId(),
+            contentId: contentId,
+            position: currentPlaying.position,
+            updatedAt: new Date().toISOString(),
+        });
+    }
+
+    async getCurrentApp(): Promise<string | null> {
+        const { response } = await this.discoveryClientService.invokeAction<AppleTvExecuteArgs, AppleTvExecuteResponse>(
+            AppleTvExecuteType,
+            {
+                command: "app",
+            },
+        );
+
+        if (!response) {
+            this.loggerService.error("No response from device");
+            return null;
+        }
+
+        return response.replace("App: ", "").trim();
+    }
+
+    async getCurrentPlaying(): Promise<PlayingInfo | null> {
         const { response } = await this.discoveryClientService.invokeAction<AppleTvExecuteArgs, AppleTvExecuteResponse>(
             AppleTvExecuteType,
             {
@@ -45,30 +95,40 @@ export class CollectorService {
 
         if (!response) {
             this.loggerService.error("No response from device");
-            return;
+            return null;
         }
 
         if (response.includes(IdleState)) {
             this.loggerService.info("Device is idle");
-            return;
+            return null;
         }
 
-        const info = this.parsePlayingInfo(response);
-        console.log(info);
+        return this.parsePlayingInfo(response);
     }
 
     private parsePlayingInfo(response: string): PlayingInfo {
         const rawInfo = response.split("\n").map((x) => x.trim());
+        const infoMap: { [key: string]: string } = rawInfo.reduce(
+            (acc, line) => {
+                const separatorIndex = line.indexOf(": ");
+                if (separatorIndex !== -1) {
+                    const key = line.substring(0, separatorIndex).trim();
+                    acc[key] = line.substring(separatorIndex + 2).trim();
+                }
+                return acc;
+            },
+            {} as { [key: string]: string },
+        );
 
         return {
-            mediaType: rawInfo[0].split(": ")[1],
-            deviceState: rawInfo[1].split(": ")[1],
-            title: rawInfo[2].split(": ")[1],
-            artist: rawInfo[3].split(": ")[1],
-            album: rawInfo[4].split(": ")[1],
-            position: rawInfo[5].split(": ")[1],
-            repeat: rawInfo[6].split(": ")[1],
-            shuffle: rawInfo[7].split(": ")[1],
+            mediaType: infoMap["Media type"] || "Unknown",
+            deviceState: infoMap["Device state"] || "Unknown",
+            title: infoMap["Title"] || "Unknown",
+            artist: infoMap["Artist"] || "Unknown",
+            album: infoMap["Album"] || "Unknown",
+            position: infoMap["Position"] || "Unknown",
+            repeat: infoMap["Repeat"] || "Unknown",
+            shuffle: infoMap["Shuffle"] || "Unknown",
         };
     }
 }
