@@ -164,10 +164,10 @@ services:
       DISCOVERY_NAME: content-collector
       DISCOVERY_ADDRESS: http://content-collector:3000/commands/execute
       DISCOVERY_SERVER_ADDRESS: http://discovery-service:3000
-      DB_PATH: /app/db/content.db
+      DB_PATH: /usr/src/app/packages/content-collector/.db/content.db
       CRON_TRIGGER_PATTERN: "*/5 * * * *"
     volumes:
-      - ./packages/content-collector/.db:/app/db
+      - ./packages/content-collector/.db:/usr/src/app/packages/content-collector/.db
     networks:
       - default
     depends_on:
