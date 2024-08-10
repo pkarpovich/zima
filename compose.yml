@@ -172,7 +172,16 @@ services:
       - default
     depends_on:
       - discovery-service
+
+  local-llm-server:
+    container_name: local-llm-server
+    entrypoint: ["/usr/bin/bash", "/run.sh"]
+    build:
+      context: packages/local-llm-server
+      dockerfile: Dockerfile
     restart: unless-stopped
+    ports:
+      - 11434:11434
 
 volumes:
   persist-homekit:
