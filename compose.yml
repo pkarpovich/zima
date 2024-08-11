@@ -172,6 +172,7 @@ services:
       - default
     depends_on:
       - discovery-service
+    restart: unless-stopped
 
 volumes:
   persist-homekit:
