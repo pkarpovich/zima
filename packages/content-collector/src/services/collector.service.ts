@@ -70,40 +70,50 @@ export class CollectorService {
     }
 
     async getCurrentApp(): Promise<string | null> {
-        const { response } = await this.discoveryClientService.invokeAction<AppleTvExecuteArgs, AppleTvExecuteResponse>(
-            AppleTvExecuteType,
-            {
+        try {
+            const { response } = await this.discoveryClientService.invokeAction<
+                AppleTvExecuteArgs,
+                AppleTvExecuteResponse
+            >(AppleTvExecuteType, {
                 command: "app",
-            },
-        );
+            });
 
-        if (!response) {
-            this.loggerService.error("No response from device");
+            if (!response) {
+                this.loggerService.error("No response from device");
+                return null;
+            }
+
+            return response.replace("App: ", "").trim();
+        } catch (e: any) {
+            this.loggerService.error("Error getting current app", e);
             return null;
         }
-
-        return response.replace("App: ", "").trim();
     }
 
     async getCurrentPlaying(): Promise<PlayingInfo | null> {
-        const { response } = await this.discoveryClientService.invokeAction<AppleTvExecuteArgs, AppleTvExecuteResponse>(
-            AppleTvExecuteType,
-            {
+        try {
+            const { response } = await this.discoveryClientService.invokeAction<
+                AppleTvExecuteArgs,
+                AppleTvExecuteResponse
+            >(AppleTvExecuteType, {
                 command: "playing",
-            },
-        );
+            });
 
-        if (!response) {
-            this.loggerService.error("No response from device");
+            if (!response) {
+                this.loggerService.error("No response from device");
+                return null;
+            }
+
+            if (response.includes(IdleState)) {
+                this.loggerService.info("Device is idle");
+                return null;
+            }
+
+            return this.parsePlayingInfo(response);
+        } catch (error: any) {
+            this.loggerService.error("Error getting playing info", error);
             return null;
         }
-
-        if (response.includes(IdleState)) {
-            this.loggerService.info("Device is idle");
-            return null;
-        }
-
-        return this.parsePlayingInfo(response);
     }
 
     private parsePlayingInfo(response: string): PlayingInfo {
