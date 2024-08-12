@@ -1,5 +1,8 @@
 import { describe, beforeEach, it } from "node:test";
 import * as assert from "node:assert";
+import { DiscoveryClientService } from "shared/services";
+
+const discoveryClientService = {};
 
 import { DiscoveryService } from "./discovery.service.js";
 
@@ -7,7 +10,7 @@ describe("DiscoveryService", () => {
     let discoveryService: DiscoveryService;
 
     beforeEach(() => {
-        discoveryService = new DiscoveryService();
+        discoveryService = new DiscoveryService(discoveryClientService as unknown as DiscoveryClientService);
     });
 
     it("should register a module", () => {
