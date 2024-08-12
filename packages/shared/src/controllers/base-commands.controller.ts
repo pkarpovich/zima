@@ -10,15 +10,16 @@ export abstract class BaseCommandsController implements BaseController {
         const router = HttpService.newRouter();
 
         router.post("/execute", this.execute.bind(this));
+        router.get("/health", (_, resp) => resp.status(200).json({ message: "OK" }));
 
         return router;
     }
 
     async execute(req: Request, resp: Response) {
-        const { name } = req.body;
+        const { name, args } = req.body;
 
         try {
-            const response = await this.handleAction(name);
+            const response = await this.handleAction(name, args);
 
             return resp.status(200).json({ message: "OK", response });
         } catch (e: any) {
@@ -27,5 +28,5 @@ export abstract class BaseCommandsController implements BaseController {
         }
     }
 
-    abstract handleAction<T>(name: string): Promise<T>;
+    abstract handleAction(name: string, args: unknown): Promise<unknown>;
 }

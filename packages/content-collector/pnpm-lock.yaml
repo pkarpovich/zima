@@ -11,9 +11,6 @@ importers:
       better-sqlite3:
         specifier: ^11.1.2
         version: 11.1.2
-      croner:
-        specifier: ^8.1.1
-        version: 8.1.1
       shared:
         specifier: link:../shared
         version: link:../shared
@@ -191,10 +188,6 @@ packages:
 
   chownr@1.1.4:
     resolution: {integrity: sha512-jJ0bqzaylmJtVnNgzTeSOs8DPavpbYgEr/b0YL8/2GO3xJEhInFmhKMUnEJQjZumK7KXGFhUy89PrsJWlakBVg==}
-
-  croner@8.1.1:
-    resolution: {integrity: sha512-1VdUuRnQP4drdFkS8NKvDR1NBgevm8TOuflcaZEKsxw42CxonjW/2vkj1AKlinJb4ZLwBcuWF9GiPr7FQc6AQA==}
-    engines: {node: '>=18.0'}
 
   decompress-response@6.0.0:
     resolution: {integrity: sha512-aW35yZM6Bb/4oJlZncMH2LCoZtJXTRxES17vE3hoRiowU2kWHaJKFkSBDnDR+cm9J+9QhXmREyIfv0pji9ejCQ==}
@@ -437,8 +430,6 @@ snapshots:
       ieee754: 1.2.1
 
   chownr@1.1.4: {}
-
-  croner@8.1.1: {}
 
   decompress-response@6.0.0:
     dependencies:

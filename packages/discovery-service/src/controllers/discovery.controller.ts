@@ -48,7 +48,8 @@ export class DiscoveryController implements BaseController {
         let response = null;
 
         try {
-            const { data } = await this.httpClientService.post<BaseServiceResponse>(module.address, req.body);
+            const url = `${module.address}/commands/execute`;
+            const { data } = await this.httpClientService.post<BaseServiceResponse>(url, req.body);
             if (data) {
                 response = data.response;
             }

@@ -55,4 +55,21 @@ export class DiscoveryClientService {
             throw error;
         }
     }
+
+    async ping(address: string): Promise<boolean> {
+        try {
+            const url = `${address}/commands/health`;
+            const { data } = await this.httpClientService.get(url);
+            if (data.message !== "OK") {
+                this.loggerService.error(`Module at ${address} is not healthy`);
+                return false;
+            }
+
+            return true;
+        } catch (error) {
+            this.loggerService.error(`Module at ${address} is not responding`);
+
+            return false;
+        }
+    }
 }

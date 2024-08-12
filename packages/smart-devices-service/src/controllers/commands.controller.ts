@@ -1,6 +1,5 @@
-import { BaseController, Request, Response, Router } from "shared/controllers";
-import { HttpService, LoggerService } from "shared/services";
-import { runFunctionWithRetry } from "shared/utils";
+import { BaseCommandsController } from "shared/controllers";
+import { LoggerService } from "shared/services";
 
 import { ActionTypes } from "../constants/action-types.js";
 import { YeelightService } from "../services/yeelight-service.js";
@@ -10,31 +9,15 @@ type Args = {
     brightness?: number;
 };
 
-export class CommandsController implements BaseController {
-    constructor(private readonly yeelightService: YeelightService, private readonly loggerService: LoggerService) {}
-
-    getRoutes(): Router {
-        const router = HttpService.newRouter();
-
-        router.post("/execute", this.execute.bind(this));
-
-        return router;
+export class CommandsController extends BaseCommandsController {
+    constructor(
+        private readonly yeelightService: YeelightService,
+        loggerService: LoggerService,
+    ) {
+        super(loggerService);
     }
 
-    async execute(req: Request, resp: Response) {
-        const { name, args } = req.body;
-
-        try {
-            await this.handleAction(name, args);
-
-            return resp.status(200).json({ message: "OK" });
-        } catch (e: any) {
-            this.loggerService.error(e.message);
-            return resp.status(500).json({ message: e.message });
-        }
-    }
-
-    private async handleAction(name: string, args: Args) {
+    async handleAction(name: string, args: Args): Promise<void> {
         this.loggerService.log(`Executing action: ${name}`);
 
         switch (name) {

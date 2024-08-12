@@ -1,4 +1,4 @@
-import { BaseController, Request, Response, Router } from "shared/controllers";
+import { BaseCommandsController, BaseController, Request, Response, Router } from "shared/controllers";
 import { HttpService, LoggerService } from "shared/services";
 import { runFunctionWithRetry } from "shared/utils";
 
@@ -7,15 +7,17 @@ import { ActionTypes } from "../constants/action-types.js";
 
 const DefaultDeviceType = "TV";
 
-export class CommandsController implements BaseController {
-    constructor(private readonly spotifyService: SpotifyService, private readonly loggerService: LoggerService) {}
+type Args = {
+    device: SpotifyApi.UserDevice;
+    value: string;
+};
 
-    getRoutes(): Router {
-        const router = HttpService.newRouter();
-
-        router.post("/execute", this.execute.bind(this));
-
-        return router;
+export class CommandsController extends BaseCommandsController {
+    constructor(
+        private readonly spotifyService: SpotifyService,
+        loggerService: LoggerService,
+    ) {
+        super(loggerService);
     }
 
     async execute(req: Request, resp: Response) {
@@ -29,8 +31,8 @@ export class CommandsController implements BaseController {
 
         try {
             await runFunctionWithRetry(
-                async () => this.handleAction(name, device, props),
-                this.spotifyService.refreshAccess
+                async () => this.handleAction(name, { device, value: props?.[0]?.value }),
+                this.spotifyService.refreshAccess,
             );
 
             return resp.status(200).json({ message: "OK" });
@@ -54,7 +56,7 @@ export class CommandsController implements BaseController {
         return devices.find((d) => d.type === DefaultDeviceType) ?? null;
     }
 
-    private async handleAction(name: string, device: SpotifyApi.UserDevice, props: { value: string }[]) {
+    async handleAction(name: string, { device, value }: Args) {
         if (!device.id) {
             throw new Error("No active device found");
         }
@@ -83,7 +85,7 @@ export class CommandsController implements BaseController {
                 break;
             }
             case ActionTypes.PlayPlaylist: {
-                await this.spotifyService.play(device.id, props[0].value);
+                await this.spotifyService.play(device.id, value);
                 break;
             }
             case ActionTypes.EnableShuffle: {

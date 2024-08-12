@@ -17,6 +17,9 @@ importers:
       body-parser:
         specifier: ^1.20.2
         version: 1.20.2
+      croner:
+        specifier: ^8.1.1
+        version: 8.1.1
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
@@ -314,6 +317,10 @@ packages:
   cookie@0.6.0:
     resolution: {integrity: sha512-U71cyTamuh1CRNCfpGY6to28lxvNwPG4Guz/EVjgf3Jmzv0vlDp1atT9eS5dDjMYHucpHbWns6Lwf3BKz6svdw==}
     engines: {node: '>= 0.6'}
+
+  croner@8.1.1:
+    resolution: {integrity: sha512-1VdUuRnQP4drdFkS8NKvDR1NBgevm8TOuflcaZEKsxw42CxonjW/2vkj1AKlinJb4ZLwBcuWF9GiPr7FQc6AQA==}
+    engines: {node: '>=18.0'}
 
   debug@2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
@@ -927,6 +934,8 @@ snapshots:
   cookie-signature@1.0.6: {}
 
   cookie@0.6.0: {}
+
+  croner@8.1.1: {}
 
   debug@2.6.9:
     dependencies:

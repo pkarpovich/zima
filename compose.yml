@@ -40,7 +40,7 @@ services:
       SPOTIFY_REDIRECT_URI: ${SPOTIFY_REDIRECT_URI}
       AUTH_DB_PATH: /app/db/auth.json
       DISCOVERY_NAME: spotify-service
-      DISCOVERY_ADDRESS: http://spotify-service:3000/commands/execute
+      DISCOVERY_ADDRESS: http://spotify-service:3000
       DISCOVERY_SERVER_ADDRESS: http://discovery-service:3000
     restart: unless-stopped
     depends_on:
@@ -72,7 +72,7 @@ services:
     environment:
       PORT: 3000
       DISCOVERY_NAME: smart-devices-service
-      DISCOVERY_ADDRESS: http://smart-devices-service:3000/commands/execute
+      DISCOVERY_ADDRESS: http://smart-devices-service:3000
       DISCOVERY_SERVER_ADDRESS: http://discovery-service:3000
     networks:
       - default
@@ -97,7 +97,7 @@ services:
       SSH_HOST: ${SSH_HOST}
       PORT: 3000
       DISCOVERY_NAME: remote-shell-service
-      DISCOVERY_ADDRESS: http://remote-shell-service:3000/commands/execute
+      DISCOVERY_ADDRESS: http://remote-shell-service:3000
       DISCOVERY_SERVER_ADDRESS: http://discovery-service:3000
       ATV_ID: ${ATV_ID}
       ATV_COMPANION_CREDENTIALS: ${ATV_COMPANION_CREDENTIALS}
@@ -118,7 +118,7 @@ services:
     environment:
       PORT: 3000
       DISCOVERY_NAME: streams-service
-      DISCOVERY_ADDRESS: http://streams-service:3000/commands/execute
+      DISCOVERY_ADDRESS: http://streams-service:3000
       DISCOVERY_SERVER_ADDRESS: http://discovery-service:3000
       LIVE_STREAM_FORWARDER_URL: ${LIVE_STREAM_FORWARDER_URL}
       LIVE_STREAM_FORWARDER_ATV_URL: ${LIVE_STREAM_FORWARDER_ATV_URL}
@@ -162,7 +162,7 @@ services:
     environment:
       PORT: 3000
       DISCOVERY_NAME: content-collector
-      DISCOVERY_ADDRESS: http://content-collector:3000/commands/execute
+      DISCOVERY_ADDRESS: http://content-collector:3000
       DISCOVERY_SERVER_ADDRESS: http://discovery-service:3000
       DB_PATH: /usr/src/app/packages/content-collector/.db/content.db
       CRON_TRIGGER_PATTERN: "*/5 * * * *"
@@ -172,6 +172,7 @@ services:
       - default
     depends_on:
       - discovery-service
+      - remote-shell-service
     restart: unless-stopped
 
 volumes:

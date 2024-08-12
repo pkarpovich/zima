@@ -1,4 +1,11 @@
-import { ConfigService, DiscoveryClientService, HttpClientService, HttpService, LoggerService } from "shared/services";
+import {
+    ConfigService,
+    DiscoveryClientService,
+    HttpClientService,
+    HttpService,
+    LoggerService,
+    CronService,
+} from "shared/services";
 import { createContainer, registerFunction, registerService, registerValue } from "shared/container";
 
 import { Config } from "./config.js";
@@ -7,7 +14,6 @@ import { CollectorService } from "./services/collector.service.js";
 import { initApiController } from "./controllers/api.controller.js";
 import { initDatabase } from "./database/database.js";
 import { ContentRepository } from "./repositories/content.repository.js";
-import { CronService } from "./services/cron.service.js";
 
 (async () => {
     const container = createContainer();

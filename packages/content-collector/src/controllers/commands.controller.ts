@@ -12,7 +12,7 @@ export class CommandsController extends BaseCommandsController {
         super(loggerService);
     }
 
-    async handleAction(name: string): Promise<any> {
+    async handleAction(name: string, args: unknown): Promise<any> {
         this.loggerService.log(`Executing action: ${name}`);
 
         switch (name) {

@@ -5,3 +5,4 @@ export * from "./services/files.service.js";
 export * from "./services/http.service.js";
 export * from "./services/discovery-client.service.js";
 export * from "./services/http-client.service.js";
+export * from "./services/cron.service.js";
