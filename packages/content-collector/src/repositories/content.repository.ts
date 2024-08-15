@@ -147,7 +147,7 @@ export class ContentRepository {
         return this.db
             .prepare<any, Playback>(
                 `
-            SELECT * FROM playback ORDER BY updatedAt DESC LIMIT 1
+            SELECT * FROM playback ORDER BY updatedAt
         `,
             )
             .all({});
@@ -168,11 +168,15 @@ export class ContentRepository {
         const playbacks = this.getAllPlayback();
         const metadata = this.getAllMetadata();
 
-        return contents.map<Content>((content) => ({
-            ...content,
-            playback: playbacks.filter((playback) => playback.contentId === content.id) || [],
-            metadata: metadata.find((metadata) => metadata.contentId === content.id) || null,
-        }));
+        return contents.map<Content>((content) => {
+            const lastContentPlayback = playbacks.findLast((playback) => playback.contentId === content.id);
+
+            return {
+                ...content,
+                playback: lastContentPlayback ? [lastContentPlayback] : [],
+                metadata: metadata.find((metadata) => metadata.contentId === content.id) || null,
+            };
+        });
     }
 
     findByTitleAndArtist(title: string, artist: string): Content | null {
