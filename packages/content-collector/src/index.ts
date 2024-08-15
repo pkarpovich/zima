@@ -45,10 +45,6 @@ import { YoutubeService } from "./services/youtube.service.js";
     });
 
     await contentRepository.init();
-
-    await collectorService.populateDbRecordMetadata();
-    console.log("Finished populating metadata");
-
     await discoveryClientService.registerModule();
     httpService.start();
 })();
