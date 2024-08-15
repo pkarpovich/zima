@@ -14,6 +14,7 @@ import { CollectorService } from "./services/collector.service.js";
 import { initApiController } from "./controllers/api.controller.js";
 import { initDatabase } from "./database/database.js";
 import { ContentRepository } from "./repositories/content.repository.js";
+import { YoutubeService } from "./services/youtube.service.js";
 
 (async () => {
     const container = createContainer();
@@ -28,6 +29,7 @@ import { ContentRepository } from "./repositories/content.repository.js";
         httpClientService: registerService(HttpClientService),
         configService: registerService(ConfigService),
         discoveryClientService: registerService(DiscoveryClientService),
+        youtubeService: registerService(YoutubeService),
         collectorService: registerService(CollectorService),
         commandsController: registerService(CommandsController),
         apiRouter: registerFunction(initApiController),

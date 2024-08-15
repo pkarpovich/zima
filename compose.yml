@@ -166,6 +166,7 @@ services:
       DISCOVERY_SERVER_ADDRESS: http://discovery-service:3000
       DB_PATH: /usr/src/app/packages/content-collector/.db/content.db
       CRON_TRIGGER_PATTERN: "*/5 * * * *"
+      YOUTUBE_API_KEY: ${YOUTUBE_API_KEY}
     volumes:
       - ./packages/content-collector/.db:/usr/src/app/packages/content-collector/.db
     networks:

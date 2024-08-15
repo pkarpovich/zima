@@ -7,6 +7,9 @@ export type Config = {
     http: HttpServiceConfig;
     dbPath: string;
     cronTriggerPattern: string;
+    youtube: {
+        apiKey: string;
+    };
 };
 
 export function Config(): Config {
@@ -19,6 +22,9 @@ export function Config(): Config {
         },
         http: {
             port: Number(process.env.PORT) || 3500,
+        },
+        youtube: {
+            apiKey: String(process.env.YOUTUBE_API_KEY),
         },
         dbPath: process.env.DB_PATH || ".db/content.db",
         cronTriggerPattern: process.env.CRON_TRIGGER_PATTERN || "*/5 * * * *",

@@ -1,6 +1,7 @@
 import { DiscoveryClientService, LoggerService } from "shared/services";
-import { ContentRepository, ContentWithPlayback } from "../repositories/content.repository.js";
+import { ContentRepository, ContentWithPlayback, Metadata } from "../repositories/content.repository.js";
 import { generateUniqId } from "shared/utils";
+import { YoutubeService } from "./youtube.service.js";
 
 const AppleTvExecuteType = "apple-tv-execute";
 
@@ -30,6 +31,7 @@ export class CollectorService {
         private readonly discoveryClientService: DiscoveryClientService,
         private readonly contentRepository: ContentRepository,
         private readonly loggerService: LoggerService,
+        private readonly youtubeService: YoutubeService,
     ) {}
 
     async getAll(): Promise<ContentWithPlayback[]> {
@@ -48,7 +50,6 @@ export class CollectorService {
             currentPlaying.title,
             currentPlaying.artist,
         );
-
         const contentId = existingContent ? existingContent.id : generateUniqId();
         this.contentRepository.createOrReplaceContent({
             id: contentId,
@@ -67,6 +68,16 @@ export class CollectorService {
             position: currentPlaying.position,
             updatedAt: new Date().toISOString(),
         });
+
+        if (existingContent?.metadata) {
+            return;
+        }
+
+        const metadata = await this.populateMetadata(currentPlaying, currentApp);
+        if (metadata) {
+            metadata.contentId = contentId;
+            this.contentRepository.createOrReplaceMetadata(metadata);
+        }
     }
 
     async getCurrentApp(): Promise<string | null> {
@@ -139,6 +150,43 @@ export class CollectorService {
             position: infoMap["Position"] || "Unknown",
             repeat: infoMap["Repeat"] || "Unknown",
             shuffle: infoMap["Shuffle"] || "Unknown",
+        };
+    }
+
+    private async populateMetadata(playingInfo: PlayingInfo, currentApp: string): Promise<Metadata | null> {
+        if (currentApp.toLowerCase().includes("youtube")) {
+            return this.populateYoutubeMetadata(playingInfo);
+        }
+
+        return null;
+    }
+
+    private async populateYoutubeMetadata(playingInfo: PlayingInfo): Promise<Metadata | null> {
+        const searchQuery = `${playingInfo.artist} - ${playingInfo.title}`;
+        const { data: youtubeResult } = await this.youtubeService.search(searchQuery);
+
+        if (!youtubeResult) {
+            this.loggerService.error(`No youtube result found for query: ${searchQuery}`);
+            return null;
+        }
+
+        const video = youtubeResult.items?.[0];
+        if (!video) {
+            this.loggerService.error(`No youtube video found for query: ${searchQuery}`);
+            return null;
+        }
+
+        const videoId = video.id?.videoId;
+        if (!videoId) {
+            this.loggerService.error(`No videoId found for query: ${searchQuery}`);
+            return null;
+        }
+
+        return {
+            id: videoId,
+            contentUrl: `https://www.youtube.com/watch?v=${videoId}`,
+            posterLink: video.snippet?.thumbnails?.medium?.url || "",
+            contentId: "",
         };
     }
 }

@@ -9,6 +9,8 @@ export type Content = {
     mediaType: string;
     createdAt: string;
     updatedAt: string;
+    playback?: Playback[];
+    metadata?: Metadata | null;
 };
 
 export type Playback = {
@@ -18,9 +20,11 @@ export type Playback = {
     updatedAt: string;
 };
 
-export type ContentWithPlayback = {
-    content: Content;
-    playback: Playback[];
+export type Metadata = {
+    id: string;
+    contentId: string;
+    contentUrl: string;
+    posterLink: string;
 };
 
 export class ContentRepository {
@@ -52,6 +56,20 @@ export class ContentRepository {
                 contentId TEXT,
                 position TEXT,
                 updatedAt TEXT,
+                FOREIGN KEY(contentId) REFERENCES content(id)
+            )
+        `,
+            )
+            .run();
+
+        this.db
+            .prepare(
+                `
+            CREATE TABLE IF NOT EXISTS metadata (
+                id TEXT PRIMARY KEY,
+                contentId TEXT,
+                contentUrl TEXT,
+                posterLink TEXT,
                 FOREIGN KEY(contentId) REFERENCES content(id)
             )
         `,
@@ -91,6 +109,20 @@ export class ContentRepository {
             .run(playback);
     }
 
+    createOrReplaceMetadata(metadata: Metadata) {
+        this.db
+            .prepare(
+                `
+            INSERT INTO metadata (id, contentId, contentUrl, posterLink)
+            VALUES (@id, @contentId, @contentUrl, @posterLink)
+            ON CONFLICT(id) DO UPDATE SET
+                contentUrl = @contentUrl,
+                posterLink = @posterLink
+        `,
+            )
+            .run(metadata);
+    }
+
     getAllContent(): Content[] {
         return this.db
             .prepare<any, Content>(
@@ -111,25 +143,49 @@ export class ContentRepository {
             .all({});
     }
 
-    getContentWithPlayback(): ContentWithPlayback[] {
+    getAllMetadata(): Metadata[] {
+        return this.db
+            .prepare<any, Metadata>(
+                `
+            SELECT * FROM metadata
+        `,
+            )
+            .all({});
+    }
+
+    getContentWithPlayback(): Content[] {
         const contents = this.getAllContent();
         const playbacks = this.getAllPlayback();
+        const metadata = this.getAllMetadata();
 
-        return contents.map((content) => ({
-            content,
-            playback: playbacks.filter((playback) => playback.contentId === content.id),
+        return contents.map<Content>((content) => ({
+            ...content,
+            playback: playbacks.filter((playback) => playback.contentId === content.id) || [],
+            metadata: metadata.find((metadata) => metadata.contentId === content.id) || null,
         }));
     }
 
     findByTitleAndArtist(title: string, artist: string): Content | null {
-        return (
+        const content =
             this.db
                 .prepare<[string, string], Content>(
                     `
             SELECT * FROM content WHERE title = ? AND artist = ?
         `,
                 )
-                .get(title, artist) || null
-        );
+                .get(title, artist) || null;
+
+        if (!content) {
+            return null;
+        }
+
+        const metadata = this.db
+            .prepare<[string], Metadata>(`SELECT * FROM metadata WHERE contentId = ?`)
+            .get(content.id);
+
+        return {
+            ...content,
+            metadata,
+        };
     }
 }
