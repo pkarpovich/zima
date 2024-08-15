@@ -1,5 +1,5 @@
 import { DiscoveryClientService, LoggerService } from "shared/services";
-import { ContentRepository, ContentWithPlayback, Metadata } from "../repositories/content.repository.js";
+import { Content, ContentRepository, Metadata } from "../repositories/content.repository.js";
 import { generateUniqId } from "shared/utils";
 import { YoutubeService } from "./youtube.service.js";
 
@@ -34,8 +34,23 @@ export class CollectorService {
         private readonly youtubeService: YoutubeService,
     ) {}
 
-    async getAll(): Promise<ContentWithPlayback[]> {
+    async getAll(): Promise<Content[]> {
         return this.contentRepository.getContentWithPlayback();
+    }
+
+    async populateDbRecordMetadata() {
+        const content = await this.getAll();
+
+        for (const item of content) {
+            if (!item.metadata && item.application.toLowerCase().includes("youtube")) {
+                const searchQuery = `${item.artist} - ${item.title}`;
+                const metadata = await this.populateYoutubeMetadata(searchQuery);
+                if (metadata) {
+                    metadata.contentId = item.id;
+                    this.contentRepository.createOrReplaceMetadata(metadata);
+                }
+            }
+        }
     }
 
     async create() {
@@ -155,14 +170,15 @@ export class CollectorService {
 
     private async populateMetadata(playingInfo: PlayingInfo, currentApp: string): Promise<Metadata | null> {
         if (currentApp.toLowerCase().includes("youtube")) {
-            return this.populateYoutubeMetadata(playingInfo);
+            const searchQuery = `${playingInfo.artist} - ${playingInfo.title}`;
+
+            return this.populateYoutubeMetadata(searchQuery);
         }
 
         return null;
     }
 
-    private async populateYoutubeMetadata(playingInfo: PlayingInfo): Promise<Metadata | null> {
-        const searchQuery = `${playingInfo.artist} - ${playingInfo.title}`;
+    private async populateYoutubeMetadata(searchQuery: string): Promise<Metadata | null> {
         const { data: youtubeResult } = await this.youtubeService.search(searchQuery);
 
         if (!youtubeResult) {

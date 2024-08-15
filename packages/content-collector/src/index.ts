@@ -38,6 +38,9 @@ import { YoutubeService } from "./services/youtube.service.js";
 
     const { discoveryClientService, httpService, contentRepository, cronService, collectorService } = container.cradle;
 
+    await collectorService.populateDbRecordMetadata();
+    console.log("Finished populating metadata");
+
     cronService.addJob({
         pattern: config.cronTriggerPattern,
         cb: () => collectorService.create(),
