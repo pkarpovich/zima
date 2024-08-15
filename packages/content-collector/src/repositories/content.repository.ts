@@ -123,11 +123,21 @@ export class ContentRepository {
             .run(metadata);
     }
 
-    getAllContent(): Content[] {
+    getAllContent(applicationName?: string): Content[] {
+        if (applicationName) {
+            return this.db
+                .prepare<any, Content>(
+                    `
+                SELECT * FROM content WHERE application = ? ORDER BY createdAt DESC
+            `,
+                )
+                .all(applicationName);
+        }
+
         return this.db
             .prepare<any, Content>(
                 `
-            SELECT * FROM content
+            SELECT * FROM content ORDER BY createdAt DESC
         `,
             )
             .all({});
@@ -137,7 +147,7 @@ export class ContentRepository {
         return this.db
             .prepare<any, Playback>(
                 `
-            SELECT * FROM playback
+            SELECT * FROM playback ORDER BY updatedAt DESC LIMIT 1
         `,
             )
             .all({});
@@ -153,8 +163,8 @@ export class ContentRepository {
             .all({});
     }
 
-    getContentWithPlayback(): Content[] {
-        const contents = this.getAllContent();
+    getContentWithPlayback(applicationName?: string): Content[] {
+        const contents = this.getAllContent(applicationName);
         const playbacks = this.getAllPlayback();
         const metadata = this.getAllMetadata();
 

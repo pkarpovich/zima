@@ -34,8 +34,8 @@ export class CollectorService {
         private readonly youtubeService: YoutubeService,
     ) {}
 
-    async getAll(): Promise<Content[]> {
-        return this.contentRepository.getContentWithPlayback();
+    async getAll(applicationName?: string): Promise<Content[]> {
+        return this.contentRepository.getContentWithPlayback(applicationName);
     }
 
     async create() {
