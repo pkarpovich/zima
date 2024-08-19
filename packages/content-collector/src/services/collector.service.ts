@@ -185,6 +185,7 @@ export class CollectorService {
 
         return {
             id: videoId,
+            videoId: videoId,
             contentUrl: `https://www.youtube.com/watch?v=${videoId}`,
             posterLink: video.snippet?.thumbnails?.medium?.url || "",
             contentId: "",

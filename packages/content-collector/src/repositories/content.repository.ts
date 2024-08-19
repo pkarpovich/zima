@@ -22,6 +22,7 @@ export type Playback = {
 
 export type Metadata = {
     id: string;
+    videoId: string;
     contentId: string;
     contentUrl: string;
     posterLink: string;
@@ -68,6 +69,7 @@ export class ContentRepository {
             CREATE TABLE IF NOT EXISTS metadata (
                 id TEXT PRIMARY KEY,
                 contentId TEXT,
+                videoId TEXT,
                 contentUrl TEXT,
                 posterLink TEXT,
                 FOREIGN KEY(contentId) REFERENCES content(id)
@@ -113,11 +115,12 @@ export class ContentRepository {
         this.db
             .prepare(
                 `
-            INSERT INTO metadata (id, contentId, contentUrl, posterLink)
-            VALUES (@id, @contentId, @contentUrl, @posterLink)
+            INSERT INTO metadata (id, contentId, contentUrl, posterLink, videoId)
+            VALUES (@id, @contentId, @contentUrl, @posterLink, @videoId)
             ON CONFLICT(id) DO UPDATE SET
                 contentUrl = @contentUrl,
-                posterLink = @posterLink
+                posterLink = @posterLink,
+                videoId = @videoId
         `,
             )
             .run(metadata);
