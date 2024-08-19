@@ -191,19 +191,4 @@ export class CollectorService {
             videoId,
         };
     }
-
-    async populateDbRecordMetadata() {
-        const content = await this.getAll();
-
-        for (const item of content) {
-            if (item.application.toLowerCase().includes("youtube")) {
-                const searchQuery = `${item.artist} - ${item.title}`;
-                const metadata = await this.populateYoutubeMetadata(searchQuery);
-                if (metadata) {
-                    metadata.contentId = item.id;
-                    this.contentRepository.createOrReplaceMetadata(metadata);
-                }
-            }
-        }
-    }
 }
