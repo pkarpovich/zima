@@ -185,10 +185,25 @@ export class CollectorService {
 
         return {
             id: videoId,
-            videoId: videoId,
             contentUrl: `https://www.youtube.com/watch?v=${videoId}`,
             posterLink: video.snippet?.thumbnails?.medium?.url || "",
             contentId: "",
+            videoId,
         };
+    }
+
+    async populateDbRecordMetadata() {
+        const content = await this.getAll();
+
+        for (const item of content) {
+            if (!item.metadata && item.application.toLowerCase().includes("youtube")) {
+                const searchQuery = `${item.artist} - ${item.title}`;
+                const metadata = await this.populateYoutubeMetadata(searchQuery);
+                if (metadata) {
+                    metadata.contentId = item.id;
+                    this.contentRepository.createOrReplaceMetadata(metadata);
+                }
+            }
+        }
     }
 }
