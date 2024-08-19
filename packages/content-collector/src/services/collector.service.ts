@@ -196,7 +196,7 @@ export class CollectorService {
         const content = await this.getAll();
 
         for (const item of content) {
-            if (!item.metadata && item.application.toLowerCase().includes("youtube")) {
+            if (item.application.toLowerCase().includes("youtube")) {
                 const searchQuery = `${item.artist} - ${item.title}`;
                 const metadata = await this.populateYoutubeMetadata(searchQuery);
                 if (metadata) {
