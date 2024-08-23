@@ -105,7 +105,7 @@ export class StreamsService {
             const liveStreamForwarderUrl = this.configService.get<string>("liveStreamForwarder.url");
             const atvUrl = this.configService.get<string>("liveStreamForwarder.atvUrl");
 
-            const streamUrl = `${liveStreamForwarderUrl}/live-stream/stream/twitch/${channel}`;
+            const streamUrl = `${liveStreamForwarderUrl}/live-stream/playlist/twitch/${channel}`;
             const deeplinkUrl = `${atvUrl}/open?target=vlc-x-callback://x-callback-url/stream?url=${encodeURIComponent(streamUrl)}`;
             return [deeplinkUrl, Providers.Twitch];
         }
