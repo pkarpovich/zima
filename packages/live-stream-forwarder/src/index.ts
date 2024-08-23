@@ -7,8 +7,14 @@ enum StreamProvider {
     Twitch = "twitch",
 }
 
+const Config = {
+    HOST: process.env.HOST || "localhost",
+    PORT: Number(process.env.PORT) || 8080,
+    PUBLIC_URL: process.env.PUBLIC_URL || "http://localhost:8080",
+    TWITCH_OAUTH_TOKEN: process.env.TWITCH_OAUTH_TOKEN,
+};
+
 const app = express();
-const port = Number(process.env.PORT) || 8080;
 
 app.get("/health", (req, res) => {
     res.json({ status: "ok" });
@@ -26,7 +32,7 @@ app.get("/playlist/:providerName/:streamId", async (req, res) => {
             {
                 name: title,
                 duration: -1,
-                url: `${process.env.PUBLIC_URL}/stream/${providerName}/${streamId}`,
+                url: `${Config.PUBLIC_URL}/stream/${providerName}/${streamId}`,
             },
         ],
     });
@@ -39,7 +45,13 @@ app.get("/stream/:providerName/:streamId", (req, res) => {
     const { providerName, streamId } = req.params;
     const streamUrl = getStreamUrl(providerName, streamId);
 
-    const streamlinkProcess = spawn("streamlink", [`--stdout`, streamUrl, "best"]);
+    const streamlinkProcess = spawn("streamlink", [
+        `--stdout`,
+        `--twitch-low-latency`,
+        `--twitch-api-header=Authorization=OAuth ${Config.TWITCH_OAUTH_TOKEN}`,
+        streamUrl,
+        "best",
+    ]);
 
     streamlinkProcess.stderr.on("data", (data) => {
         console.error(`streamlink: ${data}`);
@@ -71,6 +83,6 @@ function getStreamUrl(providerName: string, streamId: string): string {
     }
 }
 
-app.listen(port, "0.0.0.0", () => {
-    console.log(`server is running at http://0.0.0.0:${port}`);
+app.listen(Config.PORT, Config.HOST, () => {
+    console.log(`server is running at http://${Config.HOST}:${Config.PORT}`);
 });
