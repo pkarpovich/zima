@@ -138,6 +138,7 @@ services:
     restart: unless-stopped
     environment:
       PORT: 8080
+      PUBLIC_URL: ${LIVE_STREAM_FORWARDER_PUBLIC_URL}
     networks:
       - default
       - proxy

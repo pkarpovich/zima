@@ -1,5 +1,7 @@
 import { spawn } from "node:child_process";
 import express from "express";
+import { writeM3U } from "@iptv/playlist";
+import ogs from "open-graph-scraper";
 
 enum StreamProvider {
     Twitch = "twitch",
@@ -10,6 +12,27 @@ const port = Number(process.env.PORT) || 8080;
 
 app.get("/health", (req, res) => {
     res.json({ status: "ok" });
+});
+
+app.get("/playlist/:providerName/:streamId", async (req, res) => {
+    const { providerName, streamId } = req.params;
+    const url = getStreamUrl(providerName, streamId);
+
+    const { result } = await ogs({ url });
+
+    const title = result.ogTitle ? `${result.ogTitle} - ${result.ogDescription}` : streamId;
+    const playlist = writeM3U({
+        channels: [
+            {
+                name: title,
+                duration: -1,
+                url: `${process.env.PUBLIC_URL}/stream/${providerName}/${streamId}`,
+            },
+        ],
+    });
+
+    res.setHeader("Content-Type", "application/x-mpegURL");
+    res.send(playlist);
 });
 
 app.get("/stream/:providerName/:streamId", (req, res) => {

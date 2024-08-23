@@ -17,6 +17,8 @@
     "typescript": "^5.5.4"
   },
   "dependencies": {
-    "express": "^4.19.2"
+    "@iptv/playlist": "^1.0.1",
+    "express": "^4.19.2",
+    "open-graph-scraper": "^6.8.0"
   }
 }
