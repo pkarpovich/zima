@@ -6,6 +6,7 @@ import { CollectorService } from "../services/collector.service.js";
 
 type Args = {
     applicationName?: string;
+    includePlayback?: boolean;
 };
 
 export class CommandsController extends BaseCommandsController {
@@ -21,7 +22,7 @@ export class CommandsController extends BaseCommandsController {
 
         switch (name) {
             case ActionTypes.GetHistory: {
-                return this.collectorService.getAll(args?.applicationName);
+                return this.collectorService.getAll(args?.applicationName, args?.includePlayback);
             }
             default: {
                 throw new Error(`Unknown action type: ${name}`);

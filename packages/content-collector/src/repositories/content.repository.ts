@@ -166,18 +166,28 @@ export class ContentRepository {
             .all({});
     }
 
-    getContentWithPlayback(applicationName?: string): Content[] {
+    getContentWithPlayback(applicationName?: string, includePlayback?: boolean): Content[] {
         const contents = this.getAllContent(applicationName);
         const playbacks = this.getAllPlayback();
         const metadata = this.getAllMetadata();
 
         return contents.map<Content>((content) => {
             const lastContentPlayback = playbacks.findLast((playback) => playback.contentId === content.id);
+            const itemPlayback = playbacks.filter((playback) => playback.contentId === content.id);
+            const itemMetadata = metadata.find((metadata) => metadata.contentId === content.id) || null;
+
+            if (includePlayback) {
+                return {
+                    ...content,
+                    playback: itemPlayback,
+                    metadata: itemMetadata,
+                };
+            }
 
             return {
                 ...content,
                 playback: lastContentPlayback ? [lastContentPlayback] : [],
-                metadata: metadata.find((metadata) => metadata.contentId === content.id) || null,
+                metadata: itemMetadata,
             };
         });
     }
