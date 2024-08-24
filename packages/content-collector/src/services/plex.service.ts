@@ -1,5 +1,5 @@
 import { ConfigService } from "shared/services";
-import { MyPlexAccount } from "@ctrl/plex";
+import { MyPlexAccount, PlexServer } from "@ctrl/plex";
 
 export type SearchResult = {
     url: string;
@@ -8,20 +8,27 @@ export type SearchResult = {
 };
 
 export class PlexService {
-    constructor(private readonly configService: ConfigService<unknown>) {}
+    private plex: PlexServer | null = null;
 
-    async search(query: string): Promise<SearchResult | null> {
+    constructor(private readonly configService: ConfigService<unknown>) {
+        this.init().catch(console.error);
+    }
+
+    async init() {
         const account = await new MyPlexAccount(
             this.configService.get<string>("plex.url"),
             this.configService.get<string>("plex.username"),
             this.configService.get<string>("plex.password"),
         ).connect();
         const resources = await account.resources();
-        const plex = await resources[0].connect();
-        const resp = await plex.search(query);
+        this.plex = await resources[0].connect();
+    }
+
+    async search(query: string): Promise<SearchResult | null> {
+        const resp = await this.plex!.search(query);
 
         const params = new URLSearchParams();
-        params.append("X-Plex-Token", plex.token);
+        params.append("X-Plex-Token", this.plex!.token);
 
         const metadata = resp[0]?.Metadata?.[0];
         const serverInfo = resp[0]?.server;
