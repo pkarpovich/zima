@@ -16,6 +16,7 @@
     "typescript": "^5.5.4"
   },
   "dependencies": {
+    "@ctrl/plex": "^3.4.0",
     "better-sqlite3": "^11.1.2",
     "googleapis": "^140.0.1",
     "shared": "link:../shared"

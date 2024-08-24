@@ -15,6 +15,7 @@ import { initApiController } from "./controllers/api.controller.js";
 import { initDatabase } from "./database/database.js";
 import { ContentRepository } from "./repositories/content.repository.js";
 import { YoutubeService } from "./services/youtube.service.js";
+import { PlexService } from "./services/plex.service.js";
 
 (async () => {
     const container = createContainer();
@@ -30,13 +31,15 @@ import { YoutubeService } from "./services/youtube.service.js";
         configService: registerService(ConfigService),
         discoveryClientService: registerService(DiscoveryClientService),
         youtubeService: registerService(YoutubeService),
+        plexService: registerService(PlexService),
         collectorService: registerService(CollectorService),
         commandsController: registerService(CommandsController),
         apiRouter: registerFunction(initApiController),
         httpService: registerService(HttpService),
     });
 
-    const { discoveryClientService, httpService, contentRepository, cronService, collectorService } = container.cradle;
+    const { discoveryClientService, httpService, contentRepository, cronService, collectorService, configService } =
+        container.cradle;
 
     cronService.addJob({
         pattern: config.cronTriggerPattern,
@@ -45,6 +48,12 @@ import { YoutubeService } from "./services/youtube.service.js";
     });
 
     await contentRepository.init();
+
+    const allowPopulate = configService.get("allowPopulate");
+    if (allowPopulate) {
+        await collectorService.populate();
+    }
+
     await discoveryClientService.registerModule();
     httpService.start();
 })();

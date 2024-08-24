@@ -7,8 +7,14 @@ export type Config = {
     http: HttpServiceConfig;
     dbPath: string;
     cronTriggerPattern: string;
+    allowPopulate: boolean;
     youtube: {
         apiKey: string;
+    };
+    plex: {
+        url: string;
+        username: string;
+        password: string;
     };
 };
 
@@ -26,7 +32,13 @@ export function Config(): Config {
         youtube: {
             apiKey: String(process.env.YOUTUBE_API_KEY),
         },
+        plex: {
+            url: String(process.env.PLEX_URL),
+            username: String(process.env.PLEX_USERNAME),
+            password: String(process.env.PLEX_PASSWORD),
+        },
         dbPath: process.env.DB_PATH || ".db/content.db",
+        allowPopulate: process.env.ALLOW_POPULATE === "true",
         cronTriggerPattern: process.env.CRON_TRIGGER_PATTERN || "*/5 * * * *",
     };
 }

@@ -2,6 +2,7 @@ import { DiscoveryClientService, LoggerService } from "shared/services";
 import { Content, ContentRepository, Metadata } from "../repositories/content.repository.js";
 import { generateUniqId } from "shared/utils";
 import { YoutubeService } from "./youtube.service.js";
+import { PlexService } from "./plex.service.js";
 
 const AppleTvExecuteType = "apple-tv-execute";
 
@@ -32,6 +33,7 @@ export class CollectorService {
         private readonly contentRepository: ContentRepository,
         private readonly loggerService: LoggerService,
         private readonly youtubeService: YoutubeService,
+        private readonly plexService: PlexService,
     ) {}
 
     async getAll(applicationName?: string, includePlayback?: boolean): Promise<Content[]> {
@@ -127,6 +129,29 @@ export class CollectorService {
         }
     }
 
+    async populate() {
+        const content = await this.getAll();
+
+        for (const item of content) {
+            if (item.application.toLowerCase().includes("youtube")) {
+                const searchQuery = `${item.artist} - ${item.title}`;
+                const metadata = await this.populateYoutubeMetadata(searchQuery);
+                if (metadata) {
+                    metadata.contentId = item.id;
+                    this.contentRepository.createOrReplaceMetadata(metadata);
+                }
+            }
+
+            if (item.application.toLowerCase().includes("plex") || item.application.toLowerCase().includes("infuse")) {
+                const metadata = await this.populatePlexMetadata(item.title);
+                if (metadata) {
+                    metadata.contentId = item.id;
+                    this.contentRepository.createOrReplaceMetadata(metadata);
+                }
+            }
+        }
+    }
+
     private parsePlayingInfo(response: string): PlayingInfo {
         const rawInfo = response.split("\n").map((x) => x.trim());
         const infoMap: { [key: string]: string } = rawInfo.reduce(
@@ -160,6 +185,12 @@ export class CollectorService {
             return this.populateYoutubeMetadata(searchQuery);
         }
 
+        if (currentApp.toLowerCase().includes("plex") || currentApp.toLowerCase().includes("infuse")) {
+            const searchQuery = `${playingInfo.artist} ${playingInfo.title}`;
+
+            return this.populatePlexMetadata(searchQuery);
+        }
+
         return null;
     }
 
@@ -189,6 +220,29 @@ export class CollectorService {
             posterLink: video.snippet?.thumbnails?.medium?.url || "",
             contentId: "",
             videoId,
+        };
+    }
+
+    private async populatePlexMetadata(searchQuery: string): Promise<Metadata | null> {
+        const query = searchQuery.split(" - ").at(-1);
+
+        if (!query) {
+            this.loggerService.error(`No query found for title: ${searchQuery}`);
+            return null;
+        }
+
+        const result = await this.plexService.search(query);
+        if (!result) {
+            this.loggerService.error(`No plex result found for query: ${query}`);
+            return null;
+        }
+
+        return {
+            id: result.url.split("/").at(-1)!,
+            contentUrl: result.url,
+            posterLink: result.thumb,
+            contentId: "",
+            videoId: result.url,
         };
     }
 }

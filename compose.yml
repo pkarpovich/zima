@@ -170,6 +170,10 @@ services:
       DB_PATH: /usr/src/app/packages/content-collector/.db/content.db
       CRON_TRIGGER_PATTERN: "*/5 * * * *"
       YOUTUBE_API_KEY: ${YOUTUBE_API_KEY}
+      PLEX_URL: ${PLEX_URL}
+      PLEX_USERNAME: ${PLEX_USERNAME}
+      PLEX_PASSWORD: ${PLEX_PASSWORD}
+      ALLOW_POPULATE: ${ALLOW_POPULATE}
     volumes:
       - ./packages/content-collector/.db:/usr/src/app/packages/content-collector/.db
     networks:
