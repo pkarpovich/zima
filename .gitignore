@@ -212,3 +212,4 @@ dist
 
 /packages/spotify-service/db/
 **/.db
+cookies.txt

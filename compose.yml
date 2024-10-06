@@ -141,6 +141,9 @@ services:
       HOST: "0.0.0.0"
       TWITCH_OAUTH_TOKEN: ${TWITCH_OAUTH_TOKEN}
       PUBLIC_URL: ${LIVE_STREAM_FORWARDER_PUBLIC_URL}
+      COOKIES_FILE_PATH: /app/packages/live-stream-forwarder/cookies.txt
+    volumes:
+      - ./cookies.txt:/app/packages/live-stream-forwarder/cookies.txt
     networks:
       - default
       - proxy

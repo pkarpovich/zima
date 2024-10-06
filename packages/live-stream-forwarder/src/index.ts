@@ -1,38 +1,42 @@
-import { spawn } from "node:child_process";
+import { spawn, exec, ChildProcess } from "node:child_process";
 import express from "express";
+import type { Request, Response } from "express";
 import { writeM3U } from "@iptv/playlist";
 import ogs from "open-graph-scraper";
-
-enum StreamProvider {
-    Twitch = "twitch",
-}
 
 const Config = {
     HOST: process.env.HOST || "localhost",
     PORT: Number(process.env.PORT) || 8080,
     PUBLIC_URL: process.env.PUBLIC_URL || "http://localhost:8080",
     TWITCH_OAUTH_TOKEN: process.env.TWITCH_OAUTH_TOKEN,
+    COOKIES_FILE_PATH: process.env.COOKIES_FILE_PATH || "./cookies.txt",
 };
+
+enum ForwarderMethod {
+    STREAMLINK = "streamlink",
+    YTDLP = "yt-dlp",
+}
 
 const app = express();
 
-app.get("/health", (req, res) => {
+app.get("/health", (_, res: Response) => {
     res.json({ status: "ok" });
 });
 
-app.get("/playlist/:providerName/:streamId", async (req, res) => {
-    const { providerName, streamId } = req.params;
-    const url = getStreamUrl(providerName, streamId);
+app.get("/playlist", async (req: Request, res: Response) => {
+    const { url } = req.query;
 
-    const { result } = await ogs({ url });
+    if (!url || typeof url !== "string" || !isValidUrl(url)) {
+        return res.status(400).send("Missing or invalid URL");
+    }
 
-    const title = result.ogTitle ? `${result.ogTitle} - ${result.ogDescription}` : streamId;
+    const title = await generateTitle(url);
     const playlist = writeM3U({
         channels: [
             {
                 name: title,
                 duration: -1,
-                url: `${Config.PUBLIC_URL}/stream/${providerName}/${streamId}`,
+                url: `${Config.PUBLIC_URL}/stream?url=${encodeURIComponent(url)}`,
             },
         ],
     });
@@ -41,46 +45,114 @@ app.get("/playlist/:providerName/:streamId", async (req, res) => {
     res.send(playlist);
 });
 
-app.get("/stream/:providerName/:streamId", (req, res) => {
-    const { providerName, streamId } = req.params;
-    const streamUrl = getStreamUrl(providerName, streamId);
+app.get("/stream", (req: Request, res: Response) => {
+    const { url } = req.query;
 
-    const streamlinkProcess = spawn("streamlink", [
-        `--stdout`,
-        `--twitch-low-latency`,
-        `--twitch-api-header=Authorization=OAuth ${Config.TWITCH_OAUTH_TOKEN}`,
-        streamUrl,
-        "best",
-    ]);
+    if (!url || typeof url !== "string" || !isValidUrl(url)) {
+        return res.status(400).send("Missing or invalid URL");
+    }
 
-    streamlinkProcess.stderr.on("data", (data) => {
-        console.error(`streamlink: ${data}`);
-    });
+    const method = determineForwarderMethod(url);
 
-    streamlinkProcess.on("error", (error) => {
-        console.error(`streamlink process error: ${error}`);
-    });
+    let childProcess;
+    let contentType = "video/MP2T";
 
-    res.setHeader("Content-Type", "video/MP2T");
-    streamlinkProcess.stdout.pipe(res);
+    switch (method) {
+        case ForwarderMethod.STREAMLINK: {
+            childProcess = spawn("streamlink", [
+                `--stdout`,
+                `--twitch-low-latency`,
+                `--twitch-api-header=Authorization=OAuth ${Config.TWITCH_OAUTH_TOKEN}`,
+                url,
+                "best",
+            ]);
+            break;
+        }
+        case ForwarderMethod.YTDLP: {
+            childProcess = spawn("yt-dlp", [
+                "--hls-use-mpegts",
+                "--part",
+                "--cookies",
+                Config.COOKIES_FILE_PATH,
+                "-o",
+                "-",
+                url,
+            ]);
+            contentType = "video/mp4";
+            break;
+        }
+        default: {
+            res.status(400).json({ error: "Invalid method parameter" });
+            return;
+        }
+    }
 
-    req.on("close", () => {
-        console.log(`client closed the connection for stream: ${streamUrl}, stopping Streamlink`);
-        streamlinkProcess.kill();
-    });
+    res.setHeader("Content-Type", contentType);
+    childProcess.stdout.pipe(res);
 
-    streamlinkProcess.on("exit", (code) => {
-        console.log(`streamlink process for channel: ${streamUrl} exited with code ${code}`);
-    });
+    handleProcessEvents(childProcess, url, req);
 });
 
-function getStreamUrl(providerName: string, streamId: string): string {
-    switch (providerName) {
-        case StreamProvider.Twitch:
-            return `twitch.tv/${streamId}`;
-        default:
-            throw new Error(`unknown stream provider: ${providerName}`);
+function isValidUrl(url: string): boolean {
+    try {
+        new URL(url);
+        return true;
+    } catch (_) {
+        return false;
     }
+}
+
+function determineForwarderMethod(url: string): ForwarderMethod {
+    const streamlinkRegex = /^(?:https?:\/\/)?(?:www\.)?(twitch\.tv|kick\.com)\//;
+
+    return streamlinkRegex.test(url) ? ForwarderMethod.STREAMLINK : ForwarderMethod.YTDLP;
+}
+
+async function generateTitle(url: string): Promise<string> {
+    let title = "Stream";
+
+    try {
+        const { result } = await ogs({ url });
+        if (result.ogTitle) {
+            return `${result.ogTitle} - ${result.ogDescription || ""}`.trim();
+        }
+    } catch (error) {
+        console.log("OGS error:", error);
+    }
+
+    try {
+        const ytDlpCmd = `yt-dlp --get-title ${url} --cookies ${Config.COOKIES_FILE_PATH}`;
+        const execPromise = new Promise<string>((resolve, reject) => {
+            exec(ytDlpCmd, (error, stdout, stderr) => {
+                if (error) {
+                    reject(`yt-dlp error: ${stderr}`);
+                } else {
+                    resolve(stdout.trim());
+                }
+            });
+        });
+
+        title = await execPromise;
+    } catch (ytDlpError) {
+        console.error("yt-dlp error:", ytDlpError);
+    }
+
+    return title;
+}
+
+function handleProcessEvents(childProcess: ChildProcess, url: string, req: Request) {
+    childProcess.on("error", (error) => {
+        console.error(`Process error: ${error}`);
+    });
+
+    childProcess.on("exit", (code) => {
+        console.log(`Process for channel: ${url} exited with code ${code}`);
+    });
+
+    req.on("close", () => {
+        console.log(`Client closed the connection for stream: ${url}, stopping process`);
+        childProcess.kill();
+    });
 }
 
 app.listen(Config.PORT, Config.HOST, () => {
