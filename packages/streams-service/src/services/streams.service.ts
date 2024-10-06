@@ -25,7 +25,7 @@ enum AppleTvCommands {
 }
 
 enum Providers {
-    Twitch = "twitch",
+    General = "general",
     Youtube = "youtube",
     Unrecognized = "unrecognized",
 }
@@ -100,14 +100,13 @@ export class StreamsService {
         } else if (url.hostname === "youtu.be") {
             const videoId = url.pathname.split("/")[1];
             return [`youtube://watch/${videoId}`, Providers.Youtube];
-        } else if (url.hostname === "www.twitch.tv") {
-            const channel = url.pathname.split("/")[1];
+        } else {
             const liveStreamForwarderUrl = this.configService.get<string>("liveStreamForwarder.url");
             const atvUrl = this.configService.get<string>("liveStreamForwarder.atvUrl");
 
-            const streamUrl = `${liveStreamForwarderUrl}/live-stream/playlist/twitch/${channel}`;
+            const streamUrl = `${liveStreamForwarderUrl}/live-stream/playlist?url=${encodeURI(link)}`;
             const deeplinkUrl = `${atvUrl}/open?target=vlc-x-callback://x-callback-url/stream?url=${encodeURIComponent(streamUrl)}`;
-            return [deeplinkUrl, Providers.Twitch];
+            return [deeplinkUrl, Providers.General];
         }
 
         return [link, Providers.Unrecognized];
@@ -126,7 +125,7 @@ export class StreamsService {
                 await this.launchApp(deeplink);
                 break;
             }
-            case Providers.Twitch: {
+            case Providers.General: {
                 await this.launchApp("com.celerity.DeepLink");
                 await wait(8000);
 
