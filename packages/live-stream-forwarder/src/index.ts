@@ -141,6 +141,10 @@ async function generateTitle(url: string): Promise<string> {
 }
 
 function handleProcessEvents(childProcess: ChildProcess, url: string, req: Request) {
+    childProcess.stderr?.on("data", (data) => {
+        console.error(`Process error: ${data}`);
+    });
+
     childProcess.on("error", (error) => {
         console.error(`Process error: ${error}`);
     });
