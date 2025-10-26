@@ -12,6 +12,8 @@ export class YeelightDevice {
 
     private readonly logService: LoggerService;
 
+    private connectionConfig: { ip: string; port: number } | null = null;
+
     constructor({ id }: { id: string }) {
         this.id = id;
         this.logService = new LoggerService();
@@ -19,7 +21,16 @@ export class YeelightDevice {
     }
 
     async connect({ ip: address, port }: { ip: string; port: number }) {
+        this.connectionConfig = { ip: address, port };
         return retry(this.connectToLocalInstance(address, port));
+    }
+
+    async reconnect() {
+        if (!this.connectionConfig) {
+            throw new Error("Cannot reconnect: no connection config available");
+        }
+        this.logService.info("Attempting to reconnect...");
+        return this.connect(this.connectionConfig);
     }
 
     async setBrightness(b: number) {
@@ -97,12 +108,38 @@ export class YeelightDevice {
         return defaultValue;
     }
 
-    private setProp<T extends Arr, R>(f?: (...args: [...T]) => R, ...headArgs: T) {
+    private isConnectionError(error: any): boolean {
+        const errorMessage = error?.message || String(error);
+        return errorMessage.includes('ECONNRESET') ||
+               errorMessage.includes('EPIPE') ||
+               errorMessage.includes('ENOTCONN');
+    }
+
+    private async handleConnectionError<T extends Arr, R>(f?: (...args: [...T]) => R, ...headArgs: T) {
+        this.logService.error(`Connection lost, attempting to reconnect...`);
+
+        try {
+            await this.reconnect();
+            this.logService.success(`Reconnected successfully, retrying command`);
+            return f?.bind(this.instance)(...headArgs);
+        } catch (reconnectError) {
+            this.logService.error(`Reconnection failed`);
+            this.logService.error(reconnectError as Error);
+            throw reconnectError;
+        }
+    }
+
+    private async setProp<T extends Arr, R>(f?: (...args: [...T]) => R, ...headArgs: T) {
         try {
             return f?.bind(this.instance)(...headArgs);
-        } catch (e) {
+        } catch (e: any) {
+            if (this.isConnectionError(e)) {
+                return this.handleConnectionError(f, ...headArgs);
+            }
+
             this.logService.error(`Can't set property ${f?.name} to ${headArgs} on yeelight device, error: `);
             this.logService.error(e as Error);
+            throw e;
         }
     }
 }
