@@ -121,7 +121,7 @@ export class YeelightDevice {
         try {
             await this.reconnect();
             this.logService.success(`Reconnected successfully, retrying command`);
-            return f?.bind(this.instance)(...headArgs);
+            return await f?.bind(this.instance)(...headArgs);
         } catch (reconnectError) {
             this.logService.error(`Reconnection failed`);
             this.logService.error(reconnectError as Error);
@@ -131,7 +131,7 @@ export class YeelightDevice {
 
     private async setProp<T extends Arr, R>(f?: (...args: [...T]) => R, ...headArgs: T) {
         try {
-            return f?.bind(this.instance)(...headArgs);
+            return await f?.bind(this.instance)(...headArgs);
         } catch (e: any) {
             if (this.isConnectionError(e)) {
                 return this.handleConnectionError(f, ...headArgs);
